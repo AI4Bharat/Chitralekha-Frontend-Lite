@@ -1,25 +1,40 @@
-# SubPlayer
+<h1 align="center">Welcome to SubPlayer 👋</h1>
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-3.0.0-blue.svg?cacheSeconds=2592000" />
+</p>
 
-> SubPlayer is an online subtitle editor
+### 🏠 [Homepage](https://subplayer-task.netlify.app/)
 
-![Screenshot](./images/screenshot6.png)
+### ✨ [Demo](https://subplayer-task.netlify.app/)
 
-## Homepage
+## Install
 
-[https://subplayer.js.org](https://subplayer.js.org)
+```sh
+npm install
+```
 
-## Donations
+## Description
 
-We accept donations through these channels:
+-   Select the language from the drop down menu, which has only Indian Languages
+-   Enter the YouTube URL, to fetch the video which will be imported into the player
+-   The API described will then fetch the video and subtitle link which will be displayed on the player
+-   Using the React Transliterate library, select a language, and start typing for your words to be converted into that particular language
 
-![pay](./public/pay.png)
+## Usage
 
--   [Paypal](https://www.paypal.me/harveyzack)
+```sh
+npm start
+```
 
-## QQ Group
+## Author
 
-![QQ Group](./public/qqgroup.png)
+👤 **Rajat Maheshwari**
 
-## License
+-   Website: https://rajatmaheshwari.me/
+-   Github: [@rajatmaheshwari2512](https://github.com/rajatmaheshwari2512)
 
-MIT © Harvey Zack
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+---

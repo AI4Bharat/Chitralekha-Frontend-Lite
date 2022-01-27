@@ -110,7 +110,7 @@ const VideoWrap = memo(
             }
         }, [$video]);
 
-        return <video onClick={onClick} src="/sample.mp4?t=1" ref={$video} />;
+        return <video onClick={onClick} src="/sample.mp4" ref={$video} />;
     },
     () => true,
 );

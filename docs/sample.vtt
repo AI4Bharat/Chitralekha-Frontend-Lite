@@ -1,0 +1,141 @@
+WEBVTT
+
+1
+00:00:00.298 --> 00:00:02.316
+Hello this is Rajat Maheshwari 
+
+2
+00:00:02.992 --> 00:00:05.298
+And I will be using this video as a tutorial 
+
+3
+00:00:05.904 --> 00:00:07.700
+on how to use the Subplayer task 
+
+4
+00:00:07.756 --> 00:00:09.005
+that had been assigned to me 
+
+5
+00:00:10.133 --> 00:00:12.806
+First things first I had prepared a Sample Video 
+
+6
+00:00:13.040 --> 00:00:14.463
+Which I will go through now 
+
+7
+00:00:14.559 --> 00:00:27.951
+<Video Plays> 
+
+8
+00:00:28.954 --> 00:00:31.760
+So as you can see the video already had English Captions 
+
+9
+00:00:32.119 --> 00:00:34.956
+that I had put in, so we'd have a basis 
+
+10
+00:00:35.042 --> 00:00:36.758
+To Import this video 
+
+11
+00:00:37.186 --> 00:00:39.923
+and according to my assigned task 
+
+12
+00:00:40.346 --> 00:00:43.492
+I have to import this video using a Youtube URL 
+
+13
+00:00:43.883 --> 00:00:45.403
+which I will proceed to do now 
+
+14
+00:00:49.725 --> 00:00:52.110
+So as you can see, on the left hand side 
+
+15
+00:00:52.110 --> 00:00:53.753
+English Subtitles have been loaded in 
+
+16
+00:00:53.996 --> 00:00:55.388
+On the right hand side as well 
+
+17
+00:00:55.672 --> 00:00:58.048
+These English subtitles are for reference, these are not editable
+
+18
+00:00:58.686 --> 00:01:01.056
+which was one of the bonus tasks that had been assigned 
+
+19
+00:01:01.602 --> 00:01:04.376
+and these are completely editable sentences 
+
+20
+00:01:04.744 --> 00:01:07.721
+So what you can do here is 
+
+21
+00:01:07.721 --> 00:01:10.367
+according to the react transliterate library 
+
+22
+00:01:11.070 --> 00:01:13.328
+the language that you have currently selected here 
+
+23
+00:01:13.818 --> 00:01:18.328
+will the language the words here will be converted into 
+
+24
+00:01:18.823 --> 00:01:20.234
+so let's select Hindi here 
+
+25
+00:01:20.690 --> 00:01:27.496
+And I'll just change a couple of sentences into Hindi, so for example
+
+26
+00:01:27.522 --> 00:01:29.536
+this sentence will become 
+
+27
+00:01:35.923 --> 00:01:38.892
+So as you can see, the sentences have been turned into Hindi
+
+28
+00:01:39.200 --> 00:01:46.527
+I'll also convert this sentence into Hindi, for example, this will become 
+
+29
+00:01:50.707 --> 00:01:55.309
+So as you can see the sentences have been converted into the requested subtitles 
+
+30
+00:01:56.576 --> 00:01:58.771
+The left hand side, as you can see is still in English 
+
+31
+00:01:58.880 --> 00:02:04.642
+And the right hand side is the transliterated subtitle in the language of your preference 
+
+32
+00:02:05.914 --> 00:02:08.793
+So this was the task that I had implemented 
+
+33
+00:02:08.909 --> 00:02:11.672
+I have also removed the advertisements from the right hand side 
+
+34
+00:02:11.672 --> 00:02:13.255
+as had been requested 
+
+35
+00:02:13.445 --> 00:02:19.338
+and this video will be the tutorial video that will show up in place of the Japanese video along with the Subtitles 

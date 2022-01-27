@@ -3,7 +3,7 @@ import languages from '../libs/languages';
 import { t, Translate } from 'react-i18nify';
 import React, { useState, useCallback } from 'react';
 import { getExt, download } from '../utils';
-import { file2sub, sub2vtt, sub2srt, sub2txt } from '../libs/readSub';
+import { file2sub, sub2vtt, sub2srt, sub2txt, url2sub, vtt2url } from '../libs/readSub';
 import sub2ass from '../libs/readSub/sub2ass';
 import googleTranslate from '../libs/googleTranslate';
 import FFmpeg from '@ffmpeg/ffmpeg';
@@ -170,6 +170,38 @@ const Style = styled.div`
             }
         }
     }
+    .youtube-link {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        .youtube-textarea {
+            width: 65%;
+            outline: none;
+            padding: 0 5px;
+            border-radius: 3px;
+        }
+
+        .btn {
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 33%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            background-color: #673ab7;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
 
     .hotkey {
         display: flex;
@@ -256,6 +288,7 @@ export default function Header({
 }) {
     const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
+    const [youtubeURL, setYoutubeURL] = useState('');
 
     const decodeAudioData = useCallback(
         async (file) => {
@@ -390,6 +423,46 @@ export default function Header({
         },
         [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData],
     );
+    const onYouTubeChange = useCallback(
+        (event) => {
+            if (youtubeURL.length > 0) {
+                fetch(
+                    `https://youtube-dl-utils-api.herokuapp.com/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
+                    {
+                        method: 'POST',
+                    },
+                )
+                    .then((resp) => {
+                        return resp.json();
+                    })
+                    .then((resp) => {
+                        const url = resp.video;
+                        const sub = resp.subtitles;
+                        fetch(sub)
+                            .then((subtext) => {
+                                return subtext.text();
+                            })
+                            .then((subtext) => {
+                                player.currentTime = 0;
+                                clearSubs();
+                                const suburl = vtt2url(subtext);
+                                url2sub(suburl).then((urlsub) => {
+                                    setSubtitle(urlsub);
+                                    player.src = url;
+                                });
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    });
+            }
+        },
+        [player, setSubtitle, clearSubs, youtubeURL, translate],
+    );
+
+    const handleChange = (e) => {
+        setYoutubeURL(e.target.value);
+    };
 
     const onSubtitleChange = useCallback(
         (event) => {
@@ -520,7 +593,13 @@ export default function Header({
                     </div>
                 </div>
                 <div className="translate">
-                    <select value={translate} onChange={(event) => setTranslate(event.target.value)}>
+                    <select
+                        value={translate}
+                        onChange={(event) => {
+                            setTranslate(event.target.value);
+                            localStorage.setItem('lang', event.target.value);
+                        }}
+                    >
                         {(languages[language] || languages.en).map((item) => (
                             <option key={item.key} value={item.key}>
                                 {item.name}
@@ -531,6 +610,17 @@ export default function Header({
                         <Translate value="TRANSLATE" />
                     </div>
                 </div>
+                <div className="youtube-link">
+                    <textarea
+                        className="youtube-textarea"
+                        placeholder="Enter YouTube Link Here"
+                        value={youtubeURL}
+                        onChange={handleChange}
+                    />
+                    <div className="btn" onClick={onYouTubeChange}>
+                        <Translate value="Fetch Video" />
+                    </div>
+                </div>
                 <div className="hotkey">
                     <span>
                         <Translate value="HOTKEY_01" />
@@ -539,12 +629,6 @@ export default function Header({
                         <Translate value="HOTKEY_02" />
                     </span>
                 </div>
-            </div>
-            <div className="bottom">
-                <a href="https://online.aimu-app.com/">
-                    <div className="title">全新字幕编辑器来了，点击这里体验</div>
-                    <img src="/aimu.png" alt="aimu" />
-                </a>
             </div>
         </Style>
     );

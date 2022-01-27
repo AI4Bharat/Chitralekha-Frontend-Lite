@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
+import { ReactTransliterate } from 'react-transliterate';
 
 const Style = styled.div`
     position: relative;
@@ -91,7 +92,25 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                             }}
                         >
                             <div className="item">
-                                <textarea
+                                <ReactTransliterate
+                                    className={[
+                                        'textarea',
+                                        currentIndex === props.index ? 'highlight' : '',
+                                        checkSub(props.rowData) ? 'illegal' : '',
+                                    ]
+                                        .join(' ')
+                                        .trim()}
+                                    value={unescape(props.rowData.text)}
+                                    spellCheck={false}
+                                    onChangeText={(event) => {
+                                        updateSub(props.rowData, {
+                                            text: event,
+                                        });
+                                    }}
+                                    lang={localStorage.getItem('lang')}
+                                    offsetY={-10}
+                                />
+                                {/* <textarea
                                     maxLength={200}
                                     spellCheck={false}
                                     className={[
@@ -107,7 +126,7 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                                             text: event.target.value,
                                         });
                                     }}
-                                />
+                                /> */}
                             </div>
                         </div>
                     );

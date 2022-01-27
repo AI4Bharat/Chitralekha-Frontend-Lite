@@ -17,6 +17,7 @@
     "react-notification-system": "^0.4.0",
     "react-scripts": "4.0.3",
     "react-textarea-autosize": "^8.3.3",
+    "react-transliterate": "^1.1.9",
     "react-virtualized": "^9.22.3",
     "styled-components": "^5.3.1",
     "wfplayer": "^2.1.0"

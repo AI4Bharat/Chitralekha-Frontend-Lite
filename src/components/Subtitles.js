@@ -94,28 +94,41 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                             >
                                 <div className="item">
                                     <ReactTransliterate
-                                        renderComponent={(props1) => (
-                                            <textarea
-                                                maxLength={200}
-                                                spellCheck={false}
-                                                className={[
-                                                    'textarea',
-                                                    currentIndex === props.index ? 'highlight' : '',
-                                                    checkSub(props.rowData) ? 'illegal' : '',
-                                                ]
-                                                    .join(' ')
-                                                    .trim()}
-                                                value={unescape(props.rowData.text)}
-                                                onChange={(event) => {
-                                                    updateSub(props.rowData, {
-                                                        text: event.target.value,
-                                                    });
-                                                }}
-                                            />
-                                        )}
+                                        disabled={disabled}
+                                        className={[
+                                            'textarea',
+                                            currentIndex === props.index ? 'highlight' : '',
+                                            checkSub(props.rowData) ? 'illegal' : '',
+                                        ]
+                                            .join(' ')
+                                            .trim()}
+                                        value={unescape(props.rowData.text)}
+                                        spellCheck={false}
+                                        onChangeText={(event) => {
+                                            updateSub(props.rowData, {
+                                                text: event,
+                                            });
+                                        }}
                                         lang={localStorage.getItem('lang')}
                                         offsetY={-10}
                                     />
+                                    {/* <textarea
+                                    maxLength={200}
+                                    spellCheck={false}
+                                    className={[
+                                        'textarea',
+                                        currentIndex === props.index ? 'highlight' : '',
+                                        checkSub(props.rowData) ? 'illegal' : '',
+                                    ]
+                                        .join(' ')
+                                        .trim()}
+                                    value={unescape(props.rowData.text)}
+                                    onChange={(event) => {
+                                        updateSub(props.rowData, {
+                                            text: event.target.value,
+                                        });
+                                    }}
+                                /> */}
                                 </div>
                             </div>
                         );

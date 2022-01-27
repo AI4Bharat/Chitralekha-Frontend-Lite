@@ -46,6 +46,7 @@ export default function App({ defaultLang }) {
     const [processing, setProcessing] = useState(0);
     const [language, setLanguage] = useState(defaultLang);
     const [subtitle, setSubtitleOriginal] = useState([]);
+    const [subtitleEnglish, setSubtitleEnglish] = useState(null);
     const [waveform, setWaveform] = useState(null);
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -65,6 +66,10 @@ export default function App({ defaultLang }) {
     );
 
     const copySubs = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
+
+    useEffect(() => {
+        localStorage.setItem('lang', 'en');
+    }, []);
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
@@ -93,6 +98,10 @@ export default function App({ defaultLang }) {
         setSubtitle([]);
         subtitleHistory.current.length = 0;
     }, [setSubtitle, subtitleHistory]);
+
+    const clearSubsEnglish = useCallback(() => {
+        setSubtitleEnglish([]);
+    }, [setSubtitleEnglish]);
 
     const checkSub = useCallback(
         (sub) => {
@@ -290,7 +299,8 @@ export default function App({ defaultLang }) {
         setLoading,
         setProcessing,
         subtitleHistory,
-
+        subtitleEnglish,
+        setSubtitleEnglish,
         notify,
         newSub,
         hasSub,
@@ -303,13 +313,28 @@ export default function App({ defaultLang }) {
         formatSub,
         mergeSub,
         splitSub,
+        clearSubsEnglish,
     };
 
     return (
         <Style>
             <div className="main">
+                <Subtitles
+                    currentIndex={props.currentIndex}
+                    subtitle={props.subtitleEnglish}
+                    checkSub={props.checkSub}
+                    player={props.player}
+                    updateSub={props.updateSub}
+                    disabled={true}
+                />
                 <Player {...props} />
-                <Subtitles {...props} />
+                <Subtitles
+                    currentIndex={props.currentIndex}
+                    subtitle={props.subtitle}
+                    checkSub={props.checkSub}
+                    player={props.player}
+                    updateSub={props.updateSub}
+                />
                 <Tool {...props} />
             </div>
             <Footer {...props} />

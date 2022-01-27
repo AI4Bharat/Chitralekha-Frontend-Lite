@@ -285,6 +285,9 @@ export default function Header({
     setSubtitle,
     setProcessing,
     notify,
+    subtitleEnglish,
+    setSubtitleEnglish,
+    clearSubsEnglish,
 }) {
     const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -437,6 +440,7 @@ export default function Header({
                     })
                     .then((resp) => {
                         const url = resp.video;
+                        player.src = url;
                         const sub = resp.subtitles;
                         fetch(sub)
                             .then((subtext) => {
@@ -448,7 +452,33 @@ export default function Header({
                                 const suburl = vtt2url(subtext);
                                 url2sub(suburl).then((urlsub) => {
                                     setSubtitle(urlsub);
-                                    player.src = url;
+                                });
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                            });
+                    });
+                fetch(
+                    `https://youtube-dl-utils-api.herokuapp.com/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
+                    {
+                        method: 'POST',
+                    },
+                )
+                    .then((resp) => {
+                        return resp.json();
+                    })
+                    .then((resp) => {
+                        //const url = resp.video;
+                        const sub = resp.subtitles;
+                        fetch(sub)
+                            .then((subtext) => {
+                                return subtext.text();
+                            })
+                            .then((subtext) => {
+                                clearSubsEnglish();
+                                const suburl = vtt2url(subtext);
+                                url2sub(suburl).then((urlsub) => {
+                                    setSubtitleEnglish(urlsub);
                                 });
                             })
                             .catch((err) => {
@@ -457,7 +487,7 @@ export default function Header({
                     });
             }
         },
-        [player, setSubtitle, clearSubs, youtubeURL, translate],
+        [setSubtitleEnglish, clearSubs, youtubeURL, translate, clearSubsEnglish, player, setSubtitle],
     );
 
     const handleChange = (e) => {

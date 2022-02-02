@@ -11,7 +11,7 @@ const Style = styled.div`
     justify-content: center;
     height: 100%;
     width: 100%;
-    padding: 20% 10%;
+    padding: 20% 2%;
 
     .video {
         display: flex;

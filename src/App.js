@@ -51,6 +51,7 @@ export default function App({ defaultLang }) {
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(-1);
+    const [subtitleKey, setSubtitleKey] = useState('en');
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);

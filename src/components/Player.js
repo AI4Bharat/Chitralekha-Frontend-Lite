@@ -13,6 +13,8 @@ const Style = styled.div`
     width: 100%;
     padding: 5%;
 
+    margin-top: -13px;
+
     .video {
         display: flex;
         align-items: center;
@@ -23,7 +25,7 @@ const Style = styled.div`
 
         video {
             position: relative;
-            // z-index: 10;
+            z-index: 10;
             outline: none;
             max-height: 100%;
             max-width: 100%;

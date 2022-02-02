@@ -452,6 +452,7 @@ export default function Header({
                                 const suburl = vtt2url(subtext);
                                 url2sub(suburl).then((urlsub) => {
                                     setSubtitle(urlsub);
+                                    localStorage.setItem('subtitle', JSON.stringify(urlsub));
                                 });
                             })
                             .catch((err) => {
@@ -479,6 +480,7 @@ export default function Header({
                                 const suburl = vtt2url(subtext);
                                 url2sub(suburl).then((urlsub) => {
                                     setSubtitleEnglish(urlsub);
+                                    localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
                                 });
                             })
                             .catch((err) => {
@@ -612,6 +614,7 @@ export default function Header({
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
                                 clearSubs();
+                                clearSubsEnglish();
                                 window.location.reload();
                             }
                         }}

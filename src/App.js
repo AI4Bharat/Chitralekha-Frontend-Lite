@@ -101,6 +101,7 @@ export default function App({ defaultLang }) {
     }, [setSubtitle, subtitleHistory]);
 
     const clearSubsEnglish = useCallback(() => {
+        localStorage.removeItem('subtitleEnglish');
         setSubtitleEnglish([]);
     }, [setSubtitleEnglish]);
 
@@ -258,6 +259,7 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         const localSubtitleString = window.localStorage.getItem('subtitle');
+        const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
         const fetchSubtitle = () =>
             fetch('/sample.json')
                 .then((res) => res.json())
@@ -279,7 +281,21 @@ export default function App({ defaultLang }) {
         } else {
             fetchSubtitle();
         }
-    }, [setSubtitleOriginal]);
+        if (localSubtitleEnglish) {
+            try {
+                const localSubtitle = JSON.parse(localSubtitleEnglish);
+                if (localSubtitle.length) {
+                    setSubtitleEnglish(localSubtitle.map((item) => new Sub(item)));
+                } else {
+                    setSubtitleEnglish([]);
+                }
+            } catch (error) {
+                setSubtitleEnglish([]);
+            }
+        } else {
+            fetchSubtitle();
+        }
+    }, [setSubtitleOriginal, setSubtitleEnglish]);
 
     const props = {
         player,

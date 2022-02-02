@@ -15,10 +15,32 @@ const Style = styled.div`
             outline: none;
         }
 
+        .ReactVirtualized__Grid__innerScrollContainer {
+            overflow: visible !important;
+        }
+
         .ReactVirtualized__Table__row {
+            overflow: visible !important;
+
             .item {
                 height: 100%;
                 padding: 5px;
+
+                ul {
+                    position: absolute !important;
+                    bottom: 200px !important;
+                    left: 0 !important;
+                    z-index: 9999 !important;
+                    height: 170px !important;
+                    width: 100% !important;
+                    transform: translate(0px, 0px) !important;
+                    display: block !important;
+
+                    li {
+                        color: #000 !important;
+                        border-bottom: 1px solid #999;
+                    }
+                }
 
                 .textarea {
                     border: none;
@@ -110,7 +132,7 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                                             });
                                         }}
                                         lang={localStorage.getItem('lang')}
-                                        offsetY={-10}
+                                        maxOptions={5}
                                     />
                                     {/* <textarea
                                     maxLength={200}

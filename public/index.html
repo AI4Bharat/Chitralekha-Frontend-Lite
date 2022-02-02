@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>SubPlayer - An online subtitle editor</title>
+        <meta name="theme-color" content="#000000" />
+        <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="SubPlayer is an online subtitle editor" />
+        <meta name="keywords" content="SubPlayer, online, subtitle, editor, vtt, srt, ass" />
+        <style>
+            .github-corner:hover .octo-arm {
+                animation: octocat-wave 560ms ease-in-out;
+            }
 
-<head>
-  <meta charset="utf-8" />
-  <title>SubPlayer - An online subtitle editor</title>
-  <meta name="theme-color" content="#000000" />
-  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SubPlayer is an online subtitle editor" />
-  <meta name="keywords" content="SubPlayer, online, subtitle, editor, vtt, srt, ass" />
-  <style>
-    .github-corner:hover .octo-arm {
-      animation: octocat-wave 560ms ease-in-out
-    }
+            @keyframes octocat-wave {
+                0%,
+                100% {
+                    transform: rotate(0);
+                }
 
-    @keyframes octocat-wave {
+                20%,
+                60% {
+                    transform: rotate(-25deg);
+                }
 
-      0%,
-      100% {
-        transform: rotate(0)
-      }
+                40%,
+                80% {
+                    transform: rotate(10deg);
+                }
+            }
 
-      20%,
-      60% {
-        transform: rotate(-25deg)
-      }
+            @media (max-width: 500px) {
+                .github-corner:hover .octo-arm {
+                    animation: none;
+                }
 
-      40%,
-      80% {
-        transform: rotate(10deg)
-      }
-    }
+                .github-corner .octo-arm {
+                    animation: octocat-wave 560ms ease-in-out;
+                }
+            }
+        </style>
+    </head>
 
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <!-- <a href="https://github.com/zhw2590582/SubPlayer" class="github-corner" aria-label="View source on GitHub"><svg
     @media (max-width:500px) {
       .github-corner:hover .octo-arm {
         animation: none
@@ -47,7 +61,7 @@
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
-  <!-- <a href="https://github.com/zhw2590582/SubPlayer" class="github-corner" aria-label="View source on GitHub"><svg
+  <a href="https://github.com/zhw2590582/SubPlayer" class="github-corner" aria-label="View source on GitHub"><svg
       width="80" height="80" viewBox="0 0 250 250"
       style="fill:#fff; color:#151513; position: absolute; top: 0; border: 0; left: 0; transform: scale(-1, 1);"
       aria-hidden="true">
@@ -60,27 +74,24 @@
         fill="currentColor" class="octo-body"></path>
     </svg>
   </a> -->
-  <script>
-    var isLocalhost = Boolean(
-      window.location.hostname === 'localhost' ||
-      window.location.hostname === '[::1]' ||
-      window.location.hostname.match(
-        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-      )
-    );
-    var _hmt = _hmt || [];
-    (function () {
-      if (!isLocalhost) {
-        var hm = document.createElement('script');
-        hm.src = 'https://hm.baidu.com/hm.js?9c948099957cd6a524dac835394d4495';
-        var s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(hm, s);
-      }
-    })();
-    if (/weibo\.cn|weibo\.com|t\.cn/.test(document.referrer)) {
-      window.location.href = 'https://aimu.app';
-    }
-  </script>
-</body>
-
+        <script>
+            var isLocalhost = Boolean(
+                window.location.hostname === 'localhost' ||
+                    window.location.hostname === '[::1]' ||
+                    window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/),
+            );
+            var _hmt = _hmt || [];
+            (function () {
+                if (!isLocalhost) {
+                    var hm = document.createElement('script');
+                    hm.src = 'https://hm.baidu.com/hm.js?9c948099957cd6a524dac835394d4495';
+                    var s = document.getElementsByTagName('script')[0];
+                    s.parentNode.insertBefore(hm, s);
+                }
+            })();
+            if (/weibo\.cn|weibo\.com|t\.cn/.test(document.referrer)) {
+                window.location.href = 'https://aimu.app';
+            }
+        </script>
+    </body>
 </html>

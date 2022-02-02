@@ -8,12 +8,10 @@ function matrixCallback(callback) {
         for (let xIndex = 0; xIndex < x; xIndex += 1) {
             for (let yIndex = 0; yIndex < y; yIndex += 1) {
                 if (xIndex === 0 || xIndex === x - 1 || yIndex === 0 || yIndex === y - 1) {
-                    // console.log(xIndex, yIndex);
                     result.push(callback(xIndex, yIndex, x, y));
                 }
             }
         }
-        // console.log('Result is ', result);
         return result;
     } catch (e) {
         console.log(e);
@@ -33,7 +31,6 @@ function getColors($canvas, $video, width, height) {
             const itemY = yIndex * itemH;
             if (itemW < 1 || itemH < 1) return { r: 0, g: 0, b: 0 };
             const { data } = ctx.getImageData(itemX, itemY, itemW, itemH);
-            console.log(data);
             let r = 0;
             let g = 0;
             let b = 0;

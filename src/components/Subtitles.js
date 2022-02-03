@@ -131,7 +131,11 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                                                 text: event,
                                             });
                                         }}
-                                        lang={localStorage.getItem('lang')}
+                                        lang={
+                                            localStorage.getItem('lang') === 'en-k'
+                                                ? 'en'
+                                                : localStorage.getItem('lang')
+                                        }
                                         maxOptions={5}
                                     />
                                     {/* <textarea

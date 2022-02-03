@@ -443,6 +443,11 @@ export default function Header({
                         const url = resp.video;
                         player.src = url;
                         const sub = resp.subtitles;
+
+                        // console.log(url);
+
+                        localStorage.setItem('videoSrc', resp.video);
+
                         fetch(sub)
                             .then((subtext) => {
                                 return subtext.text();
@@ -562,7 +567,7 @@ export default function Header({
         setLoading(t('TRANSLATING'));
 
         if (translate === 'en-k') {
-            return englishKeywordsTranslate(formatSub(subtitle), translate)
+            return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
                 .then((res) => {
                     setLoading('');
                     setSubtitle(formatSub(res));
@@ -596,7 +601,7 @@ export default function Header({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
 
     return (
         <Style className="tool">
@@ -634,6 +639,7 @@ export default function Header({
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
+                                localStorage.setItem('videoSrc', '/sample.mp4');
                                 clearSubs();
                                 clearSubsEnglish();
                                 window.location.reload();

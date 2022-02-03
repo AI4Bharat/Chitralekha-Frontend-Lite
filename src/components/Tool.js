@@ -601,7 +601,7 @@ export default function Header({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
 
     return (
         <Style className="tool">

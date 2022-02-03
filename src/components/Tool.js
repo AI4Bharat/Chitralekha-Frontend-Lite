@@ -567,7 +567,7 @@ export default function Header({
         setLoading(t('TRANSLATING'));
 
         if (translate === 'en-k') {
-            return englishKeywordsTranslate(formatSub(subtitle), translate)
+            return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
                 .then((res) => {
                     setLoading('');
                     setSubtitle(formatSub(res));

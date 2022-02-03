@@ -112,7 +112,11 @@ const VideoWrap = memo(
             }
         }, [$video]);
 
-        return <video onClick={onClick} src="/sample.mp4" ref={$video} />;
+        if (localStorage.getItem('videoSrc') === null) {
+            return <video onClick={onClick} src="/sample.mp4" ref={$video} />;
+        }
+
+        return <video onClick={onClick} src={localStorage.getItem('videoSrc')} ref={$video} />;
     },
     () => true,
 );

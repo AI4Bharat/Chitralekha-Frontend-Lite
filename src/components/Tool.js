@@ -443,6 +443,11 @@ export default function Header({
                         const url = resp.video;
                         player.src = url;
                         const sub = resp.subtitles;
+
+                        // console.log(url);
+
+                        localStorage.setItem('videoSrc', resp.video);
+
                         fetch(sub)
                             .then((subtext) => {
                                 return subtext.text();
@@ -634,6 +639,7 @@ export default function Header({
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
+                                localStorage.setItem('videoSrc', '/sample.mp4');
                                 clearSubs();
                                 clearSubsEnglish();
                                 window.location.reload();

@@ -6,6 +6,7 @@ import { getExt, download } from '../utils';
 import { file2sub, sub2vtt, sub2srt, sub2txt, url2sub, vtt2url } from '../libs/readSub';
 import sub2ass from '../libs/readSub/sub2ass';
 import googleTranslate from '../libs/googleTranslate';
+import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
 
@@ -559,7 +560,27 @@ export default function Header({
 
     const onTranslate = useCallback(() => {
         setLoading(t('TRANSLATING'));
-        googleTranslate(formatSub(subtitle), translate)
+
+        if (translate === 'en-k') {
+            return englishKeywordsTranslate(formatSub(subtitle), translate)
+                .then((res) => {
+                    setLoading('');
+                    setSubtitle(formatSub(res));
+                    notify({
+                        message: t('TRANSLAT_SUCCESS'),
+                        level: 'success',
+                    });
+                })
+                .catch((err) => {
+                    setLoading('');
+                    notify({
+                        message: err.message,
+                        level: 'error',
+                    });
+                });
+        }
+
+        return googleTranslate(formatSub(subtitle), translate)
             .then((res) => {
                 setLoading('');
                 setSubtitle(formatSub(res));

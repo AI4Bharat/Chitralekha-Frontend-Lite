@@ -109,6 +109,7 @@ const zh = [
 
 const en = [
     { name: 'English', key: 'en' },
+    { name: 'English Keywords', key: 'en-k' },
     { name: 'Bengali', key: 'bn' },
     { name: 'Gujarati', key: 'gu' },
     { name: 'Hindi', key: 'hi' },

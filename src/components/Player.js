@@ -62,7 +62,7 @@ const Style = styled.div`
             }
 
             .textarea {
-                width: 100%;
+                width: 75%;
                 outline: none;
                 resize: none;
                 text-align: center;

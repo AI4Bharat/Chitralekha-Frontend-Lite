@@ -563,6 +563,35 @@ export default function Header({
         [subtitle],
     );
 
+    const downloadSubReference = useCallback(
+        (type) => {
+            let text = '';
+            const name = `${Date.now()}.${type}`;
+            switch (type) {
+                case 'vtt':
+                    text = sub2vtt(subtitleEnglish);
+                    break;
+                case 'srt':
+                    text = sub2srt(subtitleEnglish);
+                    break;
+                case 'ass':
+                    text = sub2ass(subtitleEnglish);
+                    break;
+                case 'txt':
+                    text = sub2txt(subtitleEnglish);
+                    break;
+                case 'json':
+                    text = JSON.stringify(subtitleEnglish);
+                    break;
+                default:
+                    break;
+            }
+            const url = URL.createObjectURL(new Blob([text]));
+            download(url, name);
+        },
+        [subtitleEnglish],
+    );
+
     const onTranslate = useCallback(() => {
         setLoading(t('TRANSLATING'));
 
@@ -623,6 +652,11 @@ export default function Header({
                         </div>
                     </div>
                 ) : null}
+                <div style={{ borderBottom: '1px solid rgb(255 255 255 / 20%)' }}>
+                    <p style={{ paddingLeft: '10px' }}>
+                        <b>Export Your Subtitles</b>
+                    </p>
+                </div>
                 <div className="export">
                     <div className="btn" onClick={() => downloadSub('ass')}>
                         <Translate value="EXPORT_ASS" />
@@ -631,6 +665,22 @@ export default function Header({
                         <Translate value="EXPORT_SRT" />
                     </div>
                     <div className="btn" onClick={() => downloadSub('vtt')}>
+                        <Translate value="EXPORT_VTT" />
+                    </div>
+                </div>
+                <div style={{ borderBottom: '1px solid rgb(255 255 255 / 20%)' }}>
+                    <p style={{ paddingLeft: '10px' }}>
+                        <b>Export Reference Subtitles</b>
+                    </p>
+                </div>
+                <div className="export">
+                    <div className="btn" onClick={() => downloadSubReference('ass')}>
+                        <Translate value="EXPORT_ASS" />
+                    </div>
+                    <div className="btn" onClick={() => downloadSubReference('srt')}>
+                        <Translate value="EXPORT_SRT" />
+                    </div>
+                    <div className="btn" onClick={() => downloadSubReference('vtt')}>
                         <Translate value="EXPORT_VTT" />
                     </div>
                 </div>

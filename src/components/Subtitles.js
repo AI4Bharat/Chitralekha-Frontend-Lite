@@ -74,7 +74,7 @@ const Style = styled.div`
     }
 `;
 
-export default function Subtitles({ currentIndex, subtitle, checkSub, player, updateSub, disabled = false }) {
+export default function Subtitles({ currentIndex, subtitle, checkSub, player, updateSub }) {
     const [height, setHeight] = useState(100);
 
     const resize = useCallback(() => {
@@ -119,7 +119,6 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                             >
                                 <div className="item">
                                     <ReactTransliterate
-                                        disabled={disabled}
                                         className={[
                                             'textarea',
                                             currentIndex === props.index ? 'highlight' : '',

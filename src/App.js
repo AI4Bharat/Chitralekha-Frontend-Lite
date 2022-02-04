@@ -55,6 +55,7 @@ export default function App({ defaultLang }) {
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
+    const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
 
     const formatSub = useCallback(
         (sub) => {
@@ -67,6 +68,7 @@ export default function App({ defaultLang }) {
     );
 
     const copySubs = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
+    const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
 
     useEffect(() => {
         localStorage.setItem('lang', 'en');
@@ -157,6 +159,7 @@ export default function App({ defaultLang }) {
 
     const updateSub = useCallback(
         (sub, obj) => {
+            console.log(sub, obj);
             const index = hasSub(sub);
             if (index < 0) return;
             const subs = copySubs();
@@ -168,6 +171,21 @@ export default function App({ defaultLang }) {
             }
         },
         [hasSub, copySubs, setSubtitle, formatSub],
+    );
+    const updateSubEnglish = useCallback(
+        (sub, obj) => {
+            const index = hasSubEnglish(sub);
+            console.log(index);
+            if (index < 0) return;
+            const subs = copySubsEnglish();
+            const subClone = formatSub(sub);
+            Object.assign(subClone, obj);
+            if (subClone.check) {
+                subs[index] = subClone;
+                setSubtitleEnglish(subs);
+            }
+        },
+        [hasSubEnglish, copySubsEnglish, setSubtitleEnglish, formatSub],
     );
 
     const mergeSub = useCallback(
@@ -335,20 +353,20 @@ export default function App({ defaultLang }) {
         mergeSub,
         splitSub,
         clearSubsEnglish,
+        updateSubEnglish,
     };
 
     return (
         <Style>
             <div className="main">
+                <Player {...props} />
                 <Subtitles
                     currentIndex={props.currentIndex}
                     subtitle={props.subtitleEnglish}
                     checkSub={props.checkSub}
                     player={props.player}
-                    updateSub={props.updateSub}
-                    disabled={true}
+                    updateSub={props.updateSubEnglish}
                 />
-                <Player {...props} />
                 <Subtitles
                     currentIndex={props.currentIndex}
                     subtitle={props.subtitle}

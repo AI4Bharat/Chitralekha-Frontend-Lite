@@ -652,12 +652,10 @@ export default function Header({
                         </div>
                     </div>
                 ) : null}
-                <div style={{ borderBottom: '1px solid rgb(255 255 255 / 20%)' }}>
-                    <p style={{ paddingLeft: '10px' }}>
-                        <b>Export Your Subtitles</b>
-                    </p>
-                </div>
-                <div className="export">
+                <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                    <b>Export Your Subtitles</b>
+                </p>
+                <div className="export" style={{ marginTop: '-20px' }}>
                     <div className="btn" onClick={() => downloadSub('ass')}>
                         <Translate value="EXPORT_ASS" />
                     </div>
@@ -668,12 +666,10 @@ export default function Header({
                         <Translate value="EXPORT_VTT" />
                     </div>
                 </div>
-                <div style={{ borderBottom: '1px solid rgb(255 255 255 / 20%)' }}>
-                    <p style={{ paddingLeft: '10px' }}>
-                        <b>Export Reference Subtitles</b>
-                    </p>
-                </div>
-                <div className="export">
+                <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                    <b>Export Reference Subtitles</b>
+                </p>
+                <div className="export" style={{ marginTop: '-20px' }}>
                     <div className="btn" onClick={() => downloadSubReference('ass')}>
                         <Translate value="EXPORT_ASS" />
                     </div>

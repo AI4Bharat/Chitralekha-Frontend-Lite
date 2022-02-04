@@ -70,7 +70,10 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         localStorage.setItem('lang', 'en');
-        localStorage.setItem('videoSrc', '/sample.mp4');
+
+        if (localStorage.getItem('videoSrc') === null) {
+            localStorage.setItem('videoSrc', '/sample.mp4');
+        }
     }, []);
 
     const setSubtitle = useCallback(

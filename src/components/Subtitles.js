@@ -57,8 +57,7 @@ const Style = styled.div`
                     resize: none;
                     outline: none;
 
-                    // word-wrap: break-word;
-                    // word-break: break-all;
+                    word-wrap: break-word;
 
                     &.highlight {
                         background-color: rgb(0 87 158);

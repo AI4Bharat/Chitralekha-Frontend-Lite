@@ -21,6 +21,7 @@ const Style = styled.div`
 
         .ReactVirtualized__Table__row {
             overflow: visible !important;
+            height: 100% !important;
 
             .item {
                 height: 100%;
@@ -55,6 +56,8 @@ const Style = styled.div`
                     transition: all 0.2s ease;
                     resize: none;
                     outline: none;
+
+                    word-wrap: break-word;
 
                     &.highlight {
                         background-color: rgb(0 87 158);
@@ -137,6 +140,7 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
                                                 : localStorage.getItem('lang')
                                         }
                                         maxOptions={5}
+                                        renderComponent={(props) => <textarea {...props} />}
                                     />
                                     {/* <textarea
                                     maxLength={200}

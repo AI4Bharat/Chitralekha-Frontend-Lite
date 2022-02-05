@@ -51,6 +51,7 @@ export default function App({ defaultLang }) {
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(-1);
+    // const [subtitleType, setSubtitleType] = useState('primary');
     // const [subtitleKey, setSubtitleKey] = useState('en');
 
     const newSub = useCallback((item) => new Sub(item), []);
@@ -366,6 +367,14 @@ export default function App({ defaultLang }) {
                     checkSub={props.checkSub}
                     player={props.player}
                     updateSub={props.updateSubEnglish}
+                    language={props.language}
+                    setLanguage={props.setLanguage}
+                    setLoading={props.setLoading}
+                    subtitleEnglish={props.subtitleEnglish}
+                    formatSub={props.formatSub}
+                    setSubtitle={props.setSubtitle}
+                    notify={props.notify}
+                    isPrimary={false}
                 />
                 <Subtitles
                     currentIndex={props.currentIndex}
@@ -373,6 +382,14 @@ export default function App({ defaultLang }) {
                     checkSub={props.checkSub}
                     player={props.player}
                     updateSub={props.updateSub}
+                    language={props.language}
+                    setLanguage={props.setLanguage}
+                    setLoading={props.setLoading}
+                    subtitleEnglish={props.subtitleEnglish}
+                    formatSub={props.formatSub}
+                    setSubtitle={props.setSubtitle}
+                    notify={props.notify}
+                    isPrimary={true}
                 />
                 <Tool {...props} />
             </div>

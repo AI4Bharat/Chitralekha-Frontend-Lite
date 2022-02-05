@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import languages from '../libs/languages';
+// import languages from '../libs/languages';
 import { t, Translate } from 'react-i18nify';
 import React, { useState, useCallback } from 'react';
 import { getExt, download } from '../utils';
 import { file2sub, sub2vtt, sub2srt, sub2txt, url2sub, vtt2url } from '../libs/readSub';
 import sub2ass from '../libs/readSub/sub2ass';
-import googleTranslate from '../libs/googleTranslate';
-import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
+// import googleTranslate from '../libs/googleTranslate';
+// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
 
@@ -290,9 +290,10 @@ export default function Header({
     setSubtitleEnglish,
     clearSubsEnglish,
 }) {
-    const [translate, setTranslate] = useState('en');
+    // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
+    const translate = 'en';
 
     const decodeAudioData = useCallback(
         async (file) => {
@@ -592,45 +593,45 @@ export default function Header({
         [subtitleEnglish],
     );
 
-    const onTranslate = useCallback(() => {
-        setLoading(t('TRANSLATING'));
+    // const onTranslate = useCallback(() => {
+    //     setLoading(t('TRANSLATING'));
 
-        if (translate === 'en-k') {
-            return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
-                .then((res) => {
-                    setLoading('');
-                    setSubtitle(formatSub(res));
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
-        }
+    //     if (translate === 'en-k') {
+    //         return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
+    //             .then((res) => {
+    //                 setLoading('');
+    //                 setSubtitle(formatSub(res));
+    //                 notify({
+    //                     message: t('TRANSLAT_SUCCESS'),
+    //                     level: 'success',
+    //                 });
+    //             })
+    //             .catch((err) => {
+    //                 setLoading('');
+    //                 notify({
+    //                     message: err.message,
+    //                     level: 'error',
+    //                 });
+    //             });
+    //     }
 
-        return googleTranslate(formatSub(subtitle), translate)
-            .then((res) => {
-                setLoading('');
-                setSubtitle(formatSub(res));
-                notify({
-                    message: t('TRANSLAT_SUCCESS'),
-                    level: 'success',
-                });
-            })
-            .catch((err) => {
-                setLoading('');
-                notify({
-                    message: err.message,
-                    level: 'error',
-                });
-            });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
+    //     return googleTranslate(formatSub(subtitle), translate)
+    //         .then((res) => {
+    //             setLoading('');
+    //             setSubtitle(formatSub(res));
+    //             notify({
+    //                 message: t('TRANSLAT_SUCCESS'),
+    //                 level: 'success',
+    //             });
+    //         })
+    //         .catch((err) => {
+    //             setLoading('');
+    //             notify({
+    //                 message: err.message,
+    //                 level: 'error',
+    //             });
+    //         });
+    // }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
 
     return (
         <Style className="tool">
@@ -698,7 +699,7 @@ export default function Header({
                         <Translate value="UNDO" />
                     </div>
                 </div>
-                <div className="translate">
+                {/* <div className="translate">
                     <select
                         value={translate}
                         onChange={(event) => {
@@ -715,7 +716,7 @@ export default function Header({
                     <div className="btn" onClick={onTranslate}>
                         <Translate value="TRANSLATE" />
                     </div>
-                </div>
+                </div> */}
                 <div className="youtube-link">
                     <textarea
                         className="youtube-textarea"

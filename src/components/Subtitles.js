@@ -1,18 +1,84 @@
 import styled from 'styled-components';
+import languages from '../libs/languages';
 import React, { useState, useCallback, useEffect } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { ReactTransliterate } from 'react-transliterate';
+import { t, Translate } from 'react-i18nify';
+import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
+import googleTranslate from '../libs/googleTranslate';
 
 const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
 
+    .translate {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        // padding: 10px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+        height: 80px;
+
+        .heading {
+            h4 {
+                margin: 0;
+            }
+        }
+
+        .options {
+            display: flex;
+        }
+
+        select {
+            width: 65%;
+            outline: none;
+            // padding: 8px 5px;
+            height: 35px;
+            border-radius: 3px;
+        }
+
+        .btn {
+            opacity: 0.85;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 35px;
+            width: 33%;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            background-color: #673ab7;
+            transition: all 0.2s ease 0s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .reference {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 80px;
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+
+        h4 {
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+    }
+
     .ReactVirtualized__Table {
         .ReactVirtualized__Table__Grid {
             outline: none;
+            height: 350px !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
@@ -74,14 +140,32 @@ const Style = styled.div`
     }
 `;
 
-export default function Subtitles({ currentIndex, subtitle, checkSub, player, updateSub }) {
+export default function Subtitles({
+    currentIndex,
+    subtitle,
+    checkSub,
+    player,
+    updateSub,
+    language,
+    setLoading,
+    subtitleEnglish,
+    formatSub,
+    setSubtitle,
+    notify,
+    isPrimary,
+}) {
     const [height, setHeight] = useState(100);
+    const [translate, setTranslate] = useState('en');
 
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 170);
     }, [setHeight]);
 
     useEffect(() => {
+        // const lang = languages['en'].filter((item) => item.key === language);
+
+        // console.log(lang);
+
         resize();
         if (!resize.init) {
             resize.init = true;
@@ -90,11 +174,84 @@ export default function Subtitles({ currentIndex, subtitle, checkSub, player, up
         }
     }, [resize]);
 
+    const onTranslate = useCallback(() => {
+        setLoading(t('TRANSLATING'));
+
+        if (translate === 'en-k') {
+            return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
+                .then((res) => {
+                    setLoading('');
+                    setSubtitle(formatSub(res));
+                    notify({
+                        message: t('TRANSLAT_SUCCESS'),
+                        level: 'success',
+                    });
+                })
+                .catch((err) => {
+                    setLoading('');
+                    notify({
+                        message: err.message,
+                        level: 'error',
+                    });
+                });
+        }
+
+        return googleTranslate(formatSub(subtitle), translate)
+            .then((res) => {
+                setLoading('');
+                setSubtitle(formatSub(res));
+                notify({
+                    message: t('TRANSLAT_SUCCESS'),
+                    level: 'success',
+                });
+            })
+            .catch((err) => {
+                setLoading('');
+                notify({
+                    message: err.message,
+                    level: 'error',
+                });
+            });
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
+
     return (
         subtitle && (
             <Style className="subtitles">
+                {isPrimary && (
+                    <div className="translate">
+                        <div className="heading">
+                            <h4> Primary Subtitles</h4>
+                        </div>
+                        <div className="options">
+                            <select
+                                value={translate}
+                                onChange={(event) => {
+                                    setTranslate(event.target.value);
+                                    localStorage.setItem('lang', event.target.value);
+                                }}
+                            >
+                                {(languages[language] || languages.en).map((item) => (
+                                    <option key={item.key} value={item.key}>
+                                        {item.name}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="btn" onClick={onTranslate}>
+                                <Translate value="TRANSLATE" />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {!isPrimary && (
+                    <div className="reference">
+                        <h4>Reference Subtitles</h4>
+                        <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span>
+                    </div>
+                )}
+
                 <Table
-                    headerHeight={40}
+                    headerHeight={20}
                     width={250}
                     height={height}
                     rowHeight={80}

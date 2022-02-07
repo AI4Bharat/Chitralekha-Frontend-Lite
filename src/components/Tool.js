@@ -296,12 +296,23 @@ export default function Header({
     subtitleEnglish,
     setSubtitleEnglish,
     clearSubsEnglish,
+    setSubtitleOriginal,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
+
+    const clearSubsHandler = () => {
+        let tempSubs = subtitle.slice(0);
+        tempSubs.map((sub) => {
+            sub.text = '';
+            sub.text2 = '';
+            return true;
+        });
+        setSubtitleOriginal(tempSubs);
+    };
 
     const decodeAudioData = useCallback(
         async (file) => {
@@ -726,6 +737,11 @@ export default function Header({
                     </div>
                     <div className="btn" onClick={undoSubs}>
                         <Translate value="UNDO" />
+                    </div>
+                </div>
+                <div className="operate">
+                    <div className="btn" onClick={clearSubsHandler}>
+                        <Translate value="Clear Subtitles" />
                     </div>
                 </div>
                 {/* <div className="translate">

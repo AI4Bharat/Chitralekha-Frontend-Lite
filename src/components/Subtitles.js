@@ -13,6 +13,7 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
+    height: 100%;
 
     .translate {
         display: flex;
@@ -78,7 +79,7 @@ const Style = styled.div`
     .ReactVirtualized__Table {
         .ReactVirtualized__Table__Grid {
             outline: none;
-            height: 350px !important;
+            height: 430px !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {

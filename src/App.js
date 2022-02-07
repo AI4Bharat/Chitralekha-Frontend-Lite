@@ -355,6 +355,7 @@ export default function App({ defaultLang }) {
         splitSub,
         clearSubsEnglish,
         updateSubEnglish,
+        setSubtitleOriginal,
     };
 
     return (

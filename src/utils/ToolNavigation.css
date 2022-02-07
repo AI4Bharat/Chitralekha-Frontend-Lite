@@ -1,0 +1,34 @@
+.tool {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(0 0 0 / 100%);
+    border-left: 1px solid rgb(255 255 255 / 20%);
+    transform: scaleX(1) !important;
+    transform-origin: right;
+    width: 45px !important;
+    transition: all 0.5s;
+    margin-left: 10px;
+}
+
+.tool-open {
+    width: 300px !important;
+    transform: scaleX(1) !important;
+}
+
+.tool .top {
+    visibility: hidden;
+    opacity: 0;
+    transform: scaleX(0) !important;
+    transform-origin: right;
+    transition: transform 0.5s 0.2s;
+}
+
+.tool-open .top {
+    transform: scaleX(1) !important;
+    transition: all 0.5s 0.2s;
+    visibility: visible;
+    opacity: 1;
+}

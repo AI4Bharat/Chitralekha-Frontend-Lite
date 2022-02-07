@@ -9,16 +9,23 @@ import sub2ass from '../libs/readSub/sub2ass';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
+import HamburgerMenu from 'react-hamburger-menu';
+import '../utils/ToolNavigation.css';
 
 const Style = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-    background-color: rgb(0 0 0 / 100%);
-    border-left: 1px solid rgb(255 255 255 / 20%);
+    border-left: 1px solid white;
+
+    .tool-button {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 10px 10px 2px 0;
+        margin-bottom: 5px;
+
+        .icon {
+            cursor: pointer;
+        }
+    }
 
     .import {
         display: flex;
@@ -294,6 +301,7 @@ export default function Header({
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
+    const [toolOpen, setToolOpen] = useState(true);
 
     const decodeAudioData = useCallback(
         async (file) => {
@@ -634,7 +642,28 @@ export default function Header({
     // }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
 
     return (
-        <Style className="tool">
+        <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
+            <div className={`tool-button`}>
+                <div
+                    className="icon"
+                    onClick={() => {
+                        console.log('hamburger clicked');
+                        setToolOpen(!toolOpen);
+                    }}
+                >
+                    <HamburgerMenu
+                        isOpen={toolOpen}
+                        width={22}
+                        height={18}
+                        strokeWidth={2}
+                        rotate={0}
+                        color={'#fff'}
+                        borderRadius={0}
+                        animationDuration={0.5}
+                    />
+                </div>
+            </div>
+
             <div className="top">
                 <div className="import">
                     <div className="btn">

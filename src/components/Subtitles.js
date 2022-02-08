@@ -156,7 +156,7 @@ export default function Subtitles({
     isPrimary,
 }) {
     const [height, setHeight] = useState(100);
-    const [translate, setTranslate] = useState('en');
+    const [translate, setTranslate] = useState(null);
 
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 170);
@@ -214,6 +214,14 @@ export default function Subtitles({
                 });
             });
     }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
+
+    useEffect(() => {
+        if (localStorage.getItem('lang')) {
+            setTranslate(localStorage.getItem('lang'));
+        } else {
+            setTranslate('en');
+        }
+    }, []);
 
     return (
         subtitle && (

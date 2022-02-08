@@ -72,7 +72,7 @@ export default function App({ defaultLang }) {
     const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
 
     useEffect(() => {
-        localStorage.setItem('lang', 'en');
+        //localStorage.setItem('lang', 'en');
 
         if (localStorage.getItem('videoSrc') === null) {
             localStorage.setItem('videoSrc', '/sample.mp4');

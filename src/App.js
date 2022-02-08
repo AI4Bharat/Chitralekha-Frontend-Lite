@@ -160,7 +160,6 @@ export default function App({ defaultLang }) {
 
     const updateSub = useCallback(
         (sub, obj) => {
-            console.log(sub, obj);
             const index = hasSub(sub);
             if (index < 0) return;
             const subs = copySubs();
@@ -176,7 +175,6 @@ export default function App({ defaultLang }) {
     const updateSubEnglish = useCallback(
         (sub, obj) => {
             const index = hasSubEnglish(sub);
-            console.log(index);
             if (index < 0) return;
             const subs = copySubsEnglish();
             const subClone = formatSub(sub);

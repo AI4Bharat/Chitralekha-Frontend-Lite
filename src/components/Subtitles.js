@@ -13,14 +13,12 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
-    height: 100%;
 
     .translate {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
         align-items: center;
-        // padding: 10px;
         border-bottom: 1px solid rgb(255 255 255 / 20%);
         height: 80px;
 
@@ -37,7 +35,6 @@ const Style = styled.div`
         select {
             width: 65%;
             outline: none;
-            // padding: 8px 5px;
             height: 35px;
             border-radius: 3px;
         }
@@ -79,7 +76,6 @@ const Style = styled.div`
     .ReactVirtualized__Table {
         .ReactVirtualized__Table__Grid {
             outline: none;
-            height: 430px !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
@@ -87,9 +83,6 @@ const Style = styled.div`
         }
 
         .ReactVirtualized__Table__row {
-            overflow: visible !important;
-            height: 90% !important;
-
             .item {
                 height: 100%;
                 padding: 10px;
@@ -159,14 +152,10 @@ export default function Subtitles({
     const [translate, setTranslate] = useState(null);
 
     const resize = useCallback(() => {
-        setHeight(document.body.clientHeight - 170);
+        setHeight(document.body.clientHeight - 240);
     }, [setHeight]);
 
     useEffect(() => {
-        // const lang = languages['en'].filter((item) => item.key === language);
-
-        // console.log(lang);
-
         resize();
         if (!resize.init) {
             resize.init = true;
@@ -205,23 +194,6 @@ export default function Subtitles({
                         level: 'error',
                     });
                 });
-
-            // return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
-            //     .then((res) => {
-            //         setLoading('');
-            //         setSubtitle(formatSub(res));
-            //         notify({
-            //             message: t('TRANSLAT_SUCCESS'),
-            //             level: 'success',
-            //         });
-            //     })
-            //     .catch((err) => {
-            //         setLoading('');
-            //         notify({
-            //             message: err.message,
-            //             level: 'error',
-            //         });
-            //     });
         }
 
         return googleTranslate(formatSub(subtitle), translate)
@@ -287,7 +259,7 @@ export default function Subtitles({
                 )}
 
                 <Table
-                    headerHeight={20}
+                    headerHeight={40}
                     width={250}
                     height={height}
                     rowHeight={80}

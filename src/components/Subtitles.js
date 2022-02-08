@@ -301,7 +301,8 @@ export default function Subtitles({
                                         }}
                                         enabled={
                                             isPrimary
-                                                ? localStorage.getItem('lang') === 'en' ||
+                                                ? !localStorage.getItem('lang') ||
+                                                  localStorage.getItem('lang') === 'en' ||
                                                   localStorage.getItem('lang') === 'en-k'
                                                     ? false
                                                     : true

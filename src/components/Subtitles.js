@@ -291,10 +291,20 @@ export default function Subtitles({
                                                 text: event,
                                             });
                                         }}
+                                        enabled={
+                                            isPrimary
+                                                ? localStorage.getItem('lang') === 'en' ||
+                                                  localStorage.getItem('lang') === 'en-k'
+                                                    ? false
+                                                    : true
+                                                : false
+                                        }
                                         lang={
-                                            localStorage.getItem('lang') === 'en-k'
-                                                ? 'en'
-                                                : localStorage.getItem('lang')
+                                            isPrimary
+                                                ? localStorage.getItem('lang') === 'en-k'
+                                                    ? 'en'
+                                                    : localStorage.getItem('lang')
+                                                : 'en'
                                         }
                                         maxOptions={5}
                                         renderComponent={(props) => <textarea {...props} />}

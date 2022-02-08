@@ -155,8 +155,8 @@ export default function Subtitles({
     notify,
     isPrimary,
 }) {
-    const [height, setHeight] = useState(80);
-    const [translate, setTranslate] = useState('en');
+    const [height, setHeight] = useState(100);
+    const [translate, setTranslate] = useState(null);
 
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 170);
@@ -240,7 +240,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
 
     return (
         subtitle && (

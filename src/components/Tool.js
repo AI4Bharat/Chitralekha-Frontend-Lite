@@ -508,7 +508,7 @@ export default function Header({
                     });
             }
         },
-        [setSubtitleEnglish, clearSubs, youtubeURL, translate, clearSubsEnglish, player, setSubtitle],
+        [setSubtitleEnglish, clearSubs, youtubeURL, translate, clearSubsEnglish, player, setSubtitle, setLoading],
     );
 
     const handleChange = (e) => {

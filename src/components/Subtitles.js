@@ -242,6 +242,14 @@ export default function Subtitles({
             });
     }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
 
+    useEffect(() => {
+        if (localStorage.getItem('lang')) {
+            setTranslate(localStorage.getItem('lang'));
+        } else {
+            setTranslate('en');
+        }
+    }, []);
+
     return (
         subtitle && (
             <Style className="subtitles">
@@ -318,10 +326,21 @@ export default function Subtitles({
                                                 text: event,
                                             });
                                         }}
+                                        enabled={
+                                            isPrimary
+                                                ? !localStorage.getItem('lang') ||
+                                                  localStorage.getItem('lang') === 'en' ||
+                                                  localStorage.getItem('lang') === 'en-k'
+                                                    ? false
+                                                    : true
+                                                : false
+                                        }
                                         lang={
-                                            localStorage.getItem('lang') === 'en-k'
-                                                ? 'en'
-                                                : localStorage.getItem('lang')
+                                            isPrimary
+                                                ? localStorage.getItem('lang') === 'en-k'
+                                                    ? 'en'
+                                                    : localStorage.getItem('lang')
+                                                : 'en'
                                         }
                                         maxOptions={5}
                                         renderComponent={(props) => <textarea {...props} />}

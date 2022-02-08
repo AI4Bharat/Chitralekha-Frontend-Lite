@@ -72,7 +72,7 @@ export default function App({ defaultLang }) {
     const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
 
     useEffect(() => {
-        localStorage.setItem('lang', 'en');
+        //localStorage.setItem('lang', 'en');
 
         if (localStorage.getItem('videoSrc') === null) {
             localStorage.setItem('videoSrc', '/sample.mp4');
@@ -160,7 +160,6 @@ export default function App({ defaultLang }) {
 
     const updateSub = useCallback(
         (sub, obj) => {
-            console.log(sub, obj);
             const index = hasSub(sub);
             if (index < 0) return;
             const subs = copySubs();
@@ -176,7 +175,6 @@ export default function App({ defaultLang }) {
     const updateSubEnglish = useCallback(
         (sub, obj) => {
             const index = hasSubEnglish(sub);
-            console.log(index);
             if (index < 0) return;
             const subs = copySubsEnglish();
             const subClone = formatSub(sub);
@@ -355,6 +353,7 @@ export default function App({ defaultLang }) {
         splitSub,
         clearSubsEnglish,
         updateSubEnglish,
+        setSubtitleOriginal,
     };
 
     return (

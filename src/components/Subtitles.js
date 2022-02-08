@@ -88,11 +88,11 @@ const Style = styled.div`
 
         .ReactVirtualized__Table__row {
             overflow: visible !important;
-            height: 100% !important;
+            height: 90% !important;
 
             .item {
                 height: 100%;
-                padding: 5px;
+                padding: 10px;
 
                 ul {
                     position: absolute !important;
@@ -179,14 +179,24 @@ export default function Subtitles({
         setLoading(t('TRANSLATING'));
 
         if (translate === 'en-k') {
-            return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
+            return googleTranslate(formatSub(subtitle), 'en')
                 .then((res) => {
-                    setLoading('');
-                    setSubtitle(formatSub(res));
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
+                    englishKeywordsTranslate(formatSub(res), translate)
+                        .then((res) => {
+                            setLoading('');
+                            setSubtitle(formatSub(res));
+                            notify({
+                                message: t('TRANSLAT_SUCCESS'),
+                                level: 'success',
+                            });
+                        })
+                        .catch((err) => {
+                            setLoading('');
+                            notify({
+                                message: err.message,
+                                level: 'error',
+                            });
+                        });
                 })
                 .catch((err) => {
                     setLoading('');
@@ -195,6 +205,23 @@ export default function Subtitles({
                         level: 'error',
                     });
                 });
+
+            // return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
+            //     .then((res) => {
+            //         setLoading('');
+            //         setSubtitle(formatSub(res));
+            //         notify({
+            //             message: t('TRANSLAT_SUCCESS'),
+            //             level: 'success',
+            //         });
+            //     })
+            //     .catch((err) => {
+            //         setLoading('');
+            //         notify({
+            //             message: err.message,
+            //             level: 'error',
+            //         });
+            //     });
         }
 
         return googleTranslate(formatSub(subtitle), translate)
@@ -213,7 +240,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
 
     useEffect(() => {
         if (localStorage.getItem('lang')) {

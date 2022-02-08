@@ -450,6 +450,8 @@ export default function Header({
     const onYouTubeChange = useCallback(
         (event) => {
             if (youtubeURL.length > 0) {
+                setLoading(t('LOADING'));
+
                 fetch(
                     `https://youtube-dl-utils-api.herokuapp.com/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
                     {
@@ -496,6 +498,8 @@ export default function Header({
                     })
                     .then((resp) => {
                         //const url = resp.video;
+                        setLoading('');
+
                         const sub = resp.subtitles;
                         fetch(sub)
                             .then((subtext) => {
@@ -515,7 +519,7 @@ export default function Header({
                     });
             }
         },
-        [setSubtitleEnglish, clearSubs, youtubeURL, translate, clearSubsEnglish, player, setSubtitle],
+        [setSubtitleEnglish, clearSubs, youtubeURL, translate, clearSubsEnglish, player, setSubtitle, setLoading],
     );
 
     const handleChange = (e) => {

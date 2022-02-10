@@ -297,6 +297,8 @@ export default function Header({
     setSubtitleEnglish,
     clearSubsEnglish,
     setSubtitleOriginal,
+    clearedSubs,
+    setClearedSubs,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -305,13 +307,17 @@ export default function Header({
     const [toolOpen, setToolOpen] = useState(true);
 
     const clearSubsHandler = () => {
+        window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
+
         let tempSubs = subtitle.slice(0);
         tempSubs.map((sub) => {
             sub.text = '';
             sub.text2 = '';
             return true;
         });
+
         setSubtitleOriginal(tempSubs);
+        setClearedSubs(true);
     };
 
     const decodeAudioData = useCallback(
@@ -772,6 +778,7 @@ export default function Header({
                         placeholder="Enter YouTube Link Here"
                         value={youtubeURL}
                         onChange={handleChange}
+                        // onKeyPress={(e) => }
                     />
                     <div className="btn" onClick={onYouTubeChange}>
                         <Translate value="Fetch Video" />

@@ -51,6 +51,8 @@ export default function App({ defaultLang }) {
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [currentIndex, setCurrentIndex] = useState(-1);
+    const [clearedSubs, setClearedSubs] = useState(false);
+    const [subsBeforeClear, setSubsBeforeClear] = useState([]);
     // const [subtitleType, setSubtitleType] = useState('primary');
     // const [subtitleKey, setSubtitleKey] = useState('en');
 
@@ -81,6 +83,7 @@ export default function App({ defaultLang }) {
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
+            console.log('Here');
             if (!isEqual(newSubtitle, subtitle)) {
                 if (saveToHistory) {
                     if (subtitleHistory.current.length >= 1000) {
@@ -279,6 +282,7 @@ export default function App({ defaultLang }) {
     }, [currentTime, subtitle]);
 
     useEffect(() => {
+        // console.log(subtitle);
         const localSubtitleString = window.localStorage.getItem('subtitle');
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
         const fetchSubtitle = () =>
@@ -354,6 +358,10 @@ export default function App({ defaultLang }) {
         clearSubsEnglish,
         updateSubEnglish,
         setSubtitleOriginal,
+        clearedSubs,
+        setClearedSubs,
+        subsBeforeClear,
+        setSubsBeforeClear,
     };
 
     return (
@@ -389,6 +397,9 @@ export default function App({ defaultLang }) {
                     setSubtitle={props.setSubtitle}
                     notify={props.notify}
                     isPrimary={true}
+                    clearedSubs={props.clearedSubs}
+                    setClearedSubs={props.setClearedSubs}
+                    setSubtitleOriginal={props.setSubtitleOriginal}
                 />
                 <Tool {...props} />
             </div>

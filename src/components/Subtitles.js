@@ -83,6 +83,7 @@ const Style = styled.div`
         }
 
         .ReactVirtualized__Table__row {
+            overflow: visible !important;
             .item {
                 height: 100%;
                 padding: 10px;
@@ -137,6 +138,7 @@ const Style = styled.div`
 export default function Subtitles({
     currentIndex,
     subtitle,
+    setSubtitleOriginal,
     checkSub,
     player,
     updateSub,
@@ -147,6 +149,8 @@ export default function Subtitles({
     setSubtitle,
     notify,
     isPrimary,
+    clearedSubs,
+    setClearedSubs,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
@@ -166,6 +170,54 @@ export default function Subtitles({
 
     const onTranslate = useCallback(() => {
         setLoading(t('TRANSLATING'));
+
+        if (clearedSubs) {
+            if (translate === 'en-k') {
+                return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
+                    .then((res) => {
+                        englishKeywordsTranslate(formatSub(res), translate)
+                            .then((res) => {
+                                setLoading('');
+                                setSubtitle(formatSub(res));
+                                notify({
+                                    message: t('TRANSLAT_SUCCESS'),
+                                    level: 'success',
+                                });
+                            })
+                            .catch((err) => {
+                                setLoading('');
+                                notify({
+                                    message: err.message,
+                                    level: 'error',
+                                });
+                            });
+                    })
+                    .catch((err) => {
+                        setLoading('');
+                        notify({
+                            message: err.message,
+                            level: 'error',
+                        });
+                    });
+            }
+
+            return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
+                .then((res) => {
+                    setLoading('');
+                    setSubtitle(formatSub(res));
+                    notify({
+                        message: t('TRANSLAT_SUCCESS'),
+                        level: 'success',
+                    });
+                })
+                .catch((err) => {
+                    setLoading('');
+                    notify({
+                        message: err.message,
+                        level: 'error',
+                    });
+                });
+        }
 
         if (translate === 'en-k') {
             return googleTranslate(formatSub(subtitle), 'en')
@@ -212,7 +264,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify]);
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs]);
 
     useEffect(() => {
         if (localStorage.getItem('lang')) {

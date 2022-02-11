@@ -83,7 +83,7 @@ export default function App({ defaultLang }) {
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
-            console.log('Here');
+            // console.log('Here');
             if (!isEqual(newSubtitle, subtitle)) {
                 if (saveToHistory) {
                     if (subtitleHistory.current.length >= 1000) {
@@ -163,12 +163,15 @@ export default function App({ defaultLang }) {
 
     const updateSub = useCallback(
         (sub, obj) => {
+            console.log(sub, obj);
             const index = hasSub(sub);
             if (index < 0) return;
             const subs = copySubs();
             const subClone = formatSub(sub);
             Object.assign(subClone, obj);
+            console.log(subClone);
             if (subClone.check) {
+                console.log('here');
                 subs[index] = subClone;
                 setSubtitle(subs);
             }
@@ -188,6 +191,19 @@ export default function App({ defaultLang }) {
             }
         },
         [hasSubEnglish, copySubsEnglish, setSubtitleEnglish, formatSub],
+    );
+
+    const updateSubTranslate = useCallback(
+        (sub, obj, index) => {
+            const subs = copySubs();
+            const subClone = formatSub(sub);
+            Object.assign(subClone, obj);
+            if (subClone.check) {
+                subs[index] = subClone;
+                setSubtitle(subs);
+            }
+        },
+        [copySubs, setSubtitle, formatSub],
     );
 
     const mergeSub = useCallback(
@@ -362,6 +378,7 @@ export default function App({ defaultLang }) {
         setClearedSubs,
         subsBeforeClear,
         setSubsBeforeClear,
+        updateSubTranslate,
     };
 
     return (
@@ -382,6 +399,7 @@ export default function App({ defaultLang }) {
                     setSubtitle={props.setSubtitle}
                     notify={props.notify}
                     isPrimary={false}
+                    updateSubOriginal={props.updateSubTranslate}
                 />
                 <Subtitles
                     currentIndex={props.currentIndex}

@@ -151,9 +151,20 @@ export default function Subtitles({
     isPrimary,
     clearedSubs,
     setClearedSubs,
+    updateSubOriginal = null,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
+
+    const handleBlur = (data, index) => {
+        //console.log(e.target.value);
+        if (isPrimary) {
+            return;
+        }
+        googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
+            updateSubOriginal(data, resp[0], index);
+        });
+    };
 
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 240);
@@ -350,6 +361,7 @@ export default function Subtitles({
                                                 text: event,
                                             });
                                         }}
+                                        onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
                                             isPrimary
                                                 ? !localStorage.getItem('lang') ||

@@ -11,6 +11,8 @@
     width: 45px !important;
     transition: all 0.5s;
     margin-left: 10px;
+    z-index: 10000;
+    height: 100%;
 }
 
 .tool-open {
@@ -21,13 +23,14 @@
 .tool .top {
     visibility: hidden;
     opacity: 0;
-    transform: scaleX(0) !important;
+    transform: scaleX(0) scaleY(0) !important;
     transform-origin: right;
     transition: transform 0.5s 0.2s;
+    overflow-y: auto;
 }
 
 .tool-open .top {
-    transform: scaleX(1) !important;
+    transform: scaleX(1) scaleY(1) !important;
     transition: all 0.5s 0.2s;
     visibility: visible;
     opacity: 1;

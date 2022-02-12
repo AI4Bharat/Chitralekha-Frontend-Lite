@@ -146,6 +146,45 @@ const Style = styled.div`
         }
     }
 
+    .configuration {
+        &-heading {
+            padding-left: 10px;
+            margin-top: -0.5px;
+        }
+
+        &-options {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            border-bottom: 1px solid rgb(255 255 255 / 20%);
+            align-items: center;
+            margin-top: -10px;
+            padding-left: 10px;
+
+            .btn {
+                position: relative;
+                opacity: 0.85;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 35px;
+                width: 90%;
+                border-radius: 3px;
+                color: #fff;
+                cursor: pointer;
+                font-size: 13px;
+                background-color: #009688;
+                transition: all 0.2s ease 0s;
+                margin-bottom: 10px;
+                letter-spacing: 1.3px;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
     .translate {
         display: flex;
         justify-content: space-between;
@@ -299,6 +338,8 @@ export default function Header({
     setSubtitleOriginal,
     clearedSubs,
     setClearedSubs,
+    configuration,
+    setConfiguration,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -622,46 +663,6 @@ export default function Header({
         [subtitleEnglish],
     );
 
-    // const onTranslate = useCallback(() => {
-    //     setLoading(t('TRANSLATING'));
-
-    //     if (translate === 'en-k') {
-    //         return englishKeywordsTranslate(formatSub(subtitleEnglish), translate)
-    //             .then((res) => {
-    //                 setLoading('');
-    //                 setSubtitle(formatSub(res));
-    //                 notify({
-    //                     message: t('TRANSLAT_SUCCESS'),
-    //                     level: 'success',
-    //                 });
-    //             })
-    //             .catch((err) => {
-    //                 setLoading('');
-    //                 notify({
-    //                     message: err.message,
-    //                     level: 'error',
-    //                 });
-    //             });
-    //     }
-
-    //     return googleTranslate(formatSub(subtitle), translate)
-    //         .then((res) => {
-    //             setLoading('');
-    //             setSubtitle(formatSub(res));
-    //             notify({
-    //                 message: t('TRANSLAT_SUCCESS'),
-    //                 level: 'success',
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             setLoading('');
-    //             notify({
-    //                 message: err.message,
-    //                 level: 'error',
-    //             });
-    //         });
-    // }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, subtitleEnglish]);
-
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
             <div className={`tool-button`}>
@@ -752,6 +753,40 @@ export default function Header({
                 <div className="operate">
                     <div className="btn" onClick={clearSubsHandler}>
                         <Translate value="Clear Subtitles" />
+                    </div>
+                </div>
+                <div className="configuration">
+                    <p className="configuration-heading">
+                        <b>Configuration Options</b>
+                    </p>
+                    <div className="configuration-options">
+                        <div
+                            className="btn"
+                            onClick={() => {
+                                console.log('Configuration - basic');
+                                setConfiguration('Subtitling');
+                            }}
+                        >
+                            <Translate value="MAIN_LANGUAGE" />
+                        </div>
+                        <div
+                            className="btn"
+                            onClick={() => {
+                                console.log('Configuration - sign');
+                                setConfiguration('Sign Language Subtitling');
+                            }}
+                        >
+                            <Translate value="SIGN_LANGUAGE" />
+                        </div>
+                        <div
+                            className="btn"
+                            onClick={() => {
+                                console.log('Configuration - same');
+                                setConfiguration('Same Language Subtitling');
+                            }}
+                        >
+                            <Translate value="SAME_LANGUAGE" />
+                        </div>
                     </div>
                 </div>
                 {/* <div className="translate">

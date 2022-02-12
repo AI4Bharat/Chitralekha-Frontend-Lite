@@ -135,7 +135,7 @@ const Style = styled.div`
     }
 `;
 
-export default function Subtitles({
+export default function SameLanguageSubtitles({
     currentIndex,
     subtitle,
     setSubtitleOriginal,
@@ -151,7 +151,6 @@ export default function Subtitles({
     isPrimary,
     clearedSubs,
     setClearedSubs,
-    configuration,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
@@ -281,7 +280,7 @@ export default function Subtitles({
                 {isPrimary && (
                     <div className="translate">
                         <div className="heading">
-                            <h4> Primary Subtitles</h4>
+                            <h4> Same Language Subtitling</h4>
                         </div>
                         <div className="options">
                             <select

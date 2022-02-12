@@ -11,6 +11,8 @@ import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
+import SameLanguageSubtitles from './components/SameLanguageSubtitle';
+import SignLanguageSubtitles from './components/SignLanguageSubtitle';
 
 const Style = styled.div`
     height: 100%;
@@ -53,8 +55,7 @@ export default function App({ defaultLang }) {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [clearedSubs, setClearedSubs] = useState(false);
     const [subsBeforeClear, setSubsBeforeClear] = useState([]);
-    // const [subtitleType, setSubtitleType] = useState('primary');
-    // const [subtitleKey, setSubtitleKey] = useState('en');
+    const [configuration, setConfiguration] = useState('Subtitling');
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -362,45 +363,144 @@ export default function App({ defaultLang }) {
         setClearedSubs,
         subsBeforeClear,
         setSubsBeforeClear,
+        configuration,
+        setConfiguration,
     };
+
+    useEffect(() => {
+        console.log(configuration);
+    }, [configuration]);
 
     return (
         <Style>
             <div className="main">
                 <Player {...props} />
-                <Subtitles
-                    currentIndex={props.currentIndex}
-                    subtitle={props.subtitleEnglish}
-                    checkSub={props.checkSub}
-                    player={props.player}
-                    updateSub={props.updateSubEnglish}
-                    language={props.language}
-                    setLanguage={props.setLanguage}
-                    setLoading={props.setLoading}
-                    subtitleEnglish={props.subtitleEnglish}
-                    formatSub={props.formatSub}
-                    setSubtitle={props.setSubtitle}
-                    notify={props.notify}
-                    isPrimary={false}
-                />
-                <Subtitles
-                    currentIndex={props.currentIndex}
-                    subtitle={props.subtitle}
-                    checkSub={props.checkSub}
-                    player={props.player}
-                    updateSub={props.updateSub}
-                    language={props.language}
-                    setLanguage={props.setLanguage}
-                    setLoading={props.setLoading}
-                    subtitleEnglish={props.subtitleEnglish}
-                    formatSub={props.formatSub}
-                    setSubtitle={props.setSubtitle}
-                    notify={props.notify}
-                    isPrimary={true}
-                    clearedSubs={props.clearedSubs}
-                    setClearedSubs={props.setClearedSubs}
-                    setSubtitleOriginal={props.setSubtitleOriginal}
-                />
+                {configuration === 'Subtitling' && (
+                    <>
+                        <Subtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitleEnglish}
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSubEnglish}
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={false}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                        />
+                        <Subtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitle}
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSub}
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={true}
+                            clearedSubs={props.clearedSubs}
+                            setClearedSubs={props.setClearedSubs}
+                            setSubtitleOriginal={props.setSubtitleOriginal}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                        />
+                    </>
+                )}
+
+                {configuration === 'Sign Language Subtitling' && (
+                    <>
+                        <SignLanguageSubtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitleEnglish}
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSubEnglish}
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={false}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                        />
+                        <SignLanguageSubtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitle}
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSub}
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={true}
+                            clearedSubs={props.clearedSubs}
+                            setClearedSubs={props.setClearedSubs}
+                            setSubtitleOriginal={props.setSubtitleOriginal}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                        />
+                    </>
+                )}
+
+                {configuration === 'Same Language Subtitling' && (
+                    <>
+                        <SameLanguageSubtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitleEnglish}
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSubEnglish}
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={false}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                        />
+                        <SameLanguageSubtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitle}
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSub}
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={true}
+                            clearedSubs={props.clearedSubs}
+                            setClearedSubs={props.setClearedSubs}
+                            setSubtitleOriginal={props.setSubtitleOriginal}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                        />
+                    </>
+                )}
+
                 <Tool {...props} />
             </div>
             <Footer {...props} />

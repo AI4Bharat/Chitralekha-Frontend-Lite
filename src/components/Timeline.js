@@ -138,7 +138,18 @@ let lastDiffX = 0;
 let isDroging = false;
 
 export default React.memo(
-    function ({ player, subtitle, render, currentTime, checkSub, removeSub, hasSub, updateSub, mergeSub }) {
+    function ({
+        player,
+        subtitle,
+        render,
+        currentTime,
+        checkSub,
+        removeSub,
+        hasSub,
+        updateSub,
+        mergeSub,
+        updateSubEnglish,
+    }) {
         const $blockRef = React.createRef();
         const $subsRef = React.createRef();
         const currentSubs = getCurrentSubs(subtitle, render.beginTime, render.duration);
@@ -203,10 +214,12 @@ export default React.memo(
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
                     //
                 } else {
+                    console.log('here');
                     if (lastType === 'left') {
                         if (startTime >= 0 && lastSub.endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             updateSub(lastSub, { start });
+                            updateSubEnglish(lastSub, { start });
                         } else {
                             lastTarget.style.width = `${width}px`;
                         }
@@ -214,6 +227,7 @@ export default React.memo(
                         if (endTime >= 0 && endTime - lastSub.startTime >= 0.2) {
                             const end = DT.d2t(endTime);
                             updateSub(lastSub, { end });
+                            updateSubEnglish(lastSub, { end });
                         } else {
                             lastTarget.style.width = `${width}px`;
                         }
@@ -222,6 +236,10 @@ export default React.memo(
                             const start = DT.d2t(startTime);
                             const end = DT.d2t(endTime);
                             updateSub(lastSub, {
+                                start,
+                                end,
+                            });
+                            updateSubEnglish(lastSub, {
                                 start,
                                 end,
                             });
@@ -239,7 +257,7 @@ export default React.memo(
             lastWidth = 0;
             lastDiffX = 0;
             isDroging = false;
-        }, [gridGap, hasSub, subtitle, updateSub]);
+        }, [gridGap, hasSub, subtitle, updateSub, updateSubEnglish]);
 
         const onKeyDown = useCallback(
             (event) => {

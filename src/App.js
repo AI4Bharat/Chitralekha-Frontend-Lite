@@ -84,7 +84,7 @@ export default function App({ defaultLang }) {
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
-            console.log('Here');
+            // console.log('Here');
             if (!isEqual(newSubtitle, subtitle)) {
                 if (saveToHistory) {
                     if (subtitleHistory.current.length >= 1000) {
@@ -189,6 +189,19 @@ export default function App({ defaultLang }) {
             }
         },
         [hasSubEnglish, copySubsEnglish, setSubtitleEnglish, formatSub],
+    );
+
+    const updateSubTranslate = useCallback(
+        (sub, obj, index) => {
+            const subs = copySubs();
+            const subClone = formatSub(sub);
+            Object.assign(subClone, obj);
+            if (subClone.check) {
+                subs[index] = subClone;
+                setSubtitle(subs);
+            }
+        },
+        [copySubs, setSubtitle, formatSub],
     );
 
     const mergeSub = useCallback(
@@ -365,6 +378,7 @@ export default function App({ defaultLang }) {
         setSubsBeforeClear,
         configuration,
         setConfiguration,
+        updateSubTranslate,
     };
 
     useEffect(() => {
@@ -500,7 +514,6 @@ export default function App({ defaultLang }) {
                         />
                     </>
                 )}
-
                 <Tool {...props} />
             </div>
             <Footer {...props} />

@@ -360,7 +360,7 @@ export default function App({ defaultLang }) {
                 setSubtitleEnglish([]);
             }
         } else {
-            fetchSubtitle();
+            // fetchSubtitle();
         }
     }, [setSubtitleOriginal, setSubtitleEnglish]);
 

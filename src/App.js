@@ -407,6 +407,7 @@ export default function App({ defaultLang }) {
                             isPrimary={false}
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
+                            updateSubOriginal={props.updateSubTranslate}
                         />
                         <Subtitles
                             currentIndex={props.currentIndex}
@@ -449,6 +450,7 @@ export default function App({ defaultLang }) {
                             isPrimary={false}
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
+                            updateSubOriginal={props.updateSubTranslate}
                         />
                         <SignLanguageSubtitles
                             currentIndex={props.currentIndex}
@@ -491,6 +493,7 @@ export default function App({ defaultLang }) {
                             isPrimary={false}
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
+                            updateSubOriginal={props.updateSubTranslate}
                         />
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}

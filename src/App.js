@@ -149,8 +149,15 @@ export default function App({ defaultLang }) {
             const subs = copySubs();
             subs.splice(index, 1);
             setSubtitle(subs);
+            if (subtitleEnglish) {
+                console.log('here');
+                const subsEnglish = copySubsEnglish();
+                subsEnglish.splice(index, 1);
+                setSubtitleEnglish(subsEnglish);
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
+            }
         },
-        [hasSub, copySubs, setSubtitle],
+        [hasSub, copySubs, setSubtitle, copySubsEnglish, subtitleEnglish],
     );
 
     const addSub = useCallback(
@@ -158,8 +165,14 @@ export default function App({ defaultLang }) {
             const subs = copySubs();
             subs.splice(index, 0, formatSub(sub));
             setSubtitle(subs);
+            if (subtitleEnglish) {
+                const subsEnglish = copySubsEnglish();
+                subsEnglish.splice(index, 0, formatSub(sub));
+                setSubtitleEnglish(subs);
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
+            }
         },
-        [copySubs, setSubtitle, formatSub],
+        [copySubs, setSubtitle, formatSub, copySubsEnglish, subtitleEnglish],
     );
 
     const updateSub = useCallback(
@@ -219,8 +232,22 @@ export default function App({ defaultLang }) {
             subs[index] = merge;
             subs.splice(index + 1, 1);
             setSubtitle(subs);
+            if (subtitleEnglish) {
+                const subsEnglish = copySubsEnglish();
+                const nextEnglish = subsEnglish[index + 1];
+                if (!nextEnglish) return;
+                const mergeEnglish = newSub({
+                    start: sub.start,
+                    end: nextEnglish.end,
+                    text: subsEnglish[index].text.trim() + '\n' + nextEnglish.text.trim(),
+                });
+                subsEnglish[index] = mergeEnglish;
+                subsEnglish.splice(index + 1, 1);
+                setSubtitleEnglish(subsEnglish);
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
+            }
         },
-        [hasSub, copySubs, setSubtitle, newSub],
+        [hasSub, copySubs, setSubtitle, newSub, copySubsEnglish, subtitleEnglish],
     );
 
     const splitSub = useCallback(

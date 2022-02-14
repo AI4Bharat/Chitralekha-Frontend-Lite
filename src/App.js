@@ -336,6 +336,7 @@ export default function App({ defaultLang }) {
         if (localSubtitleString) {
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
+                console.log(localSubtitle);
                 if (localSubtitle.length) {
                     setSubtitleOriginal(localSubtitle.map((item) => new Sub(item)));
                 } else {

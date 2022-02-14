@@ -30,6 +30,7 @@ const Style = styled.div`
 
         .options {
             display: flex;
+            width: 90%;
         }
 
         select {
@@ -45,7 +46,7 @@ const Style = styled.div`
             justify-content: center;
             align-items: center;
             height: 35px;
-            width: 33%;
+            width: 100%;
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
@@ -135,7 +136,7 @@ const Style = styled.div`
     }
 `;
 
-export default function Subtitles({
+export default function SignLanguageSubtitles({
     currentIndex,
     subtitle,
     setSubtitleOriginal,
@@ -151,21 +152,9 @@ export default function Subtitles({
     isPrimary,
     clearedSubs,
     setClearedSubs,
-    configuration,
-    updateSubOriginal = null,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
-
-    const handleBlur = (data, index) => {
-        //console.log(e.target.value);
-        if (isPrimary) {
-            return;
-        }
-        googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
-            updateSubOriginal(data, resp[0], index);
-        });
-    };
 
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 240);
@@ -184,55 +173,7 @@ export default function Subtitles({
         setLoading(t('TRANSLATING'));
 
         if (clearedSubs) {
-            if (translate === 'en-k') {
-                return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
-                    .then((res) => {
-                        englishKeywordsTranslate(formatSub(res), translate)
-                            .then((res) => {
-                                setLoading('');
-                                setSubtitle(formatSub(res));
-                                notify({
-                                    message: t('TRANSLAT_SUCCESS'),
-                                    level: 'success',
-                                });
-                            })
-                            .catch((err) => {
-                                setLoading('');
-                                notify({
-                                    message: err.message,
-                                    level: 'error',
-                                });
-                            });
-                    })
-                    .catch((err) => {
-                        setLoading('');
-                        notify({
-                            message: err.message,
-                            level: 'error',
-                        });
-                    });
-            }
-
-            return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
-                .then((res) => {
-                    setLoading('');
-                    setSubtitle(formatSub(res));
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
-        }
-
-        if (translate === 'en-k') {
-            return googleTranslate(formatSub(subtitle), 'en')
+            return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
                 .then((res) => {
                     englishKeywordsTranslate(formatSub(res), translate)
                         .then((res) => {
@@ -260,14 +201,24 @@ export default function Subtitles({
                 });
         }
 
-        return googleTranslate(formatSub(subtitle), translate)
+        return googleTranslate(formatSub(subtitle), 'en')
             .then((res) => {
-                setLoading('');
-                setSubtitle(formatSub(res));
-                notify({
-                    message: t('TRANSLAT_SUCCESS'),
-                    level: 'success',
-                });
+                englishKeywordsTranslate(formatSub(res), translate)
+                    .then((res) => {
+                        setLoading('');
+                        setSubtitle(formatSub(res));
+                        notify({
+                            message: t('TRANSLAT_SUCCESS'),
+                            level: 'success',
+                        });
+                    })
+                    .catch((err) => {
+                        setLoading('');
+                        notify({
+                            message: err.message,
+                            level: 'error',
+                        });
+                    });
             })
             .catch((err) => {
                 setLoading('');
@@ -292,22 +243,9 @@ export default function Subtitles({
                 {isPrimary && (
                     <div className="translate">
                         <div className="heading">
-                            <h4> Primary Subtitles</h4>
+                            <h4> Sign Language Subtitling</h4>
                         </div>
                         <div className="options">
-                            <select
-                                value={translate}
-                                onChange={(event) => {
-                                    setTranslate(event.target.value);
-                                    localStorage.setItem('lang', event.target.value);
-                                }}
-                            >
-                                {(languages[language] || languages.en).map((item) => (
-                                    <option key={item.key} value={item.key}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
                             <div className="btn" onClick={onTranslate}>
                                 <Translate value="TRANSLATE" />
                             </div>
@@ -362,7 +300,6 @@ export default function Subtitles({
                                                 text: event,
                                             });
                                         }}
-                                        onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
                                             isPrimary
                                                 ? !localStorage.getItem('lang') ||

@@ -135,7 +135,7 @@ const Style = styled.div`
     }
 `;
 
-export default function Subtitles({
+export default function SameLanguageSubtitles({
     currentIndex,
     subtitle,
     setSubtitleOriginal,
@@ -151,21 +151,9 @@ export default function Subtitles({
     isPrimary,
     clearedSubs,
     setClearedSubs,
-    configuration,
-    updateSubOriginal = null,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
-
-    const handleBlur = (data, index) => {
-        //console.log(e.target.value);
-        if (isPrimary) {
-            return;
-        }
-        googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
-            updateSubOriginal(data, resp[0], index);
-        });
-    };
 
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 240);
@@ -292,7 +280,7 @@ export default function Subtitles({
                 {isPrimary && (
                     <div className="translate">
                         <div className="heading">
-                            <h4> Primary Subtitles</h4>
+                            <h4> Same Language Subtitling</h4>
                         </div>
                         <div className="options">
                             <select
@@ -362,7 +350,6 @@ export default function Subtitles({
                                                 text: event,
                                             });
                                         }}
-                                        onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
                                             isPrimary
                                                 ? !localStorage.getItem('lang') ||

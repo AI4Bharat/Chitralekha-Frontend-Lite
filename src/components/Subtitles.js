@@ -191,6 +191,7 @@ export default function Subtitles({
                             .then((res) => {
                                 setLoading('');
                                 setSubtitle(formatSub(res));
+                                localStorage.setItem('currentLang', 'en');
                                 notify({
                                     message: t('TRANSLAT_SUCCESS'),
                                     level: 'success',
@@ -217,6 +218,7 @@ export default function Subtitles({
                 .then((res) => {
                     setLoading('');
                     setSubtitle(formatSub(res));
+                    localStorage.setItem('currentLang', translate);
                     notify({
                         message: t('TRANSLAT_SUCCESS'),
                         level: 'success',
@@ -238,6 +240,7 @@ export default function Subtitles({
                         .then((res) => {
                             setLoading('');
                             setSubtitle(formatSub(res));
+                            localStorage.setItem('currentLang', 'en');
                             notify({
                                 message: t('TRANSLAT_SUCCESS'),
                                 level: 'success',
@@ -264,6 +267,7 @@ export default function Subtitles({
             .then((res) => {
                 setLoading('');
                 setSubtitle(formatSub(res));
+                localStorage.setItem('currentLang', translate);
                 notify({
                     message: t('TRANSLAT_SUCCESS'),
                     level: 'success',

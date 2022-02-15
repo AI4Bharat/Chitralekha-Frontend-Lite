@@ -157,7 +157,7 @@ const Style = styled.div`
             flex-direction: column;
             flex-wrap: wrap;
             border-bottom: 1px solid rgb(255 255 255 / 20%);
-            align-items: center;
+            // align-items: center;
             margin-top: -10px;
             padding-left: 10px;
 
@@ -168,7 +168,7 @@ const Style = styled.div`
                 justify-content: center;
                 align-items: center;
                 height: 35px;
-                width: 90%;
+                width: 95%;
                 border-radius: 3px;
                 color: #fff;
                 cursor: pointer;
@@ -510,29 +510,49 @@ export default function Header({
                     })
                     .then((resp) => {
                         const url = resp.video;
+                        const audio = resp.audio;
                         player.src = url;
-                        const sub = resp.subtitles;
-
-                        // console.log(url);
 
                         localStorage.setItem('videoSrc', resp.video);
 
-                        fetch(sub)
-                            .then((subtext) => {
-                                return subtext.text();
-                            })
-                            .then((subtext) => {
-                                player.currentTime = 0;
-                                clearSubs();
-                                const suburl = vtt2url(subtext);
-                                url2sub(suburl).then((urlsub) => {
-                                    setSubtitle(urlsub);
-                                    localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                        if (resp.subtitles) {
+                            const sub = resp.subtitles;
+
+                            fetch(sub)
+                                .then((subtext) => {
+                                    return subtext.text();
+                                })
+                                .then((subtext) => {
+                                    console.log(subtext);
+                                    player.currentTime = 0;
+                                    clearSubs();
+                                    const suburl = vtt2url(subtext);
+                                    url2sub(suburl).then((urlsub) => {
+                                        setSubtitle(urlsub);
+                                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                                    });
+                                })
+                                .catch((err) => {
+                                    console.log(err);
                                 });
+                        } else {
+                            const data = {
+                                audio_url: audio,
+                                vad_level: 2,
+                                chunk_size: 10,
+                                language: 'en',
+                            };
+
+                            fetch('http://164.52.212.33:5000/transcribe_audio', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data),
                             })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                                .then((resp) => {
+                                    return resp.json();
+                                })
+                                .then((resp) => console.log(resp));
+                        }
                     });
                 fetch(
                     `https://youtube-dl-utils-api.herokuapp.com/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
@@ -763,6 +783,15 @@ export default function Header({
                         <div
                             className="btn"
                             onClick={() => {
+                                console.log('Configuration - same');
+                                setConfiguration('Same Language Subtitling');
+                            }}
+                        >
+                            <Translate value="SAME_LANGUAGE" />
+                        </div>
+                        <div
+                            className="btn"
+                            onClick={() => {
                                 console.log('Configuration - basic');
                                 setConfiguration('Subtitling');
                             }}
@@ -777,15 +806,6 @@ export default function Header({
                             }}
                         >
                             <Translate value="SIGN_LANGUAGE" />
-                        </div>
-                        <div
-                            className="btn"
-                            onClick={() => {
-                                console.log('Configuration - same');
-                                setConfiguration('Same Language Subtitling');
-                            }}
-                        >
-                            <Translate value="SAME_LANGUAGE" />
                         </div>
                     </div>
                 </div>

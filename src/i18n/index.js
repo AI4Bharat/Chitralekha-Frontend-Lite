@@ -32,9 +32,9 @@ const en = {
     BURN_START: 'Start burn subtitles',
     BURN_SUCCESS: 'Burn subtitles success',
     OPEN_VIDEO_ERROR: 'Please open the video first',
-    SAME_LANGUAGE: 'Same Language',
+    SAME_LANGUAGE: 'Transcription',
     SIGN_LANGUAGE: 'Sign Language',
-    MAIN_LANGUAGE: 'Subtitling',
+    MAIN_LANGUAGE: 'Translation',
 };
 
 const it = {

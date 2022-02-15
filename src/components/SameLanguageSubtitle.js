@@ -291,7 +291,7 @@ export default function SameLanguageSubtitles({
                 {isPrimary && (
                     <div className="translate">
                         <div className="heading">
-                            <h4> Same Language Subtitling</h4>
+                            <h4>Transcription</h4>
                         </div>
                         <div className="options">
                             <select

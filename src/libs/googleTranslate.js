@@ -81,6 +81,7 @@ export default async function googleTranslate(subtitle = [], lang) {
                     })
                     .catch((err) => {
                         console.log(err);
+                        reject(err);
                     });
             }
         })();

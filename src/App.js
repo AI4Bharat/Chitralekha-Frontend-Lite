@@ -55,7 +55,10 @@ export default function App({ defaultLang }) {
     const [currentIndex, setCurrentIndex] = useState(-1);
     const [clearedSubs, setClearedSubs] = useState(false);
     const [subsBeforeClear, setSubsBeforeClear] = useState([]);
-    const [configuration, setConfiguration] = useState('Subtitling');
+    const [configuration, setConfiguration] = useState('');
+    const [enableConfiguration, setEnableConfiguration] = useState(false);
+    const [isSetVideo, setIsSetVideo] = useState(false);
+    const [isSetConfiguration, setIsSetConfiguration] = useState(false);
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -407,6 +410,12 @@ export default function App({ defaultLang }) {
         configuration,
         setConfiguration,
         updateSubTranslate,
+        enableConfiguration,
+        setEnableConfiguration,
+        isSetVideo,
+        setIsSetVideo,
+        isSetConfiguration,
+        setIsSetConfiguration,
     };
 
     useEffect(() => {
@@ -417,7 +426,7 @@ export default function App({ defaultLang }) {
         <Style>
             <div className="main">
                 <Player {...props} />
-                {configuration === 'Subtitling' && (
+                {(configuration === 'Subtitling' || configuration === '') && (
                     <>
                         <Subtitles
                             currentIndex={props.currentIndex}
@@ -507,24 +516,6 @@ export default function App({ defaultLang }) {
                     <>
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
-                            subtitle={props.subtitleEnglish}
-                            checkSub={props.checkSub}
-                            player={props.player}
-                            updateSub={props.updateSubEnglish}
-                            language={props.language}
-                            setLanguage={props.setLanguage}
-                            setLoading={props.setLoading}
-                            subtitleEnglish={props.subtitleEnglish}
-                            formatSub={props.formatSub}
-                            setSubtitle={props.setSubtitle}
-                            notify={props.notify}
-                            isPrimary={false}
-                            configuration={props.configuration}
-                            setConfiguration={props.setConfiguration}
-                            updateSubOriginal={props.updateSubTranslate}
-                        />
-                        <SameLanguageSubtitles
-                            currentIndex={props.currentIndex}
                             subtitle={props.subtitle}
                             checkSub={props.checkSub}
                             player={props.player}
@@ -542,6 +533,7 @@ export default function App({ defaultLang }) {
                             setSubtitleOriginal={props.setSubtitleOriginal}
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
+                            clearSubs={props.clearSubs}
                         />
                     </>
                 )}

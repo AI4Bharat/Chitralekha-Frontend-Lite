@@ -1,3 +1,5 @@
+// ff450a7f531a4e9ab43bd2dd87cdbfcc
+
 import styled from 'styled-components';
 import languages from '../libs/languages';
 import React, { useState, useCallback, useEffect } from 'react';
@@ -6,15 +8,17 @@ import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { ReactTransliterate } from 'react-transliterate';
 import { t, Translate } from 'react-i18nify';
-import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
+// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
+import { url2sub, vtt2url } from '../libs/readSub';
+// import { url2sub, vtt2url } from '../libs/readSub';
 
 const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
 
-    .translate {
+    .transcribe {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
@@ -30,13 +34,13 @@ const Style = styled.div`
 
         .options {
             display: flex;
-        }
+            width: 100%;
+            align-items: center;
+            justify-content: center;
 
-        select {
-            width: 65%;
-            outline: none;
-            height: 35px;
-            border-radius: 3px;
+            span {
+                font-size: 18px;
+            }
         }
 
         .btn {
@@ -45,13 +49,14 @@ const Style = styled.div`
             justify-content: center;
             align-items: center;
             height: 35px;
-            width: 33%;
+            width: 60%;
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
             font-size: 13px;
             background-color: #673ab7;
             transition: all 0.2s ease 0s;
+            margin-right: 10px;
 
             &:hover {
                 opacity: 1;
@@ -152,9 +157,10 @@ export default function SameLanguageSubtitles({
     clearedSubs,
     setClearedSubs,
     updateSubOriginal = null,
+    clearSubs,
 }) {
     const [height, setHeight] = useState(100);
-    const [translate, setTranslate] = useState(null);
+    // const [translate, setTranslate] = useState(null);
 
     const handleBlur = (data, index) => {
         //console.log(e.target.value);
@@ -179,137 +185,261 @@ export default function SameLanguageSubtitles({
         }
     }, [resize]);
 
-    const onTranslate = useCallback(() => {
-        setLoading(t('TRANSLATING'));
+    // const onTranslate = useCallback(() => {
+    //     setLoading(t('TRANSLATING'));
 
-        if (clearedSubs) {
-            if (translate === 'en-k') {
-                return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
-                    .then((res) => {
-                        englishKeywordsTranslate(formatSub(res), translate)
-                            .then((res) => {
-                                setLoading('');
-                                setSubtitle(formatSub(res));
-                                notify({
-                                    message: t('TRANSLAT_SUCCESS'),
-                                    level: 'success',
-                                });
-                            })
-                            .catch((err) => {
-                                setLoading('');
-                                notify({
-                                    message: err.message,
-                                    level: 'error',
-                                });
-                            });
-                    })
-                    .catch((err) => {
-                        setLoading('');
-                        notify({
-                            message: err.message,
-                            level: 'error',
-                        });
-                    });
-            }
+    //     if (clearedSubs) {
+    //         if (translate === 'en-k') {
+    //             return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
+    //                 .then((res) => {
+    //                     englishKeywordsTranslate(formatSub(res), translate)
+    //                         .then((res) => {
+    //                             setLoading('');
+    //                             setSubtitle(formatSub(res));
+    //                             notify({
+    //                                 message: t('TRANSLAT_SUCCESS'),
+    //                                 level: 'success',
+    //                             });
+    //                         })
+    //                         .catch((err) => {
+    //                             setLoading('');
+    //                             notify({
+    //                                 message: err.message,
+    //                                 level: 'error',
+    //                             });
+    //                         });
+    //                 })
+    //                 .catch((err) => {
+    //                     setLoading('');
+    //                     notify({
+    //                         message: err.message,
+    //                         level: 'error',
+    //                     });
+    //                 });
+    //         }
 
-            return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
-                .then((res) => {
-                    setLoading('');
-                    setSubtitle(formatSub(res));
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
-        }
+    //         return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
+    //             .then((res) => {
+    //                 setLoading('');
+    //                 setSubtitle(formatSub(res));
+    //                 notify({
+    //                     message: t('TRANSLAT_SUCCESS'),
+    //                     level: 'success',
+    //                 });
+    //             })
+    //             .catch((err) => {
+    //                 setLoading('');
+    //                 notify({
+    //                     message: err.message,
+    //                     level: 'error',
+    //                 });
+    //             });
+    //     }
 
-        if (translate === 'en-k') {
-            return googleTranslate(formatSub(subtitle), 'en')
-                .then((res) => {
-                    englishKeywordsTranslate(formatSub(res), translate)
-                        .then((res) => {
-                            setLoading('');
-                            setSubtitle(formatSub(res));
-                            notify({
-                                message: t('TRANSLAT_SUCCESS'),
-                                level: 'success',
-                            });
-                        })
-                        .catch((err) => {
-                            setLoading('');
-                            notify({
-                                message: err.message,
-                                level: 'error',
-                            });
-                        });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
-        }
+    //     if (translate === 'en-k') {
+    //         return googleTranslate(formatSub(subtitle), 'en')
+    //             .then((res) => {
+    //                 englishKeywordsTranslate(formatSub(res), translate)
+    //                     .then((res) => {
+    //                         setLoading('');
+    //                         setSubtitle(formatSub(res));
+    //                         notify({
+    //                             message: t('TRANSLAT_SUCCESS'),
+    //                             level: 'success',
+    //                         });
+    //                     })
+    //                     .catch((err) => {
+    //                         setLoading('');
+    //                         notify({
+    //                             message: err.message,
+    //                             level: 'error',
+    //                         });
+    //                     });
+    //             })
+    //             .catch((err) => {
+    //                 setLoading('');
+    //                 notify({
+    //                     message: err.message,
+    //                     level: 'error',
+    //                 });
+    //             });
+    //     }
 
-        return googleTranslate(formatSub(subtitle), translate)
-            .then((res) => {
-                setLoading('');
-                setSubtitle(formatSub(res));
-                notify({
-                    message: t('TRANSLAT_SUCCESS'),
-                    level: 'success',
+    //     return googleTranslate(formatSub(subtitle), translate)
+    //         .then((res) => {
+    //             setLoading('');
+    //             setSubtitle(formatSub(res));
+    //             notify({
+    //                 message: t('TRANSLAT_SUCCESS'),
+    //                 level: 'success',
+    //             });
+    //         })
+    //         .catch((err) => {
+    //             setLoading('');
+    //             notify({
+    //                 message: err.message,
+    //                 level: 'error',
+    //             });
+    //         });
+    // }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs]);
+
+    const onTranscribe = useCallback(() => {
+        console.log(localStorage.getItem('audioSrc'));
+
+        setLoading(t('TRANSCRIBING'));
+        const audio = localStorage.getItem('audioSrc');
+
+        const data = {
+            audio_url: audio,
+            vad_level: 2,
+            chunk_size: 10,
+            language: 'en',
+        };
+
+        return fetch('http://13.90.168.58:8000/transcribe_audio', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        })
+            .then((resp) => resp.json())
+            .then((resp) => {
+                console.log(resp.output);
+                player.currentTime = 0;
+                clearSubs();
+                const suburl = vtt2url(resp.output);
+                url2sub(suburl).then((urlsub) => {
+                    setSubtitle(formatSub(urlsub));
+                    localStorage.setItem('subtitle', JSON.stringify(urlsub));
                 });
             })
+            .then(() => setLoading(''))
             .catch((err) => {
+                console.log(err);
                 setLoading('');
                 notify({
                     message: err.message,
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs]);
 
-    useEffect(() => {
-        if (localStorage.getItem('lang')) {
-            setTranslate(localStorage.getItem('lang'));
-        } else {
-            setTranslate('en');
-        }
-    }, []);
+        // setLoading(t('TRANSLATING'));
+
+        // if (clearedSubs) {
+        //     if (translate === 'en-k') {
+        //         return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
+        //             .then((res) => {
+        //                 englishKeywordsTranslate(formatSub(res), translate)
+        //                     .then((res) => {
+        //                         setLoading('');
+        //                         setSubtitle(formatSub(res));
+        //                         notify({
+        //                             message: t('TRANSLAT_SUCCESS'),
+        //                             level: 'success',
+        //                         });
+        //                     })
+        //                     .catch((err) => {
+        //                         setLoading('');
+        //                         notify({
+        //                             message: err.message,
+        //                             level: 'error',
+        //                         });
+        //                     });
+        //             })
+        //             .catch((err) => {
+        //                 setLoading('');
+        //                 notify({
+        //                     message: err.message,
+        //                     level: 'error',
+        //                 });
+        //             });
+        //     }
+
+        //     return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
+        //         .then((res) => {
+        //             setLoading('');
+        //             setSubtitle(formatSub(res));
+        //             notify({
+        //                 message: t('TRANSLAT_SUCCESS'),
+        //                 level: 'success',
+        //             });
+        //         })
+        //         .catch((err) => {
+        //             setLoading('');
+        //             notify({
+        //                 message: err.message,
+        //                 level: 'error',
+        //             });
+        //         });
+        // }
+
+        // if (translate === 'en-k') {
+        //     return googleTranslate(formatSub(subtitle), 'en')
+        //         .then((res) => {
+        //             englishKeywordsTranslate(formatSub(res), translate)
+        //                 .then((res) => {
+        //                     setLoading('');
+        //                     setSubtitle(formatSub(res));
+        //                     notify({
+        //                         message: t('TRANSLAT_SUCCESS'),
+        //                         level: 'success',
+        //                     });
+        //                 })
+        //                 .catch((err) => {
+        //                     setLoading('');
+        //                     notify({
+        //                         message: err.message,
+        //                         level: 'error',
+        //                     });
+        //                 });
+        //         })
+        //         .catch((err) => {
+        //             setLoading('');
+        //             notify({
+        //                 message: err.message,
+        //                 level: 'error',
+        //             });
+        //         });
+        // }
+
+        // return googleTranslate(formatSub(subtitle), translate)
+        //     .then((res) => {
+        //         setLoading('');
+        //         setSubtitle(formatSub(res));
+        //         notify({
+        //             message: t('TRANSLAT_SUCCESS'),
+        //             level: 'success',
+        //         });
+        //     })
+        //     .catch((err) => {
+        //         setLoading('');
+        //         notify({
+        //             message: err.message,
+        //             level: 'error',
+        //         });
+        //     });
+    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player]);
+
+    // useEffect(() => {
+    //     if (localStorage.getItem('lang')) {
+    //         setTranslate(localStorage.getItem('lang'));
+    //     } else {
+    //         setTranslate('en');
+    //     }
+    // }, []);
 
     return (
         subtitle && (
             <Style className="subtitles">
                 {isPrimary && (
-                    <div className="translate">
+                    <div className="transcribe">
                         <div className="heading">
                             <h4>Transcription</h4>
                         </div>
                         <div className="options">
-                            <select
-                                value={translate}
-                                onChange={(event) => {
-                                    setTranslate(event.target.value);
-                                    localStorage.setItem('lang', event.target.value);
-                                }}
-                            >
-                                {(languages[language] || languages.en).map((item) => (
-                                    <option key={item.key} value={item.key}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <div className="btn" onClick={onTranslate}>
-                                <Translate value="TRANSLATE" />
+                            <div className="btn" onClick={onTranscribe}>
+                                <Translate value="TRANSCRIBE" />
                             </div>
+                            <span className="language"> : en</span>
                         </div>
                     </div>
                 )}

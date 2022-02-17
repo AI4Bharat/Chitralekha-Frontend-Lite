@@ -65,6 +65,23 @@ const Style = styled.div`
         }
     }
 
+    .seconday-options {
+        transform: scaleY(1) !important;
+        transition: all 0.25s 0.4s;
+        transform-origin: top;
+    }
+
+    .hide-secondary-options {
+        transform: scaleY(0) !important;
+        transition: all 0.25s;
+        transform-origin: top;
+    }
+
+    .hide-secondary-options * > {
+        opacity: 0;
+        transition: all 0.1s;
+    }
+
     .burn {
         display: flex;
         justify-content: space-between;
@@ -147,12 +164,18 @@ const Style = styled.div`
     }
 
     .configuration {
+        transform: scaleY(1) !important;
+        transition: all 0.25s 0.4s;
+        transform-origin: top;
+
         &-heading {
+            opacity: 1;
             padding-left: 10px;
             margin-top: -0.5px;
         }
 
         &-options {
+            opacity: 1;
             display: flex;
             flex-direction: column;
             flex-wrap: wrap;
@@ -183,6 +206,21 @@ const Style = styled.div`
                 }
             }
         }
+    }
+
+    .hide-config {
+        transform: scaleY(0) !important;
+        transition: all 0.25s;
+        transform-origin: top;
+    }
+    .hide-config .configuration-heading {
+        opacity: 0;
+        transition: all 0.1s;
+    }
+
+    .hide-config .configuration-options {
+        opacity: 0;
+        transition: all 0.1s;
     }
 
     .translate {
@@ -340,6 +378,12 @@ export default function Header({
     setClearedSubs,
     configuration,
     setConfiguration,
+    enableConfiguration,
+    setEnableConfiguration,
+    isSetVideo,
+    setIsSetVideo,
+    isSetConfiguration,
+    setIsSetConfiguration,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -491,8 +535,10 @@ export default function Header({
                     });
                 }
             }
+
+            setIsSetVideo(true);
         },
-        [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData],
+        [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData, setIsSetVideo],
     );
     const onYouTubeChange = useCallback(
         (event) => {
@@ -500,7 +546,7 @@ export default function Header({
                 setLoading(t('LOADING'));
 
                 fetch(
-                    `https://youtube-dl-utils-api.herokuapp.com/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
+                    `http://13.90.168.58:8000/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
                     {
                         method: 'POST',
                     },
@@ -514,6 +560,7 @@ export default function Header({
                         player.src = url;
 
                         localStorage.setItem('videoSrc', resp.video);
+                        localStorage.setItem('audioSrc', resp.audio);
 
                         if (resp.subtitles) {
                             const sub = resp.subtitles;
@@ -551,7 +598,19 @@ export default function Header({
                                 .then((resp) => {
                                     return resp.json();
                                 })
-                                .then((resp) => console.log(resp));
+                                .then((resp) => {
+                                    console.log(resp.output);
+                                    player.currentTime = 0;
+                                    clearSubs();
+                                    const suburl = vtt2url(resp.output);
+                                    url2sub(suburl).then((urlsub) => {
+                                        setSubtitle(urlsub);
+                                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                                    });
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                });
                         }
                     });
                 fetch(
@@ -565,28 +624,74 @@ export default function Header({
                     })
                     .then((resp) => {
                         //const url = resp.video;
-                        setLoading('');
+                        const audio = resp.audio;
 
-                        const sub = resp.subtitles;
-                        fetch(sub)
-                            .then((subtext) => {
-                                return subtext.text();
-                            })
-                            .then((subtext) => {
-                                clearSubsEnglish();
-                                const suburl = vtt2url(subtext);
-                                url2sub(suburl).then((urlsub) => {
-                                    setSubtitleEnglish(urlsub);
-                                    localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                        if (resp.subtitles) {
+                            const sub = resp.subtitles;
+                            fetch(sub)
+                                .then((subtext) => {
+                                    return subtext.text();
+                                })
+                                .then((subtext) => {
+                                    clearSubsEnglish();
+                                    const suburl = vtt2url(subtext);
+                                    url2sub(suburl).then((urlsub) => {
+                                        setSubtitleEnglish(urlsub);
+                                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                                    });
+
+                                    setLoading('');
+                                })
+                                .catch((err) => {
+                                    console.log(err);
                                 });
+                        } else {
+                            const data = {
+                                audio_url: audio,
+                                vad_level: 2,
+                                chunk_size: 10,
+                                language: 'en',
+                            };
+
+                            fetch('http://164.52.212.33:5000/transcribe_audio', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data),
                             })
-                            .catch((err) => {
-                                console.log(err);
-                            });
+                                .then((resp) => {
+                                    return resp.json();
+                                })
+                                .then((resp) => {
+                                    console.log(resp.output);
+                                    player.currentTime = 0;
+                                    clearSubs();
+                                    const suburl = vtt2url(resp.output);
+                                    url2sub(suburl).then((urlsub) => {
+                                        setSubtitleEnglish(urlsub);
+                                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                                    });
+                                })
+                                .then(() => setLoading(''))
+                                .catch((err) => {
+                                    console.log(err);
+                                });
+                        }
                     });
             }
+
+            setIsSetVideo(true);
         },
-        [setSubtitleEnglish, clearSubs, youtubeURL, translate, clearSubsEnglish, player, setSubtitle, setLoading],
+        [
+            setSubtitleEnglish,
+            clearSubs,
+            youtubeURL,
+            translate,
+            clearSubsEnglish,
+            player,
+            setSubtitle,
+            setLoading,
+            setIsSetVideo,
+        ],
     );
 
     const handleChange = (e) => {
@@ -707,7 +812,7 @@ export default function Header({
             </div>
 
             <div className="top">
-                <div className="import">
+                <div className="import ">
                     <div className="btn">
                         <Translate value="OPEN_VIDEO" />
                         <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
@@ -717,65 +822,19 @@ export default function Header({
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
                     </div>
                 </div>
-                {window.crossOriginIsolated ? (
-                    <div className="burn" onClick={burnSubtitles}>
-                        <div className="btn">
-                            <Translate value="EXPORT_VIDEO" />
-                        </div>
-                    </div>
-                ) : null}
-                <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                    <b>Export Your Subtitles</b>
-                </p>
-                <div className="export" style={{ marginTop: '-20px' }}>
-                    <div className="btn" onClick={() => downloadSub('ass')}>
-                        <Translate value="EXPORT_ASS" />
-                    </div>
-                    <div className="btn" onClick={() => downloadSub('srt')}>
-                        <Translate value="EXPORT_SRT" />
-                    </div>
-                    <div className="btn" onClick={() => downloadSub('vtt')}>
-                        <Translate value="EXPORT_VTT" />
+                <div className="youtube-link ">
+                    <textarea
+                        className="youtube-textarea"
+                        placeholder="Enter YouTube Link Here"
+                        value={youtubeURL}
+                        onChange={handleChange}
+                        // onKeyPress={(e) => }
+                    />
+                    <div className="btn" onClick={onYouTubeChange}>
+                        <Translate value="Fetch Video" />
                     </div>
                 </div>
-                <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                    <b>Export Reference Subtitles</b>
-                </p>
-                <div className="export" style={{ marginTop: '-20px' }}>
-                    <div className="btn" onClick={() => downloadSubReference('ass')}>
-                        <Translate value="EXPORT_ASS" />
-                    </div>
-                    <div className="btn" onClick={() => downloadSubReference('srt')}>
-                        <Translate value="EXPORT_SRT" />
-                    </div>
-                    <div className="btn" onClick={() => downloadSubReference('vtt')}>
-                        <Translate value="EXPORT_VTT" />
-                    </div>
-                </div>
-                <div className="operate">
-                    <div
-                        className="btn"
-                        onClick={() => {
-                            if (window.confirm(t('CLEAR_TIP')) === true) {
-                                localStorage.setItem('videoSrc', '/sample.mp4');
-                                clearSubs();
-                                clearSubsEnglish();
-                                window.location.reload();
-                            }
-                        }}
-                    >
-                        <Translate value="CLEAR" />
-                    </div>
-                    <div className="btn" onClick={undoSubs}>
-                        <Translate value="UNDO" />
-                    </div>
-                </div>
-                <div className="operate">
-                    <div className="btn" onClick={clearSubsHandler}>
-                        <Translate value="Clear Subtitles" />
-                    </div>
-                </div>
-                <div className="configuration">
+                <div className={`configuration ${isSetVideo ? '' : 'hide-config'}`}>
                     <p className="configuration-heading">
                         <b>Configuration Options</b>
                     </p>
@@ -785,6 +844,7 @@ export default function Header({
                             onClick={() => {
                                 console.log('Configuration - same');
                                 setConfiguration('Same Language Subtitling');
+                                setIsSetConfiguration(true);
                             }}
                         >
                             <Translate value="SAME_LANGUAGE" />
@@ -794,6 +854,7 @@ export default function Header({
                             onClick={() => {
                                 console.log('Configuration - basic');
                                 setConfiguration('Subtitling');
+                                setIsSetConfiguration(true);
                             }}
                         >
                             <Translate value="MAIN_LANGUAGE" />
@@ -803,12 +864,74 @@ export default function Header({
                             onClick={() => {
                                 console.log('Configuration - sign');
                                 setConfiguration('Sign Language Subtitling');
+                                setIsSetConfiguration(true);
                             }}
                         >
                             <Translate value="SIGN_LANGUAGE" />
                         </div>
                     </div>
                 </div>
+                <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
+                    {window.crossOriginIsolated ? (
+                        <div className="burn" onClick={burnSubtitles}>
+                            <div className="btn">
+                                <Translate value="EXPORT_VIDEO" />
+                            </div>
+                        </div>
+                    ) : null}
+                    <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                        <b>Export Your Subtitles</b>
+                    </p>
+                    <div className="export" style={{ marginTop: '-20px' }}>
+                        <div className="btn" onClick={() => downloadSub('ass')}>
+                            <Translate value="EXPORT_ASS" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSub('srt')}>
+                            <Translate value="EXPORT_SRT" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSub('vtt')}>
+                            <Translate value="EXPORT_VTT" />
+                        </div>
+                    </div>
+                    <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                        <b>Export Reference Subtitles</b>
+                    </p>
+                    <div className="export" style={{ marginTop: '-20px' }}>
+                        <div className="btn" onClick={() => downloadSubReference('ass')}>
+                            <Translate value="EXPORT_ASS" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSubReference('srt')}>
+                            <Translate value="EXPORT_SRT" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSubReference('vtt')}>
+                            <Translate value="EXPORT_VTT" />
+                        </div>
+                    </div>
+                    <div className="operate">
+                        <div
+                            className="btn"
+                            onClick={() => {
+                                if (window.confirm(t('CLEAR_TIP')) === true) {
+                                    localStorage.setItem('videoSrc', '/sample.mp4');
+                                    clearSubs();
+                                    clearSubsEnglish();
+                                    window.location.reload();
+                                }
+                            }}
+                        >
+                            <Translate value="CLEAR" />
+                        </div>
+                        <div className="btn" onClick={undoSubs}>
+                            <Translate value="UNDO" />
+                        </div>
+                    </div>
+                    <div className="operate">
+                        <div className="btn" onClick={clearSubsHandler}>
+                            <Translate value="Clear Subtitles" />
+                        </div>
+                    </div>
+                </div>
+
                 {/* <div className="translate">
                     <select
                         value={translate}
@@ -827,18 +950,7 @@ export default function Header({
                         <Translate value="TRANSLATE" />
                     </div>
                 </div> */}
-                <div className="youtube-link">
-                    <textarea
-                        className="youtube-textarea"
-                        placeholder="Enter YouTube Link Here"
-                        value={youtubeURL}
-                        onChange={handleChange}
-                        // onKeyPress={(e) => }
-                    />
-                    <div className="btn" onClick={onYouTubeChange}>
-                        <Translate value="Fetch Video" />
-                    </div>
-                </div>
+
                 <div className="hotkey">
                     <span>
                         <Translate value="HOTKEY_01" />

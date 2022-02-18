@@ -834,6 +834,29 @@ export default function Header({
                         <Translate value="Fetch Video" />
                     </div>
                 </div>
+                <div className="operate">
+                    <div
+                        className="btn"
+                        onClick={() => {
+                            if (window.confirm(t('CLEAR_TIP')) === true) {
+                                localStorage.setItem('videoSrc', '/sample.mp4');
+                                clearSubs();
+                                clearSubsEnglish();
+                                window.location.reload();
+                            }
+                        }}
+                    >
+                        <Translate value="CLEAR" />
+                    </div>
+                    <div className="btn" onClick={undoSubs}>
+                        <Translate value="UNDO" />
+                    </div>
+                </div>
+                <div className="operate">
+                    <div className="btn" onClick={clearSubsHandler}>
+                        <Translate value="Clear Subtitles" />
+                    </div>
+                </div>
                 <div className={`configuration ${isSetVideo ? '' : 'hide-config'}`}>
                     <p className="configuration-heading">
                         <b>Configuration Options</b>
@@ -905,29 +928,6 @@ export default function Header({
                         </div>
                         <div className="btn" onClick={() => downloadSubReference('vtt')}>
                             <Translate value="EXPORT_VTT" />
-                        </div>
-                    </div>
-                    <div className="operate">
-                        <div
-                            className="btn"
-                            onClick={() => {
-                                if (window.confirm(t('CLEAR_TIP')) === true) {
-                                    localStorage.setItem('videoSrc', '/sample.mp4');
-                                    clearSubs();
-                                    clearSubsEnglish();
-                                    window.location.reload();
-                                }
-                            }}
-                        >
-                            <Translate value="CLEAR" />
-                        </div>
-                        <div className="btn" onClick={undoSubs}>
-                            <Translate value="UNDO" />
-                        </div>
-                    </div>
-                    <div className="operate">
-                        <div className="btn" onClick={clearSubsHandler}>
-                            <Translate value="Clear Subtitles" />
                         </div>
                     </div>
                 </div>

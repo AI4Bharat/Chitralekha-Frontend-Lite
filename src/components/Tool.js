@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 // import languages from '../libs/languages';
 import { t, Translate } from 'react-i18nify';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { getExt, download } from '../utils';
 import { file2sub, sub2vtt, sub2srt, sub2txt, url2sub, vtt2url } from '../libs/readSub';
 import sub2ass from '../libs/readSub/sub2ass';
@@ -537,6 +537,7 @@ export default function Header({
             }
 
             setIsSetVideo(true);
+            localStorage.setItem('isVideoPresent', true);
         },
         [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData, setIsSetVideo],
     );
@@ -680,6 +681,7 @@ export default function Header({
             }
 
             setIsSetVideo(true);
+            localStorage.setItem('isVideoPresent', true);
         },
         [
             setSubtitleEnglish,
@@ -788,6 +790,16 @@ export default function Header({
         [subtitleEnglish],
     );
 
+    useEffect(() => {
+        console.log(localStorage.getItem('isVideoPresent'));
+
+        if (localStorage.getItem('isVideoPresent') === null) {
+            setIsSetVideo(false);
+        } else {
+            setIsSetVideo(true);
+        }
+    }, [setIsSetVideo]);
+
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
             <div className={`tool-button`}>
@@ -857,7 +869,7 @@ export default function Header({
                         <Translate value="Clear Subtitles" />
                     </div>
                 </div>
-                <div className={`configuration ${isSetVideo ? '' : 'hide-config'}`}>
+                <div className={`${isSetVideo ? 'configuration' : 'configuration hide-config'}`}>
                     <p className="configuration-heading">
                         <b>Configuration Options</b>
                     </p>

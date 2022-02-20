@@ -8,7 +8,9 @@ const en = {
     EXPORT_VTT: 'Export VTT',
     EXPORT_VIDEO: 'Export Video',
     TRANSLATE: 'Translation',
+    TRANSCRIBE: 'Transcription',
     TRANSLATING: 'Translation...',
+    TRANSCRIBING: 'Transcribing ...',
     TRANSLAT_SUCCESS: 'Translation success',
     DECODE_START: 'Start decoding audio',
     DECODE_SUCCESS: 'Decoding audio success',
@@ -32,9 +34,9 @@ const en = {
     BURN_START: 'Start burn subtitles',
     BURN_SUCCESS: 'Burn subtitles success',
     OPEN_VIDEO_ERROR: 'Please open the video first',
-    SAME_LANGUAGE: 'Same Language',
+    SAME_LANGUAGE: 'Transcription',
     SIGN_LANGUAGE: 'Sign Language',
-    MAIN_LANGUAGE: 'Subtitling',
+    MAIN_LANGUAGE: 'Translation',
 };
 
 const it = {

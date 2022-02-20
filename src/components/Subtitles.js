@@ -296,7 +296,7 @@ export default function Subtitles({
                 {isPrimary && (
                     <div className="translate">
                         <div className="heading">
-                            <h4> Primary Subtitles</h4>
+                            <h4>Translation</h4>
                         </div>
                         <div className="options">
                             <select

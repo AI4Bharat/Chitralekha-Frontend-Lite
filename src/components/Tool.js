@@ -380,8 +380,6 @@ export default function Header({
     setConfiguration,
     enableConfiguration,
     setEnableConfiguration,
-    isSetVideo,
-    setIsSetVideo,
     isSetConfiguration,
     setIsSetConfiguration,
 }) {
@@ -390,6 +388,7 @@ export default function Header({
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
+    const [isSetVideo, setIsSetVideo] = useState(false);
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -536,8 +535,8 @@ export default function Header({
                 }
             }
 
-            setIsSetVideo(true);
             localStorage.setItem('isVideoPresent', true);
+            setIsSetVideo(true);
         },
         [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData, setIsSetVideo],
     );
@@ -680,8 +679,8 @@ export default function Header({
                     });
             }
 
-            setIsSetVideo(true);
             localStorage.setItem('isVideoPresent', true);
+            setIsSetVideo(true);
         },
         [
             setSubtitleEnglish,
@@ -791,14 +790,13 @@ export default function Header({
     );
 
     useEffect(() => {
-        console.log(localStorage.getItem('isVideoPresent'));
-        if (localStorage.getItem('isVideoPresent') === true) {
-            setIsSetVideo(true);
-        } else {
-            console.log('here');
-            setIsSetVideo(false);
+        if (isSetVideo === false) {
+            if (window.localStorage.getItem('isVideoPresent') === 'true') {
+                console.log('here inside loop');
+                setIsSetVideo(!isSetVideo);
+            }
         }
-    }, [setIsSetVideo]);
+    }, [setIsSetVideo, isSetVideo]);
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
@@ -852,7 +850,7 @@ export default function Header({
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
                                 localStorage.setItem('videoSrc', '/sample.mp4');
-                                localStorage.setItem('isVideoPresent', null);
+                                localStorage.setItem('isVideoPresent', false);
                                 localStorage.setItem('lang', 'en');
                                 clearSubs();
                                 clearSubsEnglish();
@@ -871,7 +869,12 @@ export default function Header({
                         <Translate value="Clear Subtitles" />
                     </div>
                 </div>
-                <div className={`${isSetVideo === true ? 'configuration' : 'configuration  hide-config'}`}>
+
+                <div
+                    className={`
+                        ${isSetVideo ? 'configuration' : 'hide-config'}
+                `}
+                >
                     <p className="configuration-heading">
                         <b>Configuration Options</b>
                     </p>

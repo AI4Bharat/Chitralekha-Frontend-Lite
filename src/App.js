@@ -425,7 +425,8 @@ export default function App({ defaultLang }) {
             <div className="main">
                 <Links />
                 <Player {...props} />
-                {(configuration === 'Subtitling' || configuration === '') && (
+                {configuration === '' && <></>}
+                {configuration === 'Subtitling' && (
                     <>
                         <Subtitles
                             currentIndex={props.currentIndex}

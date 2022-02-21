@@ -63,7 +63,7 @@ export default async function googleTranslate(subtitle = [], lang) {
                     source_language: 'en',
                     target_language: lang,
                 };
-                fetch('http://164.52.212.33:5050/batch_translate', {
+                fetch('http://13.90.168.58:8080/batch_translate', {
                     method: 'POST',
                     body: JSON.stringify(body),
                     headers: {
@@ -74,6 +74,7 @@ export default async function googleTranslate(subtitle = [], lang) {
                         return resp.json();
                     })
                     .then((resp) => {
+                        console.log(resp);
                         for (let i = 0; i < resp.text_lines.length; i++) {
                             entireArray[i].text = resp.text_lines[i];
                         }

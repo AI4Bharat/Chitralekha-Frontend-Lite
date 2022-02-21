@@ -853,6 +853,7 @@ export default function Header({
                             if (window.confirm(t('CLEAR_TIP')) === true) {
                                 localStorage.setItem('videoSrc', '/sample.mp4');
                                 localStorage.setItem('isVideoPresent', null);
+                                localStorage.setItem('lang', 'en');
                                 clearSubs();
                                 clearSubsEnglish();
                                 window.location.reload();

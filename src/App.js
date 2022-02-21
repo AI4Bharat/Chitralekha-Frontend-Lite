@@ -420,10 +420,6 @@ export default function App({ defaultLang }) {
         setIsSetConfiguration,
     };
 
-    useEffect(() => {
-        console.log(configuration);
-    }, [configuration]);
-
     return (
         <Style>
             <div className="main">

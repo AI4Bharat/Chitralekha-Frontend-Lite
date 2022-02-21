@@ -792,11 +792,11 @@ export default function Header({
 
     useEffect(() => {
         console.log(localStorage.getItem('isVideoPresent'));
-
-        if (localStorage.getItem('isVideoPresent') === null) {
-            setIsSetVideo(false);
-        } else {
+        if (localStorage.getItem('isVideoPresent') === true) {
             setIsSetVideo(true);
+        } else {
+            console.log('here');
+            setIsSetVideo(false);
         }
     }, [setIsSetVideo]);
 
@@ -852,6 +852,7 @@ export default function Header({
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
                                 localStorage.setItem('videoSrc', '/sample.mp4');
+                                localStorage.setItem('isVideoPresent', null);
                                 clearSubs();
                                 clearSubsEnglish();
                                 window.location.reload();
@@ -869,7 +870,7 @@ export default function Header({
                         <Translate value="Clear Subtitles" />
                     </div>
                 </div>
-                <div className={`${isSetVideo ? 'configuration' : 'configuration hide-config'}`}>
+                <div className={`${isSetVideo === true ? 'configuration' : 'configuration  hide-config'}`}>
                     <p className="configuration-heading">
                         <b>Configuration Options</b>
                     </p>

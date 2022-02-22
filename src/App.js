@@ -61,6 +61,7 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
+    const [translationApi, setTranslationApi] = useState('AI4Bharat');
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -329,6 +330,7 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         // console.log(subtitle);
+        console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
         const fetchSubtitle = () =>
@@ -418,6 +420,8 @@ export default function App({ defaultLang }) {
         setIsSetVideo,
         isSetConfiguration,
         setIsSetConfiguration,
+        translationApi,
+        setTranslationApi,
     };
 
     return (
@@ -465,6 +469,7 @@ export default function App({ defaultLang }) {
                             setSubtitleOriginal={props.setSubtitleOriginal}
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
+                            translationApi={props.translationApi}
                         />
                     </>
                 )}

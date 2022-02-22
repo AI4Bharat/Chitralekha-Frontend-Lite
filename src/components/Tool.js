@@ -83,6 +83,27 @@ const Style = styled.div`
         transition: all 0.1s;
     }
 
+    .select-translation-api-container {
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+        display: flex;
+        flex-direction: column;
+        // justify-content: center;
+        padding-left: 10px;
+
+        .select-heading {
+            margin-top: -0.5px;
+        }
+
+        select {
+            width: 95%;
+            outline: none;
+            height: 35px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            margin-top: -10px;
+        }
+    }
+
     .burn {
         display: flex;
         justify-content: space-between;
@@ -384,6 +405,8 @@ export default function Header({
     setEnableConfiguration,
     isSetConfiguration,
     setIsSetConfiguration,
+    translationApi,
+    setTranslationApi,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -915,6 +938,25 @@ export default function Header({
                     </div>
                 </div>
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
+                    {configuration === 'Subtitling' && (
+                        <>
+                            <div className="select-translation-api-container">
+                                <p className="select-heading">
+                                    <b>Configuration Options</b>
+                                </p>
+                                <select
+                                    value={translationApi}
+                                    onChange={(e) => {
+                                        // console.log(e.target.value);
+                                        setTranslationApi(e.target.value);
+                                    }}
+                                >
+                                    <option value="AI4Bharat">AI4Bharat Translate Api</option>
+                                    <option value="Google">Google Translate Api</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">

@@ -79,13 +79,13 @@ export default function App({ defaultLang }) {
     const copySubs = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
     const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
 
-    useEffect(() => {
-        //localStorage.setItem('lang', 'en');
+    // useEffect(() => {
+    //     //localStorage.setItem('lang', 'en');
 
-        if (localStorage.getItem('videoSrc') === null) {
-            localStorage.setItem('videoSrc', '/sample.mp4');
-        }
-    }, []);
+    //     if (localStorage.getItem('videoSrc') === null) {
+    //         localStorage.setItem('videoSrc', '/sample.mp4');
+    //     }
+    // }, []);
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {

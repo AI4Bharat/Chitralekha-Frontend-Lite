@@ -75,6 +75,7 @@ const Style = styled.div`
         transform: scaleY(0) !important;
         transition: all 0.25s;
         transform-origin: top;
+        height: 0;
     }
 
     .hide-secondary-options * > {
@@ -212,6 +213,7 @@ const Style = styled.div`
         transform: scaleY(0) !important;
         transition: all 0.25s;
         transform-origin: top;
+        height: 0;
     }
     .hide-config .configuration-heading {
         opacity: 0;
@@ -516,7 +518,7 @@ export default function Header({
                     const url = URL.createObjectURL(new Blob([file]));
                     waveform.decoder.destroy();
                     waveform.drawer.update();
-                    waveform.seek(0);
+                    // waveform.seek(0);
                     player.currentTime = 0;
                     clearSubs();
                     setSubtitle([
@@ -849,7 +851,8 @@ export default function Header({
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
-                                localStorage.setItem('videoSrc', '/sample.mp4');
+                                // localStorage.setItem('videoSrc', '/sample.mp4');
+                                localStorage.setItem('videoSrc', null);
                                 localStorage.setItem('isVideoPresent', false);
                                 localStorage.setItem('lang', 'en');
                                 clearSubs();

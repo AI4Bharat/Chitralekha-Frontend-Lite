@@ -6,8 +6,9 @@ import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { ReactTransliterate } from 'react-transliterate';
 import { t, Translate } from 'react-i18nify';
-import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
+// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
+import ai4BharatTranslate from '../libs/ai4BharatTranslate';
 
 const Style = styled.div`
     position: relative;
@@ -30,6 +31,7 @@ const Style = styled.div`
 
         .options {
             display: flex;
+            width: 80%;
         }
 
         select {
@@ -45,7 +47,7 @@ const Style = styled.div`
             justify-content: center;
             align-items: center;
             height: 35px;
-            width: 33%;
+            width: 50%;
             border-radius: 3px;
             color: #fff;
             cursor: pointer;
@@ -153,6 +155,7 @@ export default function Subtitles({
     setClearedSubs,
     configuration,
     updateSubOriginal = null,
+    translationApi,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
@@ -181,29 +184,53 @@ export default function Subtitles({
     }, [resize]);
 
     const onTranslate = useCallback(() => {
+        console.log(translationApi);
         setLoading(t('TRANSLATING'));
 
         if (clearedSubs) {
-            if (translate === 'en-k') {
-                return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
+            // if (translate === 'en-k') {
+            //     return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
+            //         .then((res) => {
+            //             englishKeywordsTranslate(formatSub(res), translate)
+            //                 .then((res) => {
+            //                     setLoading('');
+            //                     setSubtitle(formatSub(res));
+            //                     localStorage.setItem('currentLang', 'en');
+            //                     notify({
+            //                         message: t('TRANSLAT_SUCCESS'),
+            //                         level: 'success',
+            //                     });
+            //                 })
+            //                 .catch((err) => {
+            //                     setLoading('');
+            //                     notify({
+            //                         message: err.message,
+            //                         level: 'error',
+            //                     });
+            //                 });
+            //         })
+            //         .catch((err) => {
+            //             setLoading('');
+            //             notify({
+            //                 message: err.message,
+            //                 level: 'error',
+            //             });
+            //         });
+            // }
+
+            if (translationApi === 'AI4Bharat') {
+                return ai4BharatTranslate(
+                    formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
+                    translate,
+                )
                     .then((res) => {
-                        englishKeywordsTranslate(formatSub(res), translate)
-                            .then((res) => {
-                                setLoading('');
-                                setSubtitle(formatSub(res));
-                                localStorage.setItem('currentLang', 'en');
-                                notify({
-                                    message: t('TRANSLAT_SUCCESS'),
-                                    level: 'success',
-                                });
-                            })
-                            .catch((err) => {
-                                setLoading('');
-                                notify({
-                                    message: err.message,
-                                    level: 'error',
-                                });
-                            });
+                        setLoading('');
+                        setSubtitle(formatSub(res));
+                        localStorage.setItem('currentLang', translate);
+                        notify({
+                            message: t('TRANSLAT_SUCCESS'),
+                            level: 'success',
+                        });
                     })
                     .catch((err) => {
                         setLoading('');
@@ -233,26 +260,46 @@ export default function Subtitles({
                 });
         }
 
-        if (translate === 'en-k') {
-            return googleTranslate(formatSub(subtitle), 'en')
+        // if (translate === 'en-k') {
+        //     return googleTranslate(formatSub(subtitle), 'en')
+        //         .then((res) => {
+        //             englishKeywordsTranslate(formatSub(res), translate)
+        //                 .then((res) => {
+        //                     setLoading('');
+        //                     setSubtitle(formatSub(res));
+        //                     localStorage.setItem('currentLang', 'en');
+        //                     notify({
+        //                         message: t('TRANSLAT_SUCCESS'),
+        //                         level: 'success',
+        //                     });
+        //                 })
+        //                 .catch((err) => {
+        //                     setLoading('');
+        //                     notify({
+        //                         message: err.message,
+        //                         level: 'error',
+        //                     });
+        //                 });
+        //         })
+        //         .catch((err) => {
+        //             setLoading('');
+        //             notify({
+        //                 message: err.message,
+        //                 level: 'error',
+        //             });
+        //         });
+        // }
+        if (translationApi === 'AI4Bharat') {
+            // console.log('ai4bharat api');
+            return ai4BharatTranslate(formatSub(subtitle), translate)
                 .then((res) => {
-                    englishKeywordsTranslate(formatSub(res), translate)
-                        .then((res) => {
-                            setLoading('');
-                            setSubtitle(formatSub(res));
-                            localStorage.setItem('currentLang', 'en');
-                            notify({
-                                message: t('TRANSLAT_SUCCESS'),
-                                level: 'success',
-                            });
-                        })
-                        .catch((err) => {
-                            setLoading('');
-                            notify({
-                                message: err.message,
-                                level: 'error',
-                            });
-                        });
+                    setLoading('');
+                    setSubtitle(formatSub(res));
+                    localStorage.setItem('currentLang', translate);
+                    notify({
+                        message: t('TRANSLAT_SUCCESS'),
+                        level: 'success',
+                    });
                 })
                 .catch((err) => {
                     setLoading('');
@@ -263,6 +310,7 @@ export default function Subtitles({
                 });
         }
 
+        // console.log('google api');
         return googleTranslate(formatSub(subtitle), translate)
             .then((res) => {
                 setLoading('');
@@ -280,7 +328,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs]);
+    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
     useEffect(() => {
         if (localStorage.getItem('lang')) {

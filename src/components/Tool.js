@@ -75,11 +75,33 @@ const Style = styled.div`
         transform: scaleY(0) !important;
         transition: all 0.25s;
         transform-origin: top;
+        height: 0;
     }
 
     .hide-secondary-options * > {
         opacity: 0;
         transition: all 0.1s;
+    }
+
+    .select-translation-api-container {
+        border-bottom: 1px solid rgb(255 255 255 / 20%);
+        display: flex;
+        flex-direction: column;
+        // justify-content: center;
+        padding-left: 10px;
+
+        .select-heading {
+            margin-top: -0.5px;
+        }
+
+        select {
+            width: 95%;
+            outline: none;
+            height: 35px;
+            border-radius: 3px;
+            margin-bottom: 10px;
+            margin-top: -10px;
+        }
     }
 
     .burn {
@@ -212,6 +234,7 @@ const Style = styled.div`
         transform: scaleY(0) !important;
         transition: all 0.25s;
         transform-origin: top;
+        height: 0;
     }
     .hide-config .configuration-heading {
         opacity: 0;
@@ -380,16 +403,17 @@ export default function Header({
     setConfiguration,
     enableConfiguration,
     setEnableConfiguration,
-    isSetVideo,
-    setIsSetVideo,
     isSetConfiguration,
     setIsSetConfiguration,
+    translationApi,
+    setTranslationApi,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
+    const [isSetVideo, setIsSetVideo] = useState(false);
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -517,7 +541,7 @@ export default function Header({
                     const url = URL.createObjectURL(new Blob([file]));
                     waveform.decoder.destroy();
                     waveform.drawer.update();
-                    waveform.seek(0);
+                    // waveform.seek(0);
                     player.currentTime = 0;
                     clearSubs();
                     setSubtitle([
@@ -536,8 +560,8 @@ export default function Header({
                 }
             }
 
-            setIsSetVideo(true);
             localStorage.setItem('isVideoPresent', true);
+            setIsSetVideo(true);
         },
         [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData, setIsSetVideo],
     );
@@ -680,8 +704,8 @@ export default function Header({
                     });
             }
 
-            setIsSetVideo(true);
             localStorage.setItem('isVideoPresent', true);
+            setIsSetVideo(true);
         },
         [
             setSubtitleEnglish,
@@ -791,14 +815,13 @@ export default function Header({
     );
 
     useEffect(() => {
-        console.log(localStorage.getItem('isVideoPresent'));
-
-        if (localStorage.getItem('isVideoPresent') === null) {
-            setIsSetVideo(false);
-        } else {
-            setIsSetVideo(true);
+        if (isSetVideo === false) {
+            if (window.localStorage.getItem('isVideoPresent') === 'true') {
+                console.log('here inside loop');
+                setIsSetVideo(!isSetVideo);
+            }
         }
-    }, [setIsSetVideo]);
+    }, [setIsSetVideo, isSetVideo]);
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
@@ -851,7 +874,10 @@ export default function Header({
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
-                                localStorage.setItem('videoSrc', '/sample.mp4');
+                                // localStorage.setItem('videoSrc', '/sample.mp4');
+                                localStorage.setItem('videoSrc', null);
+                                localStorage.setItem('isVideoPresent', false);
+                                localStorage.setItem('lang', 'en');
                                 clearSubs();
                                 clearSubsEnglish();
                                 window.location.reload();
@@ -869,7 +895,12 @@ export default function Header({
                         <Translate value="Clear Subtitles" />
                     </div>
                 </div>
-                <div className={`${isSetVideo ? 'configuration' : 'configuration hide-config'}`}>
+
+                <div
+                    className={`
+                        ${isSetVideo ? 'configuration' : 'hide-config'}
+                `}
+                >
                     <p className="configuration-heading">
                         <b>Configuration Options</b>
                     </p>
@@ -907,6 +938,25 @@ export default function Header({
                     </div>
                 </div>
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
+                    {configuration === 'Subtitling' && (
+                        <>
+                            <div className="select-translation-api-container">
+                                <p className="select-heading">
+                                    <b>Configuration Options</b>
+                                </p>
+                                <select
+                                    value={translationApi}
+                                    onChange={(e) => {
+                                        // console.log(e.target.value);
+                                        setTranslationApi(e.target.value);
+                                    }}
+                                >
+                                    <option value="AI4Bharat">AI4Bharat Translate Api</option>
+                                    <option value="Google">Google Translate Api</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">

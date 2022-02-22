@@ -61,6 +61,7 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
+    const [translationApi, setTranslationApi] = useState('AI4Bharat');
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -79,13 +80,13 @@ export default function App({ defaultLang }) {
     const copySubs = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
     const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
 
-    useEffect(() => {
-        //localStorage.setItem('lang', 'en');
+    // useEffect(() => {
+    //     //localStorage.setItem('lang', 'en');
 
-        if (localStorage.getItem('videoSrc') === null) {
-            localStorage.setItem('videoSrc', '/sample.mp4');
-        }
-    }, []);
+    //     if (localStorage.getItem('videoSrc') === null) {
+    //         localStorage.setItem('videoSrc', '/sample.mp4');
+    //     }
+    // }, []);
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
@@ -329,6 +330,7 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         // console.log(subtitle);
+        console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
         const fetchSubtitle = () =>
@@ -418,18 +420,17 @@ export default function App({ defaultLang }) {
         setIsSetVideo,
         isSetConfiguration,
         setIsSetConfiguration,
+        translationApi,
+        setTranslationApi,
     };
-
-    useEffect(() => {
-        console.log(configuration);
-    }, [configuration]);
 
     return (
         <Style>
             <div className="main">
                 <Links />
                 <Player {...props} />
-                {(configuration === 'Subtitling' || configuration === '') && (
+                {configuration === '' && <></>}
+                {configuration === 'Subtitling' && (
                     <>
                         <Subtitles
                             currentIndex={props.currentIndex}
@@ -468,6 +469,7 @@ export default function App({ defaultLang }) {
                             setSubtitleOriginal={props.setSubtitleOriginal}
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
+                            translationApi={props.translationApi}
                         />
                     </>
                 )}

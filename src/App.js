@@ -330,7 +330,7 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         // console.log(subtitle);
-        console.log(translationApi);
+        // console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
         const fetchSubtitle = () =>

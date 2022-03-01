@@ -198,7 +198,7 @@ export default function SameLanguageSubtitles({
             language: 'en',
         };
 
-        return fetch('http://13.90.168.58:8000/transcribe_audio', {
+        return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),

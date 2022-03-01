@@ -15,7 +15,7 @@ export default async function ai4BharatTranslate(subtitle = [], lang) {
                     source_language: 'en',
                     target_language: lang,
                 };
-                fetch('http://13.90.168.58:8080/batch_translate', {
+                fetch(`${process.env.REACT_APP_NMR_URL}/batch_translate`, {
                     method: 'POST',
                     body: JSON.stringify(body),
                     headers: {

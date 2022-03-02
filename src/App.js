@@ -333,12 +333,12 @@ export default function App({ defaultLang }) {
         // console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
-        const fetchSubtitle = () =>
-            fetch('/sample.json')
-                .then((res) => res.json())
-                .then((res) => {
-                    setSubtitleOriginal(res.map((item) => new Sub(item)));
-                });
+        // const fetchSubtitle = () =>
+        //     fetch('/sample.json')
+        //         .then((res) => res.json())
+        //         .then((res) => {
+        //             setSubtitleOriginal(res.map((item) => new Sub(item)));
+        //         });
 
         if (localSubtitleString) {
             try {
@@ -347,13 +347,13 @@ export default function App({ defaultLang }) {
                 if (localSubtitle.length) {
                     setSubtitleOriginal(localSubtitle.map((item) => new Sub(item)));
                 } else {
-                    fetchSubtitle();
+                    // fetchSubtitle();
                 }
             } catch (error) {
-                fetchSubtitle();
+                // fetchSubtitle();
             }
         } else {
-            fetchSubtitle();
+            // fetchSubtitle();
         }
         if (localSubtitleEnglish) {
             try {

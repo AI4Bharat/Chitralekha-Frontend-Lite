@@ -1,23 +1,26 @@
 name: Build and Deploy
 on:
-  push:
-    branches:
-      - master
+    push:
+        branches:
+            - master
 jobs:
-  build-and-deploy:
-    concurrency: ci-${{ github.ref }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v2
+    build-and-deploy:
+        concurrency: ci-${{ github.ref }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout 🛎️
+              uses: actions/checkout@v2
 
-      - name: Install and Build 🔧
-        run: |
-          npm ci
-          npm run build
+            - name: Install and Build 🔧
+              run: |
+                  npm ci
+                  npm run build
+              env:
+                  REACT_APP_ASR_URL: ${{ secrets.REACT_APP_ASR_URL }}
+                  REACT_APP_NMR_URL: ${{ secrets.REACT_APP_NMR_URL }}
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.2.5
-        with:
-          branch: gh-pages
-          folder: build
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@v4.2.5
+              with:
+                  branch: gh-pages
+                  folder: build

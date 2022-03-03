@@ -158,6 +158,7 @@ export default function SameLanguageSubtitles({
     setClearedSubs,
     updateSubOriginal = null,
     clearSubs,
+    setSubtitleEnglish,
 }) {
     const [height, setHeight] = useState(100);
     // const [translate, setTranslate] = useState(null);
@@ -211,7 +212,9 @@ export default function SameLanguageSubtitles({
                 const suburl = vtt2url(resp.output);
                 url2sub(suburl).then((urlsub) => {
                     setSubtitle(formatSub(urlsub));
+                    setSubtitleEnglish(formatSub(urlsub));
                     localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                    localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
                 });
             })
             .then(() => setLoading(''))
@@ -223,7 +226,7 @@ export default function SameLanguageSubtitles({
                     level: 'error',
                 });
             });
-    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player]);
+    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish]);
 
     // useEffect(() => {
     //     if (localStorage.getItem('lang')) {
@@ -298,15 +301,7 @@ export default function SameLanguageSubtitles({
                                             });
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
-                                        enabled={
-                                            isPrimary
-                                                ? !localStorage.getItem('lang') ||
-                                                  localStorage.getItem('lang') === 'en' ||
-                                                  localStorage.getItem('lang') === 'en-k'
-                                                    ? false
-                                                    : true
-                                                : false
-                                        }
+                                        enabled={false}
                                         lang={
                                             isPrimary
                                                 ? localStorage.getItem('lang') === 'en-k'

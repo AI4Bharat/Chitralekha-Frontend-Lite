@@ -312,15 +312,7 @@ export default function SignLanguageSubtitles({
                                             });
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
-                                        enabled={
-                                            isPrimary
-                                                ? !localStorage.getItem('lang') ||
-                                                  localStorage.getItem('lang') === 'en' ||
-                                                  localStorage.getItem('lang') === 'en-k'
-                                                    ? false
-                                                    : true
-                                                : false
-                                        }
+                                        enabled={false}
                                         lang={
                                             isPrimary
                                                 ? localStorage.getItem('lang') === 'en-k'

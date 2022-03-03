@@ -539,6 +539,7 @@ export default function App({ defaultLang }) {
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
                             clearSubs={props.clearSubs}
+                            setSubtitleEnglish={props.setSubtitleEnglish}
                         />
                     </>
                 )}

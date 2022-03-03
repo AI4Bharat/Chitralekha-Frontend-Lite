@@ -942,7 +942,7 @@ export default function Header({
                         <>
                             <div className="select-translation-api-container">
                                 <p className="select-heading">
-                                    <b>Configuration Options</b>
+                                    <b>Translation Api</b>
                                 </p>
                                 <select
                                     value={translationApi}
@@ -951,8 +951,8 @@ export default function Header({
                                         setTranslationApi(e.target.value);
                                     }}
                                 >
-                                    <option value="AI4Bharat">AI4Bharat Translate Api</option>
-                                    <option value="Google">Google Translate Api</option>
+                                    <option value="AI4Bharat">AI4Bharat</option>
+                                    <option value="Google">Google</option>
                                 </select>
                             </div>
                         </>

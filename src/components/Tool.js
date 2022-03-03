@@ -573,7 +573,7 @@ export default function Header({
                 console.log(process.env.REACT_APP_ASR_URL);
 
                 fetch(
-                    `${process.env.REACT_APP_ASR_URL}get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
+                    `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
                     {
                         method: 'POST',
                     },
@@ -617,7 +617,7 @@ export default function Header({
                                 language: 'en',
                             };
 
-                            fetch(`${process.env.REACT_APP_ASR_URL}transcribe_audio`, {
+                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(data),
@@ -641,7 +641,7 @@ export default function Header({
                         }
                     });
                 fetch(
-                    `${process.env.REACT_APP_ASR_URL}get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
+                    `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
                     {
                         method: 'POST',
                     },
@@ -680,7 +680,7 @@ export default function Header({
                                 language: 'en',
                             };
 
-                            fetch(`${process.env.REACT_APP_ASR_URL}transcribe_audio`, {
+                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(data),

@@ -571,7 +571,7 @@ export default function Header({
                 setLoading(t('LOADING'));
 
                 fetch(
-                    `http://13.90.168.58:8000/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
+                    `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
                     {
                         method: 'POST',
                     },
@@ -615,7 +615,7 @@ export default function Header({
                                 language: 'en',
                             };
 
-                            fetch('http://164.52.212.33:5000/transcribe_audio', {
+                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(data),
@@ -639,7 +639,7 @@ export default function Header({
                         }
                     });
                 fetch(
-                    `https://youtube-dl-utils-api.herokuapp.com/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
+                    `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
                     {
                         method: 'POST',
                     },
@@ -678,7 +678,7 @@ export default function Header({
                                 language: 'en',
                             };
 
-                            fetch('http://164.52.212.33:5000/transcribe_audio', {
+                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(data),

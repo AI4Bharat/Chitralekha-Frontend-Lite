@@ -545,7 +545,7 @@ export default function App({ defaultLang }) {
                 )}
                 <Tool {...props} />
             </div>
-            <Footer {...props} />
+            {isSetVideo && <Footer {...props} />}
             {loading ? <Loading loading={loading} /> : null}
             {processing > 0 && processing < 100 ? <ProgressBar processing={processing} /> : null}
             <NotificationSystem ref={notificationSystem} allowHTML={true} />

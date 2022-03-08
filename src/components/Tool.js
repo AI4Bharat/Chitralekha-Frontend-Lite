@@ -407,25 +407,30 @@ export default function Header({
     setIsSetConfiguration,
     translationApi,
     setTranslationApi,
+    isSetVideo,
+    setIsSetVideo,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
-    const [isSetVideo, setIsSetVideo] = useState(false);
+    // const [isSetVideo, setIsSetVideo] = useState(false);
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
 
-        let tempSubs = subtitle.slice(0);
-        tempSubs.map((sub) => {
-            sub.text = '';
-            sub.text2 = '';
-            return true;
-        });
+        // let tempSubs = subtitle.slice(0);
+        // tempSubs.map((sub) => {
+        //     sub.text = '';
+        //     sub.text2 = '';
+        //     return true;
+        // });
+        setSubtitle([]);
+        setSubtitleEnglish([]);
+        localStorage.removeItem('subtitleEnglish');
 
-        setSubtitleOriginal(tempSubs);
+        // setSubtitleOriginal(tempSubs);
         setClearedSubs(true);
     };
 

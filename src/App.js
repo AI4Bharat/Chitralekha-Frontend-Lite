@@ -449,6 +449,7 @@ export default function App({ defaultLang }) {
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
                             updateSubOriginal={props.updateSubTranslate}
+                            translationApi={props.translationApi}
                         />
                         <Subtitles
                             currentIndex={props.currentIndex}
@@ -545,7 +546,7 @@ export default function App({ defaultLang }) {
                 )}
                 <Tool {...props} />
             </div>
-            <Footer {...props} />
+            {isSetVideo && <Footer {...props} />}
             {loading ? <Loading loading={loading} /> : null}
             {processing > 0 && processing < 100 ? <ProgressBar processing={processing} /> : null}
             <NotificationSystem ref={notificationSystem} allowHTML={true} />

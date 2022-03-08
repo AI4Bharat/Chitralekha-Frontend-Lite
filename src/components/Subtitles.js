@@ -160,14 +160,50 @@ export default function Subtitles({
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
 
+    const [languageAvailable, setLanguageAvailable] = useState(languages);
+
+    useEffect(() => {
+        if (localStorage.getItem('lang')) {
+            setTranslate(localStorage.getItem('lang'));
+        } else {
+            setTranslate('en');
+        }
+    }, []);
+    useEffect(() => {
+        if (translationApi === 'AI4Bharat') {
+            fetch(`${process.env.REACT_APP_NMR_URL}/supported_languages`)
+                .then((resp) => {
+                    return resp.json();
+                })
+                .then((resp) => {
+                    let langArray = [];
+                    for (const key in resp) {
+                        langArray.push({ name: `${key}`, key: `${resp[key]}` });
+                    }
+                    setLanguageAvailable(langArray);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        } else {
+            setLanguageAvailable(languages);
+        }
+    }, [translationApi]);
     const handleBlur = (data, index) => {
         //console.log(e.target.value);
         if (isPrimary) {
             return;
         }
-        googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
-            updateSubOriginal(data, resp[0], index);
-        });
+        console.log(translationApi);
+        if (translationApi === 'AI4Bharat') {
+            ai4BharatTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
+                updateSubOriginal(data, resp[0], index);
+            });
+        } else {
+            googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
+                updateSubOriginal(data, resp[0], index);
+            });
+        }
     };
 
     const resize = useCallback(() => {
@@ -330,18 +366,10 @@ export default function Subtitles({
             });
     }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
-    useEffect(() => {
-        if (localStorage.getItem('lang')) {
-            setTranslate(localStorage.getItem('lang'));
-        } else {
-            setTranslate('en');
-        }
-    }, []);
-
     return (
         subtitle && (
             <Style className="subtitles">
-                {isPrimary && (
+                {isPrimary && translate && languageAvailable && (
                     <div className="translate">
                         <div className="heading">
                             <h4>Translation</h4>
@@ -354,11 +382,13 @@ export default function Subtitles({
                                     localStorage.setItem('lang', event.target.value);
                                 }}
                             >
-                                {(languages[language] || languages.en).map((item) => (
-                                    <option key={item.key} value={item.key}>
-                                        {item.name}
-                                    </option>
-                                ))}
+                                {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
+                                    (item) => (
+                                        <option key={item.key} value={item.key}>
+                                            {item.name}
+                                        </option>
+                                    ),
+                                )}
                             </select>
                             <div className="btn" onClick={onTranslate}>
                                 <Translate value="TRANSLATE" />

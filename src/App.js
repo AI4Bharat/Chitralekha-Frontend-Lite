@@ -449,6 +449,7 @@ export default function App({ defaultLang }) {
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
                             updateSubOriginal={props.updateSubTranslate}
+                            translationApi={props.translationApi}
                         />
                         <Subtitles
                             currentIndex={props.currentIndex}

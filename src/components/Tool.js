@@ -11,6 +11,7 @@ import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
 import HamburgerMenu from 'react-hamburger-menu';
 import '../utils/ToolNavigation.css';
+import BottomLinks from './BottomLinks';
 
 const Style = styled.div`
     border-left: 1px solid white;
@@ -1019,6 +1020,9 @@ export default function Header({
                         <Translate value="TRANSLATE" />
                     </div>
                 </div> */}
+                <div className="">
+                    <BottomLinks />
+                </div>
 
                 <div className="hotkey">
                     <span>
@@ -1029,6 +1033,9 @@ export default function Header({
                     </span>
                 </div>
             </div>
+            {/* <div className="">
+                <BottomLinks />
+            </div> */}
         </Style>
     );
 }

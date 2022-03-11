@@ -181,12 +181,16 @@ export default function Subtitles({
                         langArray.push({ name: `${key}`, key: `${resp[key]}` });
                     }
                     setLanguageAvailable(langArray);
+                    localStorage.setItem('lang', langArray[0].key);
+                    setTranslate(langArray[0].key);
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
             setLanguageAvailable(languages);
+            localStorage.setItem('lang', languages['en'][1].key);
+            setTranslate(languages['en'][1].key);
         }
     }, [translationApi]);
     const handleBlur = (data, index) => {
@@ -383,11 +387,12 @@ export default function Subtitles({
                                 }}
                             >
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
-                                    (item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.name}
-                                        </option>
-                                    ),
+                                    (item) =>
+                                        item.key !== 'en' && (
+                                            <option key={item.key} value={item.key}>
+                                                {item.name}
+                                            </option>
+                                        ),
                                 )}
                             </select>
                             <div className="btn" onClick={onTranslate}>

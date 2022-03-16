@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import Links from './components/Links';
-import BottomLinks from './components/BottomLinks';
+// import BottomLinks from './components/BottomLinks';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
@@ -38,7 +38,7 @@ const Style = styled.div`
     }
 
     .footer {
-        height: 180px;
+        height: 200px;
     }
 `;
 
@@ -550,7 +550,7 @@ export default function App({ defaultLang }) {
             {loading ? <Loading loading={loading} /> : null}
             {processing > 0 && processing < 100 ? <ProgressBar processing={processing} /> : null}
             <NotificationSystem ref={notificationSystem} allowHTML={true} />
-            <BottomLinks />
+            {/* <BottomLinks /> */}
         </Style>
     );
 }

@@ -592,6 +592,7 @@ export default function Header({
 
                         localStorage.setItem('videoSrc', resp.video);
                         localStorage.setItem('audioSrc', resp.audio);
+                        localStorage.setItem('youtubeURL', youtubeURL);
 
                         if (resp.subtitles) {
                             const sub = resp.subtitles;
@@ -615,13 +616,13 @@ export default function Header({
                                 });
                         } else {
                             const data = {
-                                audio_url: audio,
+                                url: youtubeURL,
                                 vad_level: 2,
                                 chunk_size: 10,
                                 language: 'en',
                             };
 
-                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
+                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(data),
@@ -644,74 +645,76 @@ export default function Header({
                                 });
                         }
                     });
-                fetch(
-                    `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
-                    {
-                        method: 'POST',
-                    },
-                )
-                    .then((resp) => {
-                        return resp.json();
-                    })
-                    .then((resp) => {
-                        //const url = resp.video;
-                        const audio = resp.audio;
+                
+                // fetch(
+                //     `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
+                //     {
+                //         method: 'POST',
+                //     },
+                // )
+                //     .then((resp) => {
+                //         return resp.json();
+                //     })
+                //     .then((resp) => {
+                //         //const url = resp.video;
+                //         const audio = resp.audio;
 
-                        if (resp.subtitles) {
-                            const sub = resp.subtitles;
-                            fetch(sub)
-                                .then((subtext) => {
-                                    return subtext.text();
-                                })
-                                .then((subtext) => {
-                                    clearSubsEnglish();
-                                    const suburl = vtt2url(subtext);
-                                    url2sub(suburl).then((urlsub) => {
-                                        setSubtitleEnglish(urlsub);
-                                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                                    });
+                //         if (resp.subtitles) {
+                //             const sub = resp.subtitles;
+                //             fetch(sub)
+                //                 .then((subtext) => {
+                //                     return subtext.text();
+                //                 })
+                //                 .then((subtext) => {
+                //                     clearSubsEnglish();
+                //                     const suburl = vtt2url(subtext);
+                //                     url2sub(suburl).then((urlsub) => {
+                //                         setSubtitleEnglish(urlsub);
+                //                         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                //                     });
 
-                                    setLoading('');
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                });
-                        } else {
-                            const data = {
-                                audio_url: audio,
-                                vad_level: 2,
-                                chunk_size: 10,
-                                language: 'en',
-                            };
+                //                     setLoading('');
+                //                 })
+                //                 .catch((err) => {
+                //                     console.log(err);
+                //                 });
+                //         } else {
+                //             const data = {
+                //                 audio_url: audio,
+                //                 vad_level: 2,
+                //                 chunk_size: 10,
+                //                 language: 'en',
+                //             };
 
-                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(data),
-                            })
-                                .then((resp) => {
-                                    return resp.json();
-                                })
-                                .then((resp) => {
-                                    console.log(resp.output);
-                                    player.currentTime = 0;
-                                    clearSubs();
-                                    const suburl = vtt2url(resp.output);
-                                    url2sub(suburl).then((urlsub) => {
-                                        setSubtitleEnglish(urlsub);
-                                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                                    });
-                                })
-                                .then(() => setLoading(''))
-                                .catch((err) => {
-                                    console.log(err);
-                                });
-                        }
-                    });
+                //             fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
+                //                 method: 'POST',
+                //                 headers: { 'Content-Type': 'application/json' },
+                //                 body: JSON.stringify(data),
+                //             })
+                //                 .then((resp) => {
+                //                     return resp.json();
+                //                 })
+                //                 .then((resp) => {
+                //                     console.log(resp.output);
+                //                     player.currentTime = 0;
+                //                     clearSubs();
+                //                     const suburl = vtt2url(resp.output);
+                //                     url2sub(suburl).then((urlsub) => {
+                //                         setSubtitleEnglish(urlsub);
+                //                         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                //                     });
+                //                 })
+                //                 .then(() => setLoading(''))
+                //                 .catch((err) => {
+                //                     console.log(err);
+                //                 });
+                //         }
+                //     });
             }
 
             localStorage.setItem('isVideoPresent', true);
             setIsSetVideo(true);
+            setLoading('')
         },
         [
             setSubtitleEnglish,

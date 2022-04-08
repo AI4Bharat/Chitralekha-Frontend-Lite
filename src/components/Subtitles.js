@@ -8,7 +8,8 @@ import { ReactTransliterate } from 'react-transliterate';
 import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
-import ai4BharatTranslate from '../libs/ai4BharatTranslate';
+import { ai4BharatBatchTranslate, ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
+import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
 
 const Style = styled.div`
     position: relative;
@@ -171,12 +172,13 @@ export default function Subtitles({
     }, []);
     useEffect(() => {
         if (translationApi === 'AI4Bharat') {
-            fetch(`${process.env.REACT_APP_NMR_URL}/supported_languages`)
+            fetch(`${process.env.REACT_APP_NMT_URL}/supported_languages`)
                 .then((resp) => {
                     return resp.json();
                 })
                 .then((resp) => {
                     let langArray = [];
+                    langArray.push({ name: 'English', key: 'en' });
                     for (const key in resp) {
                         langArray.push({ name: `${key}`, key: `${resp[key]}` });
                     }
@@ -200,9 +202,10 @@ export default function Subtitles({
         }
         console.log(translationApi);
         if (translationApi === 'AI4Bharat') {
-            ai4BharatTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
-                updateSubOriginal(data, resp[0], index);
-            });
+            return;
+            // ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
+            //     updateSubOriginal(data, resp[0], index);
+            // });
         } else {
             googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
                 updateSubOriginal(data, resp[0], index);
@@ -259,8 +262,9 @@ export default function Subtitles({
             // }
 
             if (translationApi === 'AI4Bharat') {
-                return ai4BharatTranslate(
+                return ai4BharatBatchTranslate(
                     formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
+                    'en',
                     translate,
                 )
                     .then((res) => {
@@ -331,14 +335,18 @@ export default function Subtitles({
         // }
         if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
-            return ai4BharatTranslate(formatSub(subtitle), translate)
+            return ai4BharatASRTranslate(sub2vtt(formatSub(subtitleEnglish)), 'hi', translate)
                 .then((res) => {
-                    setLoading('');
-                    setSubtitle(formatSub(res));
-                    localStorage.setItem('currentLang', translate);
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
+                    console.log(res);
+                    const suburl = vtt2url(res);
+                    url2sub(suburl).then((urlsub) => {
+                        setSubtitle(formatSub(urlsub));
+                        localStorage.setItem('currentLang', translate);
+                        setLoading('');
+                        notify({
+                            message: t('TRANSLAT_SUCCESS'),
+                            level: 'success',
+                        });
                     });
                 })
                 .catch((err) => {
@@ -351,7 +359,7 @@ export default function Subtitles({
         }
 
         // console.log('google api');
-        return googleTranslate(formatSub(subtitle), translate)
+        return googleTranslate(formatSub(subtitleEnglish), translate)
             .then((res) => {
                 setLoading('');
                 setSubtitle(formatSub(res));
@@ -453,8 +461,8 @@ export default function Subtitles({
                                         enabled={
                                             isPrimary
                                                 ? !localStorage.getItem('lang') ||
-                                                  localStorage.getItem('lang') === 'en' ||
-                                                  localStorage.getItem('lang') === 'en-k'
+                                                    localStorage.getItem('lang') === 'en' ||
+                                                    localStorage.getItem('lang') === 'en-k'
                                                     ? false
                                                     : true
                                                 : false

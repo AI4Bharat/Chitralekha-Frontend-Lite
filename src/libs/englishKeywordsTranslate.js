@@ -2,7 +2,7 @@ import { sleep } from '../utils';
 
 function translate(query = '', lang) {
     if (!query.trim()) return Promise.resolve('');
-    const url = new URL(`${process.env.REACT_APP_NMR_URL}/lemmatize_sentence`);
+    const url = new URL(`${process.env.REACT_APP_NMT_URL}/lemmatize_sentence`);
     url.searchParams.append('sentence', query);
     url.searchParams.append('lang', 'en');
 

@@ -11,7 +11,6 @@ import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
 import { url2sub, vtt2url } from '../libs/readSub';
-// import { url2sub, vtt2url } from '../libs/readSub';
 
 const Style = styled.div`
     position: relative;
@@ -187,19 +186,19 @@ export default function SameLanguageSubtitles({
     }, [resize]);
 
     const onTranscribe = useCallback(() => {
-        console.log(localStorage.getItem('audioSrc'));
+        console.log(localStorage.getItem('youtubeURL'));
 
         setLoading(t('TRANSCRIBING'));
-        const audio = localStorage.getItem('audioSrc');
+        const youtubeURL = localStorage.getItem('youtubeURL');
 
         const data = {
-            audio_url: audio,
+            url: youtubeURL,
             vad_level: 2,
             chunk_size: 10,
             language: 'en',
         };
 
-        return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
+        return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),

@@ -1,4 +1,6 @@
-export default async function ai4BharatTranslate(subtitle = [], lang) {
+import { sub2vtt, url2sub, vtt2url } from './readSub';
+
+export async function ai4BharatBatchTranslate(subtitle = [], from_lang, to_lang) {
     console.log('ai4bharat translate clicked');
     return new Promise((resolve, reject) => {
         const result = [];
@@ -12,10 +14,10 @@ export default async function ai4BharatTranslate(subtitle = [], lang) {
             } else {
                 const body = {
                     text_lines: result,
-                    source_language: 'en',
-                    target_language: lang,
+                    source_language: from_lang,
+                    target_language: to_lang,
                 };
-                fetch(`${process.env.REACT_APP_NMR_URL}/batch_translate`, {
+                fetch(`${process.env.REACT_APP_NMT_URL}/batch_translate`, {
                     method: 'POST',
                     body: JSON.stringify(body),
                     headers: {
@@ -38,5 +40,35 @@ export default async function ai4BharatTranslate(subtitle = [], lang) {
                     });
             }
         })();
+    });
+}
+
+export async function ai4BharatASRTranslate(webvtt, from_lang, to_lang) {
+    console.log('ai4bharat vtt_translate clicked');
+
+    return new Promise((resolve, reject) => {
+        const body = {
+            webvtt: webvtt,
+            source_language: from_lang,
+            target_language: to_lang,
+        };
+        fetch(`${process.env.REACT_APP_NMT_URL}/translate_vtt`, {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((resp) => {
+                return resp.json();
+            })
+            .then((resp) => {
+                console.log(resp);
+                resolve(resp.text);
+            })
+            .catch((err) => {
+                console.log(err);
+                reject(err);
+            });
     });
 }

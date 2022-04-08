@@ -17,7 +17,7 @@ jobs:
                   npm run build
               env:
                   REACT_APP_ASR_URL: ${{ secrets.REACT_APP_ASR_URL }}
-                  REACT_APP_NMR_URL: ${{ secrets.REACT_APP_NMR_URL }}
+                  REACT_APP_NMT_URL: ${{ secrets.REACT_APP_NMT_URL }}
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@v4.2.5

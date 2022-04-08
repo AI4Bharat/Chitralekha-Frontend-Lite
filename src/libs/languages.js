@@ -116,7 +116,7 @@ const en = [
     { name: 'Kannada', key: 'kn' },
     { name: 'Malayalam', key: 'ml' },
     { name: 'Marathi', key: 'mr' },
-    { name: 'Nepalese', key: 'ne' },
+    { name: 'Nepali', key: 'ne' },
     { name: 'Oriya', key: 'or' },
     { name: 'Punjabi', key: 'pa' },
     { name: 'Sinhala', key: 'si' },

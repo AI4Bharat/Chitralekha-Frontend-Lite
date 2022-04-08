@@ -376,7 +376,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
-    }, [subtitle, setLoading, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
+    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
     return (
         subtitle && (

@@ -587,7 +587,6 @@ export default function Header({
                     })
                     .then((resp) => {
                         const url = resp.video;
-                        const audio = resp.audio;
                         player.src = url;
 
                         localStorage.setItem('videoSrc', resp.video);
@@ -717,11 +716,9 @@ export default function Header({
             setLoading('')
         },
         [
-            setSubtitleEnglish,
             clearSubs,
             youtubeURL,
             translate,
-            clearSubsEnglish,
             player,
             setSubtitle,
             setLoading,

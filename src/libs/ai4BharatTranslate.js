@@ -1,5 +1,3 @@
-import { sub2vtt, url2sub, vtt2url } from './readSub';
-
 export async function ai4BharatBatchTranslate(subtitle = [], from_lang, to_lang) {
     console.log('ai4bharat translate clicked');
     return new Promise((resolve, reject) => {

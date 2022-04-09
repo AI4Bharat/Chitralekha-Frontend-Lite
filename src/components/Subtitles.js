@@ -8,8 +8,9 @@ import { ReactTransliterate } from 'react-transliterate';
 import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
-import { ai4BharatBatchTranslate, ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
-import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
+import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
+// import { ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
+// import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
 
 const Style = styled.div`
     position: relative;
@@ -178,7 +179,7 @@ export default function Subtitles({
                 })
                 .then((resp) => {
                     let langArray = [];
-                    langArray.push({ name: 'English', key: 'en' });
+                    // langArray.push({ name: 'English', key: 'en' });
                     for (const key in resp) {
                         langArray.push({ name: `${key}`, key: `${resp[key]}` });
                     }
@@ -202,10 +203,10 @@ export default function Subtitles({
         }
         console.log(translationApi);
         if (translationApi === 'AI4Bharat') {
-            return;
-            // ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
-            //     updateSubOriginal(data, resp[0], index);
-            // });
+            // return;
+            ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
+                updateSubOriginal(data, resp[0], index);
+            });
         } else {
             googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
                 updateSubOriginal(data, resp[0], index);
@@ -335,18 +336,14 @@ export default function Subtitles({
         // }
         if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
-            return ai4BharatASRTranslate(sub2vtt(formatSub(subtitleEnglish)), 'hi', translate)
+            return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
                 .then((res) => {
-                    console.log(res);
-                    const suburl = vtt2url(res);
-                    url2sub(suburl).then((urlsub) => {
-                        setSubtitle(formatSub(urlsub));
-                        localStorage.setItem('currentLang', translate);
-                        setLoading('');
-                        notify({
-                            message: t('TRANSLAT_SUCCESS'),
-                            level: 'success',
-                        });
+                    setLoading('');
+                    setSubtitle(formatSub(res));
+                    localStorage.setItem('currentLang', translate);
+                    notify({
+                        message: t('TRANSLAT_SUCCESS'),
+                        level: 'success',
                     });
                 })
                 .catch((err) => {
@@ -356,6 +353,27 @@ export default function Subtitles({
                         level: 'error',
                     });
                 });
+            // return ai4BharatASRTranslate(sub2vtt(formatSub(subtitleEnglish)), 'hi', translate)
+            //     .then((res) => {
+            //         console.log(res);
+            //         const suburl = vtt2url(res);
+            //         url2sub(suburl).then((urlsub) => {
+            //             setSubtitle(formatSub(urlsub));
+            //             localStorage.setItem('currentLang', translate);
+            //             setLoading('');
+            //             notify({
+            //                 message: t('TRANSLAT_SUCCESS'),
+            //                 level: 'success',
+            //             });
+            //         });
+            //     })
+            //     .catch((err) => {
+            //         setLoading('');
+            //         notify({
+            //             message: err.message,
+            //             level: 'error',
+            //         });
+            //     });
         }
 
         // console.log('google api');
@@ -383,9 +401,9 @@ export default function Subtitles({
             <Style className="subtitles">
                 {isPrimary && translate && languageAvailable && (
                     <div className="translate">
-                        <div className="heading">
+                        {/* <div className="heading">
                             <h4>Translation</h4>
-                        </div>
+                        </div> */}
                         <div className="options">
                             <select
                                 value={translate}
@@ -413,7 +431,7 @@ export default function Subtitles({
                 {!isPrimary && (
                     <div className="reference">
                         <h4>Reference Subtitles</h4>
-                        <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span>
+                        {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}
 
@@ -465,14 +483,14 @@ export default function Subtitles({
                                                     localStorage.getItem('lang') === 'en-k'
                                                     ? false
                                                     : true
-                                                : false
+                                                : true
                                         }
                                         lang={
                                             isPrimary
                                                 ? localStorage.getItem('lang') === 'en-k'
                                                     ? 'en'
                                                     : localStorage.getItem('lang')
-                                                : 'en'
+                                                : 'hi'
                                         }
                                         maxOptions={5}
                                         renderComponent={(props) => <textarea {...props} />}

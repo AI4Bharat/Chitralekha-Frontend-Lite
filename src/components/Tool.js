@@ -614,34 +614,35 @@ export default function Header({
                                     console.log(err);
                                 });
                         } else {
-                            const data = {
-                                url: youtubeURL,
-                                vad_level: 2,
-                                chunk_size: 10,
-                                language: 'en',
-                            };
+                            // // Auto-transcribe
+                            // const data = {
+                            //     url: youtubeURL,
+                            //     vad_level: 2,
+                            //     chunk_size: 10,
+                            //     language: 'en',
+                            // };
 
-                            fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(data),
-                            })
-                                .then((resp) => {
-                                    return resp.json();
-                                })
-                                .then((resp) => {
-                                    console.log(resp.output);
-                                    player.currentTime = 0;
-                                    clearSubs();
-                                    const suburl = vtt2url(resp.output);
-                                    url2sub(suburl).then((urlsub) => {
-                                        setSubtitle(urlsub);
-                                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                                    });
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                });
+                            // fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
+                            //     method: 'POST',
+                            //     headers: { 'Content-Type': 'application/json' },
+                            //     body: JSON.stringify(data),
+                            // })
+                            //     .then((resp) => {
+                            //         return resp.json();
+                            //     })
+                            //     .then((resp) => {
+                            //         console.log(resp.output);
+                            //         player.currentTime = 0;
+                            //         clearSubs();
+                            //         const suburl = vtt2url(resp.output);
+                            //         url2sub(suburl).then((urlsub) => {
+                            //             setSubtitle(urlsub);
+                            //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                            //         });
+                            //     })
+                            //     .catch((err) => {
+                            //         console.log(err);
+                            //     });
                         }
                     });
                 

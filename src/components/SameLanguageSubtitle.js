@@ -241,13 +241,13 @@ export default function SameLanguageSubtitles({
                 {isPrimary && (
                     <div className="transcribe">
                         <div className="heading">
-                            <h4>Transcription</h4>
+                            <h4>Speech-To-Text</h4>
                         </div>
                         <div className="options">
                             <div className="btn" onClick={onTranscribe}>
                                 <Translate value="TRANSCRIBE" />
                             </div>
-                            <span className="language"> : en</span>
+                            {/* <span className="language"> : en</span> */}
                         </div>
                     </div>
                 )}
@@ -300,14 +300,15 @@ export default function SameLanguageSubtitles({
                                             });
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
-                                        enabled={false}
-                                        lang={
-                                            isPrimary
-                                                ? localStorage.getItem('lang') === 'en-k'
-                                                    ? 'en'
-                                                    : localStorage.getItem('lang')
-                                                : 'en'
-                                        }
+                                        enabled={true}
+                                        lang='hi'
+                                        // lang={
+                                        //     isPrimary
+                                        //         ? localStorage.getItem('lang') === 'en-k'
+                                        //             ? 'en'
+                                        //             : localStorage.getItem('lang')
+                                        //         : 'en'
+                                        // }
                                         maxOptions={5}
                                         renderComponent={(props) => <textarea {...props} />}
                                     />

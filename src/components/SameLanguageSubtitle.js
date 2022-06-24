@@ -168,6 +168,8 @@ export default function SameLanguageSubtitles({
     translationApi,
     
 }) {
+   // console.log('at start ' + subtitle )
+    //console.log('at start ' + subtitleEnglish )
     const [height, setHeight] = useState(100);
     // const [translate, setTranslate] = useState(null);
     
@@ -214,6 +216,24 @@ export default function SameLanguageSubtitles({
 
     //end of change
     
+    //change
+    function useStickyState(defaultValue, key) {
+        const [value, setValue] = React.useState(() => {
+          const stickyValue = window.localStorage.getItem(key);
+          return stickyValue !== null
+            ? JSON.parse(stickyValue)
+            : defaultValue;
+        });
+        React.useEffect(() => {
+          window.localStorage.setItem(key, JSON.stringify(value));
+        }, [key, value]);
+        return [value, setValue];
+      }
+    
+
+    const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
+
+
     const handleBlur = (data, index) => {
         //console.log(e.target.value);
         
@@ -269,7 +289,7 @@ export default function SameLanguageSubtitles({
             chunk_size: 10,
             language: lang,
         };
-console.log(lang);
+        //console.log(lang);
         return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -317,18 +337,28 @@ console.log(lang);
     end of change*/
 
     return (
-        subtitle && (
+        
+        // subtitle && 
+        // (
+            
             <Style className="subtitles">
+               {/* {console.log('rendering')}
+                {console.log(subtitle)}
+                {console.log(subtitle.length)}
+                {console.log(subtitleEnglish)}
+                {console.log("subEng" + subtitleEnglish.length)} */}
                 {isPrimary && (
                     <div className="transcribe">
                         <div className="heading">
                             <h4>Speech-To-Text</h4>
                         </div>
+                        {console.log('rendering here')}
                         <div className="options">
                             <select
-                                value={transcribe == null ? '' : transcribe}
+                               // value={transcribe == null ? '' : transcribe}
+                               value={modeTranscribe}
                                 onChange={(event) => {
-                                   
+                                    setModeTranscribe(event.target.value);
                                     localStorage.setItem('lang', event.target.value);
                                     setTranscribe(localStorage.getItem('lang'));
                                    // console.log("transcribe "+localStorage.getItem('lang'));
@@ -368,8 +398,8 @@ console.log(lang);
                     height={height}
                     rowHeight={80}
                     scrollToIndex={currentIndex}
-                    rowCount={subtitle.length}
-                    rowGetter={({ index }) => subtitle[index]}
+                    rowCount={subtitleEnglish.length}
+                    rowGetter={({ index }) => subtitleEnglish[index]}
                     headerRowRenderer={() => null}
                     rowRenderer={(props) => {
                         return (
@@ -405,7 +435,7 @@ console.log(lang);
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={true}
-                                        lang='hi'
+                                        lang={localStorage.getItem('lang')}
                                         // lang={
                                         //     isPrimary
                                         //         ? localStorage.getItem('lang') === 'en-k'
@@ -439,7 +469,7 @@ console.log(lang);
                     }}
                 ></Table>
             </Style>
-        )
+    //    )
     );
 }
 

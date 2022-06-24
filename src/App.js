@@ -579,7 +579,7 @@ export default function App({ defaultLang }) {
                         {/* final */}
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
-                            subtitle={props.subtitle} //here
+                            subtitle={props.subtitleEnglish} //here
                             checkSub={props.checkSub}
                             player={props.player}
                             updateSub={props.updateSubEnglish} //here

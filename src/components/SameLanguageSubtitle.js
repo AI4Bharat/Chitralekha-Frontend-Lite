@@ -269,7 +269,7 @@ export default function SameLanguageSubtitles({
             chunk_size: 10,
             language: lang,
         };
-console.log(lang);
+        //console.log(lang);
         return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -317,7 +317,8 @@ console.log(lang);
     end of change*/
 
     return (
-        subtitle && (
+        subtitle && 
+        (
             <Style className="subtitles">
                 {isPrimary && (
                     <div className="transcribe">
@@ -405,7 +406,7 @@ console.log(lang);
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={true}
-                                        lang='hi'
+                                        lang={localStorage.getItem('lang')}
                                         // lang={
                                         //     isPrimary
                                         //         ? localStorage.getItem('lang') === 'en-k'

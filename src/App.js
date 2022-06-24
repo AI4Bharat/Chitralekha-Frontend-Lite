@@ -50,7 +50,7 @@ export default function App({ defaultLang }) {
     const [processing, setProcessing] = useState(0);
     const [language, setLanguage] = useState(defaultLang);
     const [subtitle, setSubtitleOriginal] = useState([]);
-    const [subtitleEnglish, setSubtitleEnglish] = useState(null);
+    const [subtitleEnglish, setSubtitleEnglish] = useState([]);
     const [waveform, setWaveform] = useState(null);
     const [playing, setPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
@@ -341,7 +341,9 @@ export default function App({ defaultLang }) {
         // console.log(subtitle);
         // console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
+     //   console.log(localSubtitleString)
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
+      //  console.log(localSubtitleEnglish)
         // const fetchSubtitle = () =>
         //     fetch('/sample.json')
         //         .then((res) => res.json())
@@ -350,6 +352,7 @@ export default function App({ defaultLang }) {
         //         });
 
         if (localSubtitleString) {
+          //  {console.log("sub other app" + subtitleEnglish + subtitle)}
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
                 //console.log(localSubtitle);
@@ -365,10 +368,12 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
         if (localSubtitleEnglish) {
+            //{console.log("subEng other app" + subtitleEnglish + subtitle)}
             try {
                 const localSubtitle = JSON.parse(localSubtitleEnglish);
                 if (localSubtitle.length) {
                     setSubtitleEnglish(localSubtitle.map((item) => new Sub(item)));
+                    
                 } else {
                     setSubtitleEnglish([]);
                 }
@@ -379,7 +384,7 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
     }, [setSubtitleOriginal, setSubtitleEnglish]);
-
+    // {console.log("subEng other app" + subtitleEnglish + subtitle)}
     const props = {
         player,
         setPlayer,
@@ -434,7 +439,9 @@ export default function App({ defaultLang }) {
     };
 
     return (
+        
         <Style>
+            {/* {console.log("subEng other app" + subtitleEnglish + subtitle)} */}
             <div className="main">
                 <Links />
                 <Player {...props} />
@@ -574,8 +581,9 @@ export default function App({ defaultLang }) {
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             
                         /> */}
-                         
-
+    
+{/* {console.log("subtitleEnglish App " + subtitleEnglish)}
+{console.log("subtitle App "+subtitle)} */}
                         {/* final */}
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
@@ -586,7 +594,7 @@ export default function App({ defaultLang }) {
                             language={props.language}
                             setLanguage={props.setLanguage}
                             setLoading={props.setLoading}
-                            subtitleEnglish={props.subtitleEnglish}
+                            subtitleEnglish={props.subtitleEnglish} //change
                             formatSub={props.formatSub}
                             setSubtitle={props.setSubtitle}
                             notify={props.notify}

@@ -269,7 +269,7 @@ export default function Subtitles({
         }
     }, [resize]);
 
-    const [modeTrans, setModeTrans] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
+    const [modeTranslate, setModeTranslate] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
 
     const onTranslate = useCallback(() => {
         console.log(translationApi);
@@ -461,10 +461,10 @@ export default function Subtitles({
                             <select
                             
                                // value="kn"
-                                value={modeTrans} //new - comment out if don't want sticky options
+                                value={modeTranslate} //new - comment out if don't want sticky options
                                 onChange={(event) => {
                                     setTranslate(event.target.value);
-                                    setModeTrans(event.target.value); //new
+                                    setModeTranslate(event.target.value); //new
                                     localStorage.setItem('lang', event.target.value);
                                     // console.log('in select');
                                      console.log(localStorage.getItem('lang'));

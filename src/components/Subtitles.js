@@ -139,6 +139,47 @@ const Style = styled.div`
     }
 `;
 
+function useStickyState(defaultValue, key) {
+    const [value, setValue] = React.useState(() => {
+      const stickyValue = window.localStorage.getItem(key);
+      return stickyValue !== null
+        ? JSON.parse(stickyValue)
+        : defaultValue;
+    });
+    React.useEffect(() => {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    }, [key, value]);
+    return [value, setValue];
+  }
+
+
+  
+
+// const CalendarView = () => {
+//     const [mode, setMode] = useStickyState('day', 'calendar-view');
+
+//     return (
+//       <>
+//         <select 
+//         onChange={(ev) => {
+//             setMode(ev.target.value);
+//             console.log(ev.target.value);
+            
+//         }}
+//         value={mode}
+//         >
+//           <option value="day">Day</option>
+//           <option value="week">Week</option>
+//           <option value="month">Month</option>
+//         </select>
+//         {/* Calendar stuff here */}
+//       </>
+//     )
+//   }
+
+
+
+
 export default function Subtitles({
     currentIndex,
     subtitle,
@@ -201,7 +242,8 @@ export default function Subtitles({
         if (isPrimary) {
             return;
         }
-        console.log(translationApi);
+        //console.log(translationApi);
+        //here is what you want to comment out if you don't want translate to be triggered on editing subtitles
         if (translationApi === 'AI4Bharat') {
             // return;
             ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
@@ -226,6 +268,8 @@ export default function Subtitles({
             window.addEventListener('resize', debounceResize);
         }
     }, [resize]);
+
+    const [modeTrans, setModeTrans] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
 
     const onTranslate = useCallback(() => {
         console.log(translationApi);
@@ -289,6 +333,8 @@ export default function Subtitles({
             return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
                 .then((res) => {
                     setLoading('');
+                    console.log('Format Sub');
+                    console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
                     setSubtitle(formatSub(res));
                     localStorage.setItem('currentLang', translate);
                     notify({
@@ -336,23 +382,25 @@ export default function Subtitles({
         // }
         if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
-            return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
-                .then((res) => {
-                    setLoading('');
-                    setSubtitle(formatSub(res));
-                    localStorage.setItem('currentLang', translate);
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
+            console.log("localstorage get item");
+            console.log(localStorage.getItem('lang'));
+            // return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
+            //     .then((res) => {
+            //         setLoading('');
+            //         setSubtitle(formatSub(res));
+            //         localStorage.setItem('currentLang', translate);
+            //         notify({
+            //             message: t('TRANSLAT_SUCCESS'),
+            //             level: 'success',
+            //         });
+            //     })
+            //     .catch((err) => {
+            //         setLoading('');
+            //         notify({
+            //             message: err.message,
+            //             level: 'error',
+            //         });
+            //     });
             // return ai4BharatASRTranslate(sub2vtt(formatSub(subtitleEnglish)), 'hi', translate)
             //     .then((res) => {
             //         console.log(res);
@@ -399,22 +447,33 @@ export default function Subtitles({
     return (
         subtitle && (
             <Style className="subtitles">
+                 {/* <CalendarView />  */}
                 {isPrimary && translate && languageAvailable && (
                     <div className="translate">
                         {/* <div className="heading">
                             <h4>Translation</h4>
                         </div> */}
+                        
+                         {/* <TestSticky />  */}
+                        
                         <div className="options">
+                              {/* <CalendarView />   */}
                             <select
-                                value={translate}
+                            
+                               // value="kn"
+                                value={modeTrans} //new - comment out if don't want sticky options
                                 onChange={(event) => {
                                     setTranslate(event.target.value);
+                                    setModeTrans(event.target.value); //new
                                     localStorage.setItem('lang', event.target.value);
+                                    // console.log('in select');
+                                     console.log(localStorage.getItem('lang'));
+                                    // console.log(event.target.value);
                                 }}
                             >
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
                                     (item) =>
-                                        item.key !== 'en' && (
+                                        item.key !== 'en' && ( 
                                             <option key={item.key} value={item.key}>
                                                 {item.name}
                                             </option>
@@ -434,7 +493,7 @@ export default function Subtitles({
                         {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}
-
+               
                 <Table
                     headerHeight={40}
                     width={250}
@@ -445,6 +504,9 @@ export default function Subtitles({
                     rowGetter={({ index }) => subtitle[index]}
                     headerRowRenderer={() => null}
                     rowRenderer={(props) => {
+                        // {
+                        //     console.log(unescape(props.rowData.text))
+                        // }
                         return (
                             <div
                                 key={props.key}
@@ -469,11 +531,16 @@ export default function Subtitles({
                                             .join(' ')
                                             .trim()}
                                         value={unescape(props.rowData.text)}
+                                       
                                         spellCheck={false}
                                         onChangeText={(event) => {
+                                            // console.log(event);
+                                            // console.log("here in on change text");
+                                            // console.log(props.rowData.text);
                                             updateSub(props.rowData, {
                                                 text: event,
                                             });
+                                           
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={

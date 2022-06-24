@@ -67,6 +67,7 @@ export default function App({ defaultLang }) {
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
 
+
     const formatSub = useCallback(
         (sub) => {
             if (Array.isArray(sub)) {
@@ -79,7 +80,7 @@ export default function App({ defaultLang }) {
 
     const copySubs = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
     const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
-
+   //const copySubsEnglish = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
     // useEffect(() => {
     //     //localStorage.setItem('lang', 'en');
 
@@ -100,6 +101,8 @@ export default function App({ defaultLang }) {
                 }
                 window.localStorage.setItem('subtitle', JSON.stringify(newSubtitle));
                 setSubtitleOriginal(newSubtitle);
+               // setSubtitleEnglish(newSubtitle);
+                
             }
         },
         [subtitle, setSubtitleOriginal, formatSub],
@@ -117,10 +120,16 @@ export default function App({ defaultLang }) {
         subtitleHistory.current.length = 0;
     }, [setSubtitle, subtitleHistory]);
 
+    // const clearSubsEnglish = useCallback(() => {
+    //     localStorage.removeItem('subtitleEnglish');
+    //     setSubtitleEnglish([]);
+    // }, [setSubtitleEnglish]); //maybe here
+
     const clearSubsEnglish = useCallback(() => {
-        localStorage.removeItem('subtitleEnglish');
         setSubtitleEnglish([]);
-    }, [setSubtitleEnglish]);
+        subtitleHistory.current.length = 0;
+    }, [setSubtitleEnglish, subtitleHistory]);
+    
 
     const checkSub = useCallback(
         (sub) => {
@@ -343,7 +352,7 @@ export default function App({ defaultLang }) {
         if (localSubtitleString) {
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
-                console.log(localSubtitle);
+                //console.log(localSubtitle);
                 if (localSubtitle.length) {
                     setSubtitleOriginal(localSubtitle.map((item) => new Sub(item)));
                 } else {
@@ -432,7 +441,7 @@ export default function App({ defaultLang }) {
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
                     <>
-                        <Subtitles
+                       {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}
                             checkSub={props.checkSub}
@@ -450,6 +459,26 @@ export default function App({ defaultLang }) {
                             setConfiguration={props.setConfiguration}
                             updateSubOriginal={props.updateSubTranslate}
                             translationApi={props.translationApi}
+                />*/}
+                        {/* here */}
+                        <Subtitles
+                           currentIndex={props.currentIndex}
+                           subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
+                           checkSub={props.checkSub}
+                           player={props.player}
+                           updateSub={props.updateSubEnglish} 
+                           language={props.language}
+                           setLanguage={props.setLanguage}
+                           setLoading={props.setLoading}
+                           subtitleEnglish={props.subtitleEnglish}
+                           formatSub={props.formatSub}
+                           setSubtitle={props.setSubtitle}
+                           notify={props.notify}
+                           isPrimary={false}
+                           configuration={props.configuration}
+                           setConfiguration={props.setConfiguration}
+                           updateSubOriginal={props.updateSubTranslate}
+                           translationApi={props.translationApi}
                         />
                         <Subtitles
                             currentIndex={props.currentIndex}
@@ -465,13 +494,14 @@ export default function App({ defaultLang }) {
                             setSubtitle={props.setSubtitle}
                             notify={props.notify}
                             isPrimary={true}
-                            clearedSubs={props.clearedSubs}
-                            setClearedSubs={props.setClearedSubs}
-                            setSubtitleOriginal={props.setSubtitleOriginal}
+                            clearedSubs={props.clearedSubs} //extra
+                            setClearedSubs={props.setClearedSubs} //extra
+                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
                             translationApi={props.translationApi}
                         />
+                         
                     </>
                 )}
 
@@ -520,7 +550,8 @@ export default function App({ defaultLang }) {
 
                 {configuration === 'Same Language Subtitling' && (
                     <>
-                        <SameLanguageSubtitles
+                   {/* original same lang subtitle config */}
+                        {/* <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitle}
                             checkSub={props.checkSub}
@@ -541,6 +572,34 @@ export default function App({ defaultLang }) {
                             setConfiguration={props.setConfiguration}
                             clearSubs={props.clearSubs}
                             setSubtitleEnglish={props.setSubtitleEnglish}
+                            
+                        /> */}
+                         
+
+                        {/* final */}
+                        <SameLanguageSubtitles
+                            currentIndex={props.currentIndex}
+                            subtitle={props.subtitle} //here
+                            checkSub={props.checkSub}
+                            player={props.player}
+                            updateSub={props.updateSubEnglish} //here
+                            language={props.language}
+                            setLanguage={props.setLanguage}
+                            setLoading={props.setLoading}
+                            subtitleEnglish={props.subtitleEnglish}
+                            formatSub={props.formatSub}
+                            setSubtitle={props.setSubtitle}
+                            notify={props.notify}
+                            isPrimary={true}
+                            clearedSubs={props.clearedSubs}
+                            setClearedSubs={props.setClearedSubs}
+                            setSubtitleOriginal={props.setSubtitleOriginal}
+                            configuration={props.configuration}
+                            setConfiguration={props.setConfiguration}
+                            clearSubs={props.clearSubs}
+                            setSubtitleEnglish={props.setSubtitleEnglish}
+                            updateSubOriginal={props.updateSubTranslate}
+                            translationApi={props.translationApi}
                         />
                     </>
                 )}

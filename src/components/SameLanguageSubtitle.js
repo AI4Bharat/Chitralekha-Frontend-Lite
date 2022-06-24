@@ -41,6 +41,13 @@ const Style = styled.div`
                 font-size: 18px;
             }
         }
+        
+        select {
+            width: 65%;
+            outline: none;
+            height: 35px;
+            border-radius: 3px;
+        }
 
         .btn {
             opacity: 0.85;
@@ -158,20 +165,85 @@ export default function SameLanguageSubtitles({
     updateSubOriginal = null,
     clearSubs,
     setSubtitleEnglish,
+    translationApi,
+    
 }) {
     const [height, setHeight] = useState(100);
     // const [translate, setTranslate] = useState(null);
+    
+    //change
+    const [transcribe, setTranscribe] = useState(null);
+    const [languageAvailable, setLanguageAvailable] = useState([]);
+   
+    useEffect(() => {
+        if (localStorage.getItem('lang')) {
+            setTranscribe(localStorage.getItem('lang'));
+        } else {
+            setTranscribe('en');
+        }
+    }, []);
+    
+    useEffect(() => {
+     /*   console.log("languages");
+        console.log(languages);
+        
+            setLanguageAvailable(languages);
+            localStorage.setItem('lang', languages['en'][1].key);
+            setTranscribe(languages['en'][1].key);
+        */
+            fetch(`${process.env.REACT_APP_ASR_URL}/supported_languages`)
+            .then((resp) => {
+                return resp.json();
+            })
+            .then((resp) => {
+                let langArray = [];
+                // langArray.push({ name: 'English', key: 'en' });
+                for (const key in resp) {
+                    langArray.push({ name: `${key}`, key: `${resp[key]}` });
+                }
+                setLanguageAvailable(langArray);
+                localStorage.setItem('lang', langArray[0].key);
+                setTranscribe(langArray[0].key);
+              //  console.log("transcribe");
+               // console.log(langArray);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, []);
 
+    //end of change
+    
     const handleBlur = (data, index) => {
         //console.log(e.target.value);
+        
         if (isPrimary) {
             return;
         }
         googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
             updateSubOriginal(data, resp[0], index);
         });
+    }
+    /*
+    //change
+    const handleBlur = (data, index) => {
+        //console.log(e.target.value);
+        if (isPrimary) {
+            return;
+        }
+        console.log(translationApi);
+        if (translationApi === 'AI4Bharat') {
+            // return;
+            ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
+                updateSubOriginal(data, resp[0], index);
+            });
+        } else {
+            googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
+                updateSubOriginal(data, resp[0], index);
+            });
+        }
     };
-
+//end of change*/
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 240);
     }, [setHeight]);
@@ -187,17 +259,17 @@ export default function SameLanguageSubtitles({
 
     const onTranscribe = useCallback(() => {
         console.log(localStorage.getItem('youtubeURL'));
-
+        const lang = localStorage.getItem('lang');
         setLoading(t('TRANSCRIBING'));
         const youtubeURL = localStorage.getItem('youtubeURL');
-
+        console.log("localstorage transcribe get item" + localStorage.getItem('lang'));
         const data = {
             url: youtubeURL,
             vad_level: 2,
             chunk_size: 10,
-            language: 'en',
+            language: lang,
         };
-
+console.log(lang);
         return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -234,6 +306,15 @@ export default function SameLanguageSubtitles({
     //         setTranslate('en');
     //     }
     // }, []);
+    /*change
+    useEffect(() => {
+        if (localStorage.getItem('lang')) {
+            setTranscribe(localStorage.getItem('lang'));
+        } else {
+            setTranscribe('en');
+        }
+    }, []);
+    end of change*/
 
     return (
         subtitle && (
@@ -244,6 +325,28 @@ export default function SameLanguageSubtitles({
                             <h4>Speech-To-Text</h4>
                         </div>
                         <div className="options">
+                            <select
+                                value={transcribe == null ? '' : transcribe}
+                                onChange={(event) => {
+                                   
+                                    localStorage.setItem('lang', event.target.value);
+                                    setTranscribe(localStorage.getItem('lang'));
+                                   // console.log("transcribe "+localStorage.getItem('lang'));
+                                    
+                                }}
+                            >
+                              {/*  <option key="please-select" value="please-select" >Please Select</option> */}
+                                {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
+                                    (item) =>
+                                        /*item.key !== 'en' && ( */
+                                            <option key={item.key} value={item.key}>
+                                                {item.name}
+                                            </option>
+                                      /*  ), */
+                                )}
+                                
+                            </select>
+                            
                             <div className="btn" onClick={onTranscribe}>
                                 <Translate value="TRANSCRIBE" />
                             </div>
@@ -295,6 +398,7 @@ export default function SameLanguageSubtitles({
                                         value={unescape(props.rowData.text)}
                                         spellCheck={false}
                                         onChangeText={(event) => {
+                                            console.log(event); //here
                                             updateSub(props.rowData, {
                                                 text: event,
                                             });
@@ -338,3 +442,4 @@ export default function SameLanguageSubtitles({
         )
     );
 }
+

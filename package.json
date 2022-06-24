@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf docs"
+    "build": "CI=false && react-scripts build && rm -rf docs"
   },
   "eslintConfig": {
     "extends": [

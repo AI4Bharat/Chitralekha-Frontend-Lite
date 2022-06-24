@@ -377,32 +377,32 @@ const Style = styled.div`
         }
     }
 `;
-function useStickyState(defaultValue, key) {
-    const [value, setValue] = React.useState(() => {
-      const stickyValue = window.localStorage.getItem(key);
-      return stickyValue !== null
-        ? JSON.parse(stickyValue)
-        : defaultValue;
-    });
-    React.useEffect(() => {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    }, [key, value]);
-    return [value, setValue];
-  }
+// function useStickyState(defaultValue, key) {
+//     const [value, setValue] = React.useState(() => {
+//       const stickyValue = window.localStorage.getItem(key);
+//       return stickyValue !== null
+//         ? JSON.parse(stickyValue)
+//         : defaultValue;
+//     });
+//     React.useEffect(() => {
+//       window.localStorage.setItem(key, JSON.stringify(value));
+//     }, [key, value]);
+//     return [value, setValue];
+//   }
 
-const CalendarView = () => {
-    const [mode, setMode] = useStickyState('day', 'calendar-view');
-    return (
-      <>
-        <select onChange={ev => setMode(ev.target.value)}>
-          <option value="day">Day</option>
-          <option value="week">Week</option>
-          <option value="month">Month</option>
-        </select>
-        {/* Calendar stuff here */}
-      </>
-    )
-  }
+// const CalendarView = () => {
+//     const [mode, setMode] = useStickyState('day', 'calendar-view');
+//     return (
+//       <>
+//         <select onChange={ev => setMode(ev.target.value)}>
+//           <option value="day">Day</option>
+//           <option value="week">Week</option>
+//           <option value="month">Month</option>
+//         </select>
+//         {/* Calendar stuff here */}
+//       </>
+//     )
+//   }
 
 FFmpeg.createFFmpeg({ log: true }).load();
 const fs = new SimpleFS.FileSystem();

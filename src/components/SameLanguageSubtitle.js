@@ -256,7 +256,7 @@ export default function SameLanguageSubtitles({
             window.addEventListener('resize', debounceResize);
         }
     }, [resize]);
-
+//
     const onTranscribe = useCallback(() => {
         console.log(localStorage.getItem('youtubeURL'));
         const lang = localStorage.getItem('lang');

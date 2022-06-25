@@ -21,6 +21,7 @@ jobs:
               env:
                   REACT_APP_ASR_URL: ${{ secrets.REACT_APP_ASR_URL }}
                   REACT_APP_NMT_URL: ${{ secrets.REACT_APP_NMT_URL }}
+                  CI: false
 
             - name: Deploy 🚀
               uses: JamesIves/github-pages-deploy-action@v4.2.5

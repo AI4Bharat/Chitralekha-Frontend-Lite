@@ -15,7 +15,7 @@ const language = navigator.language.toLowerCase();
 const defaultLang = i18n[language] ? language : 'en';
 setLocale(defaultLang);
 
-// Add comment for triggering push
+// Add comment for triggering push - 2
 ReactDOM.render(
     <React.Fragment>
         <GlobalStyle />

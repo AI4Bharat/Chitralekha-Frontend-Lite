@@ -111,6 +111,7 @@ const Timeline = styled.div`
 `;
 
 function getCurrentSubs(subs, beginTime, duration) {
+    //console.log('subs ' + subs[0])
     return subs.filter((item) => {
         return (
             (item.startTime >= beginTime && item.startTime <= beginTime + duration) ||
@@ -153,6 +154,8 @@ export default React.memo(
         const $blockRef = React.createRef();
         const $subsRef = React.createRef();
         const currentSubs = getCurrentSubs(subtitle, render.beginTime, render.duration);
+       // console.log('currentSubs '+currentSubs);
+      // console.log('subtitle '+subtitle[0])
         const gridGap = document.body.clientWidth / render.gridNum;
         const currentIndex = currentSubs.findIndex(
             (item) => item.startTime <= currentTime && item.endTime > currentTime,
@@ -219,6 +222,7 @@ export default React.memo(
                         if (startTime >= 0 && lastSub.endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             updateSub(lastSub, { start });
+                            console.log('lastSub left ' + lastSub);
                             updateSubEnglish(lastSub, { start });
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -227,6 +231,7 @@ export default React.memo(
                         if (endTime >= 0 && endTime - lastSub.startTime >= 0.2) {
                             const end = DT.d2t(endTime);
                             updateSub(lastSub, { end });
+                            console.log('lastSub right ' + lastSub);
                             updateSubEnglish(lastSub, { end });
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -235,6 +240,7 @@ export default React.memo(
                         if (startTime > 0 && endTime > 0 && endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             const end = DT.d2t(endTime);
+                            console.log('lastSub else ' + lastSub);
                             updateSub(lastSub, {
                                 start,
                                 end,
@@ -342,6 +348,7 @@ export default React.memo(
                                         title={sub.text}
                                         onMouseDown={(event) => onMouseDown(sub, event)}
                                     >
+                                        {console.log('sub.text '+sub.text)}
                                         {`${sub.text}`.split(/\r?\n/).map((line, index) => (
                                             <p key={index}>{line}</p>
                                         ))}

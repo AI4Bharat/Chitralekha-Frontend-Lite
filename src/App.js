@@ -165,7 +165,7 @@ export default function App({ defaultLang }) {
             subs.splice(index, 1);
             setSubtitle(subs);
             if (subtitleEnglish) {
-                console.log('here');
+                //console.log('here');
                 const subsEnglish = copySubsEnglish();
                 subsEnglish.splice(index, 1);
                 setSubtitleEnglish(subsEnglish);
@@ -489,7 +489,7 @@ export default function App({ defaultLang }) {
                         />
                         <Subtitles
                             currentIndex={props.currentIndex}
-                            subtitle={props.subtitle}
+                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
                             checkSub={props.checkSub}
                             player={props.player}
                             updateSub={props.updateSub}

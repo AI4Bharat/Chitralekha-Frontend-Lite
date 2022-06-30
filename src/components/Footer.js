@@ -317,6 +317,12 @@ export default function Footer(props) {
 
     return (
         <Style className="footer" ref={$footer}>
+            {/* {console.log('props '+props.subtitle.length)}
+            {
+                props.subtitle.map((item, index)=>{
+                    console.log(item);
+                })
+            } */}
             {props.player ? (
                 <React.Fragment>
                     <Progress {...props} />

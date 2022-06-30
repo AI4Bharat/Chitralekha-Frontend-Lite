@@ -206,10 +206,12 @@ export default function Subtitles({
     const [languageAvailable, setLanguageAvailable] = useState(languages);
 
     useEffect(() => {
-        if (localStorage.getItem('lang')) {
-            setTranslate(localStorage.getItem('lang'));
+        if (localStorage.getItem('langTranslate')) {
+            setTranslate(localStorage.getItem('langTranslate')); //changes in both
         } else {
-            setTranslate('en');
+            localStorage.setItem('langTranslate', 'en') //added 
+            //setTranslate('en');
+            setTranslate(localStorage.getItem('langTranslate'));
         }
     }, []);
     useEffect(() => {
@@ -225,15 +227,20 @@ export default function Subtitles({
                         langArray.push({ name: `${key}`, key: `${resp[key]}` });
                     }
                     setLanguageAvailable(langArray);
-                    localStorage.setItem('lang', langArray[0].key);
-                    setTranslate(langArray[0].key);
+                    //localStorage.setItem('langTranslate', langArray[0].key); //changes necessary?
+                    // for(const item in langArray) {
+                    //     console.log('langArray key '+ langArray[item].key);
+                    // }
+                    // console.log('translate lang array[0] '+langArray[0].key);
+                   // setTranslate(langArray[0].key); //test changing to localStorage.getItem('lang')
+                   // setTranslate(localStorage.getItem('langTranslate')); changes commented out
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
             setLanguageAvailable(languages);
-            localStorage.setItem('lang', languages['en'][1].key);
+            localStorage.setItem('langTranslate', languages['en'][1].key); //changes
             setTranslate(languages['en'][1].key);
         }
     }, [translationApi]);
@@ -245,12 +252,13 @@ export default function Subtitles({
         //console.log(translationApi);
         //here is what you want to comment out if you don't want translate to be triggered on editing subtitles
         if (translationApi === 'AI4Bharat') {
-            // return;
-            ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
+            // return; //changes to both below
+         //   ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('langTranslate')).then((resp) => {
+            ai4BharatBatchTranslate([{ text: data.text }], localStorage.getItem('langTranscribe'), localStorage.getItem('langTranslate')).then((resp) => {
                 updateSubOriginal(data, resp[0], index);
             });
         } else {
-            googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
+            googleTranslate([{ text: data.text }], localStorage.getItem('langTranslate')).then((resp) => {
                 updateSubOriginal(data, resp[0], index);
             });
         }
@@ -269,10 +277,10 @@ export default function Subtitles({
         }
     }, [resize]);
 
-    const [modeTranslate, setModeTranslate] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
+    const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
     const onTranslate = useCallback(() => {
-        console.log(translationApi);
+        console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
         setLoading(t('TRANSLATING'));
 
         if (clearedSubs) {
@@ -283,7 +291,7 @@ export default function Subtitles({
             //                 .then((res) => {
             //                     setLoading('');
             //                     setSubtitle(formatSub(res));
-            //                     localStorage.setItem('currentLang', 'en');
+            //                     localStorage.setItem('langTranslate', 'en');
             //                     notify({
             //                         message: t('TRANSLAT_SUCCESS'),
             //                         level: 'success',
@@ -315,7 +323,8 @@ export default function Subtitles({
                     .then((res) => {
                         setLoading('');
                         setSubtitle(formatSub(res));
-                        localStorage.setItem('currentLang', translate);
+                        localStorage.setItem('langTranslate', translate);
+                        console.log('langTranslate '+localStorage.getItem('langTranslate'));
                         notify({
                             message: t('TRANSLAT_SUCCESS'),
                             level: 'success',
@@ -334,9 +343,9 @@ export default function Subtitles({
                 .then((res) => {
                     setLoading('');
                     console.log('Format Sub');
-                    console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
+                    //console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
                     setSubtitle(formatSub(res));
-                    localStorage.setItem('currentLang', translate);
+                    localStorage.setItem('langTranslate', translate);
                     notify({
                         message: t('TRANSLAT_SUCCESS'),
                         level: 'success',
@@ -358,7 +367,7 @@ export default function Subtitles({
         //                 .then((res) => {
         //                     setLoading('');
         //                     setSubtitle(formatSub(res));
-        //                     localStorage.setItem('currentLang', 'en');
+        //                     localStorage.setItem('langTranslate', 'en');
         //                     notify({
         //                         message: t('TRANSLAT_SUCCESS'),
         //                         level: 'success',
@@ -382,13 +391,13 @@ export default function Subtitles({
         // }
         if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
-            console.log("localstorage get item");
-            console.log(localStorage.getItem('lang'));
+           // console.log("localstorage get item");
+            console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
             // return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
             //     .then((res) => {
             //         setLoading('');
             //         setSubtitle(formatSub(res));
-            //         localStorage.setItem('currentLang', translate);
+            //         localStorage.setItem('langTranslate', translate);
             //         notify({
             //             message: t('TRANSLAT_SUCCESS'),
             //             level: 'success',
@@ -407,7 +416,7 @@ export default function Subtitles({
             //         const suburl = vtt2url(res);
             //         url2sub(suburl).then((urlsub) => {
             //             setSubtitle(formatSub(urlsub));
-            //             localStorage.setItem('currentLang', translate);
+            //             localStorage.setItem('langTranslate', translate);
             //             setLoading('');
             //             notify({
             //                 message: t('TRANSLAT_SUCCESS'),
@@ -429,7 +438,7 @@ export default function Subtitles({
             .then((res) => {
                 setLoading('');
                 setSubtitle(formatSub(res));
-                localStorage.setItem('currentLang', translate);
+                localStorage.setItem('langTranslate', translate);
                 notify({
                     message: t('TRANSLAT_SUCCESS'),
                     level: 'success',
@@ -465,15 +474,18 @@ export default function Subtitles({
                                 onChange={(event) => {
                                     setTranslate(event.target.value);
                                     setModeTranslate(event.target.value); //new
-                                    localStorage.setItem('lang', event.target.value);
+                                   // localStorage.setItem('lang', event.target.value); //maybe remove later
+                                    localStorage.setItem('langTranslate', event.target.value); 
                                     // console.log('in select');
-                                     console.log(localStorage.getItem('lang'));
+                                   //  console.log('in onChange translate lang ' +localStorage.getItem('lang'));
+                                     console.log('in onChange translate langTranslate ' +localStorage.getItem('langTranslate'));
                                     // console.log(event.target.value);
                                 }}
                             >
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
                                     (item) =>
-                                        item.key !== 'en' && ( 
+                                        //item.key !== 'en' && 
+                                        ( 
                                             <option key={item.key} value={item.key}>
                                                 {item.name}
                                             </option>
@@ -521,6 +533,8 @@ export default function Subtitles({
                                     }
                                 }}
                             >
+                                {console.log('langTranslate '+localStorage.getItem('langTranslate'))}
+                               {/* {console.log('before react transliterate '+localStorage.getItem('lang'))} */}
                                 <div className="item">
                                     <ReactTransliterate
                                         className={[
@@ -544,20 +558,24 @@ export default function Subtitles({
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
-                                            isPrimary
-                                                ? !localStorage.getItem('lang') ||
-                                                    localStorage.getItem('lang') === 'en' ||
-                                                    localStorage.getItem('lang') === 'en-k'
-                                                    ? false
-                                                    : true
-                                                : true
+                                            // isPrimary
+                                            //     ? !localStorage.getItem('lang') ||
+                                            //         localStorage.getItem('lang') === 'en' ||
+                                            //         localStorage.getItem('lang') === 'en-k'
+                                            //         ? false
+                                            //         : true
+                                            //     : true
+                                            true
                                         }
                                         lang={
+                                            // isPrimary
+                                            //     ? localStorage.getItem('lang') === 'en-k'
+                                            //         ? 'en'
+                                            //         : localStorage.getItem('lang')
+                                            //     : 'hi'
                                             isPrimary
-                                                ? localStorage.getItem('lang') === 'en-k'
-                                                    ? 'en'
-                                                    : localStorage.getItem('lang')
-                                                : 'hi'
+                                            ? localStorage.getItem('langTranslate')
+                                            : localStorage.getItem('langTranscribe')
                                         }
                                         maxOptions={5}
                                         renderComponent={(props) => <textarea {...props} />}

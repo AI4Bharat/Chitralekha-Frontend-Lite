@@ -627,7 +627,7 @@ export default function Header({
                                     return subtext.text();
                                 })
                                 .then((subtext) => {
-                                    console.log(subtext);
+                                   // console.log(subtext);
                                     player.currentTime = 0;
                                     clearSubs();
                                     const suburl = vtt2url(subtext);
@@ -767,6 +767,7 @@ export default function Header({
                         .then((res) => {
                             clearSubs();
                             setSubtitle(res);
+                            setSubtitleEnglish(res); //changed from setSubtitle to setSubtitleEnglish
                         })
                         .catch((err) => {
                             notify({
@@ -944,7 +945,7 @@ export default function Header({
                             onClick={() => {
                                 console.log('Configuration - same');
                                 const langTranscribe = localStorage.getItem('lang');
-                                console.log("lang " + langTranscribe);
+                              //  console.log("lang " + langTranscribe);
                                 setConfiguration('Same Language Subtitling');
                                 setIsSetConfiguration(true);
                             }}

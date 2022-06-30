@@ -180,7 +180,7 @@ export default function Player(props) {
                 <VideoWrap {...props} />
                 {props.player && currentSub ? (
                     <div className="subtitle">
-                        {focusing ? (
+                        {/* {focusing ? (
                             <div className="operate" onClick={onSplit}>
                                 <Translate value="SPLIT" />
                             </div>
@@ -194,7 +194,7 @@ export default function Player(props) {
                             onBlur={onBlur}
                             onKeyDown={onFocus}
                             spellCheck={false}
-                        />
+                        /> */}
                     </div>
                 ) : null}
             </div>

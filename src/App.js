@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import Links from './components/Links';
+import LoginForm from './components/Login';
 // import BottomLinks from './components/BottomLinks';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
@@ -61,6 +62,7 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
 
     const newSub = useCallback((item) => new Sub(item), []);
@@ -609,6 +611,12 @@ export default function App({ defaultLang }) {
                         />
                     </>
                 )}
+                <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
+                <div style={{zIndex: 200}}>
+                    <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                    Sign In
+                    </span>
+                </div>
                 <Tool {...props} />
             </div>
             {isSetVideo && <Footer {...props} />}

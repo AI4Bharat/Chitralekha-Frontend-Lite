@@ -187,8 +187,6 @@ export default function SameLanguageSubtitles({
     
     useEffect(() => {
      /*   console.log("languages");
-        console.log(languages);
-        
             setLanguageAvailable(languages);
             localStorage.setItem('lang', languages['en'][1].key);
             setTranscribe(languages['en'][1].key);

@@ -91,7 +91,6 @@ export default function App({ defaultLang }) {
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
-            // console.log('Here');
             if (!isEqual(newSubtitle, subtitle)) {
                 if (saveToHistory) {
                     if (subtitleHistory.current.length >= 1000) {
@@ -355,7 +354,6 @@ export default function App({ defaultLang }) {
           //  {console.log("sub other app" + subtitleEnglish + subtitle)}
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
-                //console.log(localSubtitle);
                 if (localSubtitle.length) {
                     setSubtitleOriginal(localSubtitle.map((item) => new Sub(item)));
                 } else {

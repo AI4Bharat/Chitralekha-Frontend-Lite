@@ -1,4 +1,5 @@
 export default {
   APISTATUS: "APISTATUS",
+  GET_VIDEO_DETAILS: "GET_VIDEO_DETAILS",
 };
   

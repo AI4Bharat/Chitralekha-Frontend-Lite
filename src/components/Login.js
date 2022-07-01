@@ -25,6 +25,11 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
               setErr("Username or Password incorrect");
             } else {
               localStorage.setItem("chitralekha_access_token", rsp_data.token);
+              localStorage.setItem("user_id", rsp_data.user?.id);
+              localStorage.setItem("username", rsp_data.user?.username);
+              localStorage.setItem("email", rsp_data.user?.email);
+              localStorage.setItem("first_name", rsp_data.user?.first_name);
+              localStorage.setItem("last_name", rsp_data.user?.last_name);
               setErr("");
               setShowLogin(false);
             }
@@ -53,6 +58,11 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
               setErr("Invalid details");
             } else {
               localStorage.setItem("chitralekha_access_token", rsp_data.token);
+              localStorage.setItem("user_id", rsp_data.user?.id);
+              localStorage.setItem("username", rsp_data.user?.username);
+              localStorage.setItem("email", rsp_data.user?.email);
+              localStorage.setItem("first_name", rsp_data.user?.first_name);
+              localStorage.setItem("last_name", rsp_data.user?.last_name);
               setErr("");
               setShowLogin(false);
             }

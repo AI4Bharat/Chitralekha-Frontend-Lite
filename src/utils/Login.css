@@ -31,7 +31,7 @@
   }
 
      .login-box{
-    border: 1px solid lightgrey;
+    border: 1px solid #fff;
     color: #fff;
     display: flex;
     justify-content: center;
@@ -60,7 +60,7 @@
     transition: 1s;
     outline: none;
     cursor: pointer;
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
     padding: 8px 0;
   }
   
@@ -86,6 +86,8 @@
 
   .login-text {
     text-align: center;
+    color: #fff;
+    margin-bottom: 0.75rem;
   }
 
   .close-btn {
@@ -98,3 +100,38 @@
     cursor: pointer;
   }
   
+  .err-msg {
+    color: red;
+    font-size: 12pt;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  .form-text {
+    color: #fff;
+    font-size: 12pt;
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  .link {
+    color: #5264cc;
+    font-weight: 700;
+  }
+
+  .link:hover {
+    color: #3f51b5;
+  }
+
+  label {
+    color: #fff;
+    font-size: 12pt;
+    text-align: center;
+  }
+
+  .signup-group {
+    display: flex;
+    flex-direction: row;
+    column-gap: 1rem
+  }

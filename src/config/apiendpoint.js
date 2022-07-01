@@ -1,4 +1,4 @@
 export default {
-    users: "/users/",
+    users: "/users/api/",
     video: "/video/",
   };

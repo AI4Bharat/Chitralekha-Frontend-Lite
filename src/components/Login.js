@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import LoginAPI from "../redux/actions/api/User/Login";
+import RegisterAPI from "../redux/actions/api/User/Register";
 import "../utils/Login.css";
 
 const LoginForm = ({ showLogin, setShowLogin }) => {
@@ -11,7 +12,6 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        console.log(credentials);
         const apiObj = new LoginAPI(credentials.username, credentials.password);
         fetch(apiObj.apiEndPoint(), {
           method: "POST",
@@ -24,8 +24,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
             if (!res.ok) {
               setErr("Username or Password incorrect");
             } else {
-              // localStorage.setItem("chitralekha_access_token", rsp_data.access);
-              // localStorage.setItem("chitralekha_refresh_token", rsp_data.refresh);
+              localStorage.setItem("chitralekha_access_token", rsp_data.token);
               setErr("");
               setShowLogin(false);
             }
@@ -41,7 +40,30 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
 
     const handleSignUp = (e) => {
         e.preventDefault();
-        console.log(details);
+        const apiObj = new RegisterAPI(details.username, details.email, details.first_name, details.last_name, details.password, details.password2);
+        fetch(apiObj.apiEndPoint(), {
+          method: "POST",
+          body: JSON.stringify(apiObj.getBody()),
+          headers: apiObj.getHeaders().headers,
+        })
+          .then(async (res) => {
+            const rsp_data = await res.json();
+            console.log(rsp_data);
+            if (!res.ok) {
+              setErr("Invalid details");
+            } else {
+              localStorage.setItem("chitralekha_access_token", rsp_data.token);
+              setErr("");
+              setShowLogin(false);
+            }
+          })
+          .catch((error) => {
+            if (typeof error === "string") {
+              setErr(error);
+            } else {
+              setErr("Something went wrong");
+            }
+          });
     }
 
   return (

@@ -118,6 +118,7 @@
   .link {
     color: #5264cc;
     font-weight: 700;
+    cursor: pointer;
   }
 
   .link:hover {

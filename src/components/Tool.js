@@ -603,6 +603,10 @@ export default function Header({
         [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData, setIsSetVideo],
     );
 
+    // const fetchTranscript = () => {
+    //     const transcriptObj = new FetchTranscriptAPI();
+    // }
+
     useEffect(() => {
         if (VideoDetails.direct_video_url) {
             localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
@@ -611,7 +615,10 @@ export default function Header({
             localStorage.setItem('youtubeURL', VideoDetails.video.url);
             localStorage.setItem('isVideoPresent', true);
             setIsSetVideo(true);
-            setLoading('')
+            setLoading('');
+            player.src = VideoDetails.direct_video_url;
+            player.currentTime = 0;
+            clearSubs();
         }
         // if (resp.subtitles) {
         //     const sub = resp.subtitles;
@@ -634,6 +641,38 @@ export default function Header({
         //             console.log(err);
         //         });
         //     }
+    // } else {
+        //             // // Auto-transcribe
+        //             // const data = {
+        //             //     url: youtubeURL,
+        //             //     vad_level: 2,
+        //             //     chunk_size: 10,
+        //             //     language: 'en',
+        //             // };
+
+        //             // fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
+        //             //     method: 'POST',
+        //             //     headers: { 'Content-Type': 'application/json' },
+        //             //     body: JSON.stringify(data),
+        //             // })
+        //             //     .then((resp) => {
+        //             //         return resp.json();
+        //             //     })
+        //             //     .then((resp) => {
+        //             //         console.log(resp.output);
+        //             //         player.currentTime = 0;
+        //             //         clearSubs();
+        //             //         const suburl = vtt2url(resp.output);
+        //             //         url2sub(suburl).then((urlsub) => {
+        //             //             setSubtitle(urlsub);
+        //             //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
+        //             //         });
+        //             //     })
+        //             //     .catch((err) => {
+        //             //         console.log(err);
+        //             //     });
+        //         }
+        //     });
     }, [VideoDetails]);
 
     const onYouTubeChange = useCallback(
@@ -954,6 +993,7 @@ export default function Header({
                                 localStorage.setItem('videoSrc', null);
                                 localStorage.setItem('isVideoPresent', false);
                                 localStorage.setItem('lang', 'en');
+                                localStorage.setItem('subtitleEnglish', null);
                                 clearSubs();
                                 clearSubsEnglish();
                                 window.location.reload();

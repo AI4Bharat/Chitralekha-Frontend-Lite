@@ -148,6 +148,7 @@
     font-weight: 500;
     margin-top: 0.5rem;
     cursor: pointer;
+    padding-bottom: 0.75rem;
   }
 
   .user-initials {

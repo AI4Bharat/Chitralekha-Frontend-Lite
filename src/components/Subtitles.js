@@ -227,18 +227,24 @@ export default function Subtitles({
     }, []);
 
     useEffect(() => {
-        if (languageChoices && Object.keys(languageChoices).length > 0) {
-            let langArray = [];
-            for (const key in languageChoices) {
-                langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
+        if (translationApi === "AI4Bharat") {
+            if (languageChoices && Object.keys(languageChoices).length > 0) {
+                let langArray = [];
+                for (const key in languageChoices) {
+                    langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
+                }
+                setLanguageAvailable(langArray);
+                console.log(langArray);
+                console.log(languageChoices);
+                localStorage.setItem('langTranslate', langArray[0].key);
+                setTranslate(langArray[0].key);
             }
-            setLanguageAvailable(langArray);
-            console.log(langArray);
-            console.log(languageChoices);
-            localStorage.setItem('langTranslate', langArray[0].key);
-            setTranslate(langArray[0].key);
+        } else {
+            setLanguageAvailable(languages);
+            localStorage.setItem('langTranslate', languages['en'][1].key); //changes
+            setTranslate(languages['en'][1].key);
         }
-    }, [languageChoices]);
+    }, [languageChoices, translationApi]);
 
     // useEffect(() => {
     //     if (translationApi === 'AI4Bharat') {

@@ -16,7 +16,7 @@
    processResponse(res) {
      super.processResponse(res);
      if (res) {
-         this.report = res;
+         this.video = res;
      }
  }
  
@@ -37,7 +37,7 @@
    }
  
    getPayload() {
-     return this.report
+     return this.video
    }
  }
  

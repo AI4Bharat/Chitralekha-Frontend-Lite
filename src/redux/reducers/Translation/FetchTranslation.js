@@ -5,7 +5,7 @@ let initialState = {
 }
 const reducer = (state=initialState,action)=>{
     switch(action.type){
-        case constants.GET_SUPPORTED_LANGUAGES:
+        case constants.FETCH_TRANSLATION:
             return {
                 ...state,
                 data:action.payload

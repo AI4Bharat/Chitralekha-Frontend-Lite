@@ -1,21 +1,21 @@
 /**
- * Get Supported Languages API
+ * Fetch Translation API
  */
  import API from "../../../api";
  import ENDPOINTS from "../../../../config/apiendpoint";
  import constants from "../../../constants";
  
- export default class GetSupportedLanguagesAPI extends API {
-   constructor(timeout = 2000) {
+ export default class FetchTranslationAPI extends API {
+   constructor(transcriptId, language, latest, timeout = 2000) {
      super("GET", timeout, false);
-     this.type = constants.GET_SUPPORTED_LANGUAGES;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.transcript}generate/supported_languages/`;
+     this.type = constants.FETCH_TRANSLATION;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.translation}?transcript_id=${transcriptId}&target_lang=${language}${latest ? "&get_latest=true" : ""}`;
    }
  
    processResponse(res) {
      super.processResponse(res);
      if (res) {
-         this.languages = res;
+         this.translation = res;
      }
  }
  
@@ -36,7 +36,7 @@
    }
  
    getPayload() {
-     return this.languages
+     return this.translation
    }
  }
  

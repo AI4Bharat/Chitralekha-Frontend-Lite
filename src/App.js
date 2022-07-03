@@ -582,8 +582,8 @@ export default function App({ defaultLang }) {
                             
                         /> */}
     
-{/* {console.log("subtitleEnglish App " + subtitleEnglish)}
-{console.log("subtitle App "+subtitle)} */}
+                        {/* {console.log("subtitleEnglish App " + subtitleEnglish)}
+                            {console.log("subtitle App "+subtitle)} */}
                         {/* final */}
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}

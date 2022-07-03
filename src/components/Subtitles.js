@@ -11,6 +11,9 @@ import googleTranslate from '../libs/googleTranslate';
 import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
 // import { ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
 // import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
+import GetTranslationLanguagesAPI from "../redux/actions/api/Translation/GetTranslationLanguages"
+import APITransport from "../redux/actions/apitransport/apitransport"
+import { useDispatch, useSelector } from 'react-redux';
 
 const Style = styled.div`
     position: relative;
@@ -200,10 +203,17 @@ export default function Subtitles({
     updateSubOriginal = null,
     translationApi,
 }) {
+    const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
 
-    const [languageAvailable, setLanguageAvailable] = useState(languages);
+    const [languageAvailable, setLanguageAvailable] = useState([]);
+    const languageChoices = useSelector(state => state.getTranslationLanguages.data);
+
+    const fetchTranslationLanguages = () => {
+        const langObj = new GetTranslationLanguagesAPI();
+        dispatch(APITransport(langObj));
+    }
 
     useEffect(() => {
         if (localStorage.getItem('langTranslate')) {
@@ -213,37 +223,53 @@ export default function Subtitles({
             //setTranslate('en');
             setTranslate(localStorage.getItem('langTranslate'));
         }
+        fetchTranslationLanguages();
     }, []);
+
     useEffect(() => {
-        if (translationApi === 'AI4Bharat') {
-            fetch(`${process.env.REACT_APP_NMT_URL}/supported_languages`)
-                .then((resp) => {
-                    return resp.json();
-                })
-                .then((resp) => {
-                    let langArray = [];
-                    // langArray.push({ name: 'English', key: 'en' });
-                    for (const key in resp) {
-                        langArray.push({ name: `${key}`, key: `${resp[key]}` });
-                    }
-                    setLanguageAvailable(langArray);
-                    //localStorage.setItem('langTranslate', langArray[0].key); //changes necessary?
-                    // for(const item in langArray) {
-                    //     console.log('langArray key '+ langArray[item].key);
-                    // }
-                    // console.log('translate lang array[0] '+langArray[0].key);
-                   // setTranslate(langArray[0].key); //test changing to localStorage.getItem('lang')
-                   // setTranslate(localStorage.getItem('langTranslate')); changes commented out
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            setLanguageAvailable(languages);
-            localStorage.setItem('langTranslate', languages['en'][1].key); //changes
-            setTranslate(languages['en'][1].key);
+        if (languageChoices && Object.keys(languageChoices).length > 0) {
+            let langArray = [];
+            for (const key in languageChoices) {
+                langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
+            }
+            setLanguageAvailable(langArray);
+            console.log(langArray);
+            console.log(languageChoices);
+            localStorage.setItem('langTranslate', langArray[0].key);
+            setTranslate(langArray[0].key);
         }
-    }, [translationApi]);
+    }, [languageChoices]);
+
+    // useEffect(() => {
+    //     if (translationApi === 'AI4Bharat') {
+    //         fetch(`${process.env.REACT_APP_NMT_URL}/supported_languages`)
+    //             .then((resp) => {
+    //                 return resp.json();
+    //             })
+    //             .then((resp) => {
+    //                 let langArray = [];
+    //                 // langArray.push({ name: 'English', key: 'en' });
+    //                 for (const key in resp) {
+    //                     langArray.push({ name: `${key}`, key: `${resp[key]}` });
+    //                 }
+    //                 setLanguageAvailable(langArray);
+    //                 //localStorage.setItem('langTranslate', langArray[0].key); //changes necessary?
+    //                 // for(const item in langArray) {
+    //                 //     console.log('langArray key '+ langArray[item].key);
+    //                 // }
+    //                 // console.log('translate lang array[0] '+langArray[0].key);
+    //                // setTranslate(langArray[0].key); //test changing to localStorage.getItem('lang')
+    //                // setTranslate(localStorage.getItem('langTranslate')); changes commented out
+    //             })
+    //             .catch((err) => {
+    //                 console.log(err);
+    //             });
+    //     } else {
+    //         setLanguageAvailable(languages);
+    //         localStorage.setItem('langTranslate', languages['en'][1].key); //changes
+    //         setTranslate(languages['en'][1].key);
+    //     }
+    // }, [translationApi]);
     const handleBlur = (data, index) => {
         //console.log(e.target.value);
         if (isPrimary) {

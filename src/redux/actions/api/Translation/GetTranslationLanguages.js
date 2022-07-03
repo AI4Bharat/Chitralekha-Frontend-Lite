@@ -9,7 +9,7 @@
    constructor(timeout = 2000) {
      super("GET", timeout, false);
      this.type = constants.GET_TRANSLATION_LANGAUGES;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.translation}generate/supported_languages/`;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.translation}generate/supported_languages`;
    }
  
    processResponse(res) {

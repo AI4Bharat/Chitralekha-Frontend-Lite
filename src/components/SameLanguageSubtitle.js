@@ -11,6 +11,9 @@ import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
 import { url2sub, vtt2url } from '../libs/readSub';
+import GetTranscriptLanguagesAPI from "../redux/actions/api/Transcript/GetTranscriptLanguages"
+import APITransport from "../redux/actions/apitransport/apitransport"
+import { useDispatch, useSelector } from 'react-redux';
 
 const Style = styled.div`
     position: relative;
@@ -171,11 +174,18 @@ export default function SameLanguageSubtitles({
    // console.log('at start ' + subtitle )
     //console.log('at start ' + subtitleEnglish )
     const [height, setHeight] = useState(100);
+    const dispatch = useDispatch();
     // const [translate, setTranslate] = useState(null);
     
     //change
     const [transcribe, setTranscribe] = useState(null);
     const [languageAvailable, setLanguageAvailable] = useState([]);
+    const languageChoices = useSelector(state => state.getTranscriptLanguages.data);
+
+    const fetchTranscriptionLanguages = () => {
+        const langObj = new GetTranscriptLanguagesAPI();
+        dispatch(APITransport(langObj));
+    }
    
     useEffect(() => {
         if (localStorage.getItem('langTranscribe')) {
@@ -183,34 +193,53 @@ export default function SameLanguageSubtitles({
          } else {
             setTranscribe('en');
         }
+        fetchTranscriptionLanguages();
     }, []);
-    
+
     useEffect(() => {
-     /*   console.log("languages");
-            setLanguageAvailable(languages);
-            localStorage.setItem('lang', languages['en'][1].key);
-            setTranscribe(languages['en'][1].key);
-        */
-            fetch(`${process.env.REACT_APP_ASR_URL}/supported_languages`)
-            .then((resp) => {
-                return resp.json();
-            })
-            .then((resp) => {
-                let langArray = [];
-                // langArray.push({ name: 'English', key: 'en' });
-                for (const key in resp) {
-                    langArray.push({ name: `${key}`, key: `${resp[key]}` });
-                }
-                setLanguageAvailable(langArray);
-                localStorage.setItem('langTranscribe', langArray[0].key);
-                setTranscribe(langArray[0].key);
-              //  console.log("transcribe");
-                console.log(langArray);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }, []);
+        if (languageChoices?.data) {
+            let langArray = [];
+            for (const key in languageChoices.data) {
+                langArray.push({ name: `${key}`, key: `${languageChoices.data[key]}` });
+            }
+            setLanguageAvailable(langArray);
+            localStorage.setItem('langTranscribe', langArray[0].key);
+            setTranscribe(langArray[0].key);
+        }
+    }, [languageChoices]);
+    
+    // useEffect(() => {
+    //  /*   console.log("languages");
+    //         setLanguageAvailable(languages);
+    //         localStorage.setItem('lang', languages['en'][1].key);
+    //         setTranscribe(languages['en'][1].key);
+    //     */
+    //         const langObj = new GetTranscriptLanguagesAPI();
+    //         // fetch(`${process.env.REACT_APP_ASR_URL}/supported_languages`)
+    //         fetch(langObj.apiEndPoint(), {
+    //             method: "GET",
+    //             headers: langObj.getHeaders().headers,
+    //           })
+    //         .then((resp) => {
+    //             console.log(resp)
+    //             return resp.json();
+    //         })
+    //         .then((resp) => {
+    //             let langArray = [];
+    //             // langArray.push({ name: 'English', key: 'en' });
+    //             for (const key in resp.data) {
+    //                 langArray.push({ name: `${key}`, key: `${resp[key]}` });
+    //             }
+    //             setLanguageAvailable(langArray);
+    //             localStorage.setItem('langTranscribe', langArray[0].key);
+    //             setTranscribe(langArray[0].key);
+    //           //  console.log("transcribe");
+    //             console.log(langArray);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //         });
+    // }, []);
 
     //end of change
     

@@ -620,7 +620,7 @@ export default function App({ defaultLang }) {
                                 <span className='user-name'>{localStorage.getItem("username")}</span>
                             </div>
                             <ul className='user-menu'>
-                                <li onClick={() => localStorage.clear()}>Logout</li>
+                                <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
                             </ul>
                         </div> 
                         : 

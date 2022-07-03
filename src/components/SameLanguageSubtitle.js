@@ -14,6 +14,8 @@ import { url2sub, vtt2url } from '../libs/readSub';
 import GetTranscriptLanguagesAPI from "../redux/actions/api/Transcript/GetTranscriptLanguages"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
+import FetchTranscriptAPI from "../redux/actions/api/Transcript/FetchTranscript"
+import GenerateTranscriptAPI from "../redux/actions/api/Transcript/GenerateTranscript"
 
 const Style = styled.div`
     position: relative;
@@ -179,12 +181,25 @@ export default function SameLanguageSubtitles({
     
     //change
     const [transcribe, setTranscribe] = useState(null);
+    const [transcribeReq, setTranscribeReq] = useState(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranscriptLanguages.data);
+    const Transcript = useSelector(state => state.fetchTranscript.data);
+    const GeneratedTrascript = useSelector(state => state.generateTranscript.data);
 
     const fetchTranscriptionLanguages = () => {
         const langObj = new GetTranscriptLanguagesAPI();
         dispatch(APITransport(langObj));
+    }
+
+    const fetchTranscription = () => {
+        const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), true);
+        dispatch(APITransport(transcriptObj));
+    }
+
+    const generateTranscription = () => {
+        const generateObj = new GenerateTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"));
+        dispatch(APITransport(generateObj));
     }
    
     useEffect(() => {
@@ -303,47 +318,76 @@ export default function SameLanguageSubtitles({
             window.addEventListener('resize', debounceResize);
         }
     }, [resize]);
+
+    const parseSubtitles = (subtitles) => {
+        const suburl = vtt2url(subtitles);
+        url2sub(suburl).then((urlsub) => {
+            setSubtitle(formatSub(urlsub));
+            setSubtitleEnglish(formatSub(urlsub));
+            localStorage.setItem('subtitle', JSON.stringify(urlsub));
+            localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+            setLoading('');
+        });
+    }
+
+    useEffect(() => {
+        if (transcribeReq && Transcript?.data) {
+            setTranscribeReq(false);
+            parseSubtitles(Transcript.data.output);
+        } else if (transcribeReq) {
+            generateTranscription();
+        }
+    }, [Transcript]);
+
+    useEffect(() => {
+        if (transcribeReq && GeneratedTrascript?.data) {
+            setTranscribeReq(false);
+            parseSubtitles(GeneratedTrascript.data.output);
+        }
+    }, [GeneratedTrascript]);
 //
     const onTranscribe = useCallback(() => {
-        console.log(localStorage.getItem('youtubeURL'));
-        const lang = localStorage.getItem('langTranscribe');
+        // console.log(localStorage.getItem('youtubeURL'));
+        // const lang = localStorage.getItem('langTranscribe');
         setLoading(t('TRANSCRIBING'));
-        const youtubeURL = localStorage.getItem('youtubeURL');
+        setTranscribeReq(true);
+        fetchTranscription();
+        // const youtubeURL = localStorage.getItem('youtubeURL');
         //console.log("localstorage transcribe get item " + localStorage.getItem('lang'));
-        const data = {
-            url: youtubeURL,
-            vad_level: 2,
-            chunk_size: 10,
-            language: lang,
-        };
+        // const data = {
+        //     url: youtubeURL,
+        //     vad_level: 2,
+        //     chunk_size: 10,
+        //     language: lang,
+        // };
         //console.log(lang);
-        return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        })
-            .then((resp) => resp.json())
-            .then((resp) => {
-                //console.log(resp.output);
-                player.currentTime = 0;
-                clearSubs();
-                const suburl = vtt2url(resp.output);
-                url2sub(suburl).then((urlsub) => {
-                    setSubtitle(formatSub(urlsub));
-                    setSubtitleEnglish(formatSub(urlsub));
-                    localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                    localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                });
-            })
-            .then(() => setLoading(''))
-            .catch((err) => {
-                console.log(err);
-                setLoading('');
-                notify({
-                    message: err.message,
-                    level: 'error',
-                });
-            });
+        // return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(data),
+        // })
+        //     .then((resp) => resp.json())
+        //     .then((resp) => {
+        //         //console.log(resp.output);
+        //         player.currentTime = 0;
+        //         clearSubs();
+        //         const suburl = vtt2url(resp.output);
+        //         url2sub(suburl).then((urlsub) => {
+        //             setSubtitle(formatSub(urlsub));
+        //             setSubtitleEnglish(formatSub(urlsub));
+        //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
+        //             localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+        //         });
+        //     })
+        //     .then(() => setLoading(''))
+        //     .catch((err) => {
+        //         console.log(err);
+        //         setLoading('');
+        //         notify({
+        //             message: err.message,
+        //             level: 'error',
+        //         });
+        //     });
     }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish]);
 
     // useEffect(() => {

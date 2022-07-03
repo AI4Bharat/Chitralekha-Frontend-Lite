@@ -767,7 +767,7 @@ export default function Header({
                         .then((res) => {
                             clearSubs();
                             setSubtitle(res);
-                            setSubtitleEnglish(res); //changed from setSubtitle to setSubtitleEnglish
+                            setSubtitleEnglish(res); //added setSubtitleEnglish
                         })
                         .catch((err) => {
                             notify({

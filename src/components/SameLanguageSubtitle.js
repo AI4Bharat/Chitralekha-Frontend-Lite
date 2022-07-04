@@ -10,12 +10,13 @@ import { ReactTransliterate } from 'react-transliterate';
 import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
-import { url2sub, vtt2url } from '../libs/readSub';
+import { url2sub, vtt2url, sub2vtt } from '../libs/readSub';
 import GetTranscriptLanguagesAPI from "../redux/actions/api/Transcript/GetTranscriptLanguages"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
 import FetchTranscriptAPI from "../redux/actions/api/Transcript/FetchTranscript"
 import GenerateTranscriptAPI from "../redux/actions/api/Transcript/GenerateTranscript"
+import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript"
 
 const Style = styled.div`
     position: relative;
@@ -188,8 +189,31 @@ export default function SameLanguageSubtitles({
     const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
     const APIStatus = useSelector(state => state.apiStatus);
 
-    const saveTranscript = () => {
-        // const saveObj = 
+    const saveTranscript = async () => {
+        if (localStorage.getItem('subtitle')) {
+            setLoading(t('SAVING'));
+            const payload = {
+                output: sub2vtt(JSON.parse(localStorage.getItem('subtitle')))
+            }
+            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+              });
+            const resp = await res.json();
+            console.log(resp);
+            if (res.ok) {
+                notify({
+                    message: 'Subtitle saved successfully', 
+                    level: 'success'});
+            } else {
+                notify({
+                    message: 'Subtitle could not be saved', 
+                    level: 'error'});
+            }
+            setLoading('');
+        }
     }
 
     const fetchTranscriptionLanguages = () => {

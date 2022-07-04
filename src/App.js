@@ -184,7 +184,7 @@ export default function App({ defaultLang }) {
             if (subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
                 subsEnglish.splice(index, 0, formatSub(sub));
-                setSubtitleEnglish(subs);
+                setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }
         },

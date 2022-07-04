@@ -16,6 +16,8 @@ import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
 import SignLanguageSubtitles from './components/SignLanguageSubtitle';
+import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+import debounce from 'lodash/debounce';
 
 const Style = styled.div`
     height: 100%;
@@ -65,11 +67,24 @@ export default function App({ defaultLang }) {
     const [showLogin, setShowLogin] = useState(false);
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
+    const [height, setHeight] = useState(100);
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
 
+    const resize = useCallback(() => {
+            setHeight(document.body.clientHeight - 240);
+        }, [setHeight]);
+    
+    useEffect(() => {
+        resize();
+        if (!resize.init) {
+            resize.init = true;
+            const debounceResize = debounce(resize, 500);
+            window.addEventListener('resize', debounceResize);
+        }
+    }, [resize]);
 
     const formatSub = useCallback(
         (sub) => {
@@ -471,49 +486,107 @@ export default function App({ defaultLang }) {
                             translationApi={props.translationApi}
                 />*/}
                         {/* here */}
-                        <Subtitles
-                           currentIndex={props.currentIndex}
-                           subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
-                           checkSub={props.checkSub}
-                           player={props.player}
-                           updateSub={props.updateSubEnglish} 
-                           language={props.language}
-                           setLanguage={props.setLanguage}
-                           setLoading={props.setLoading}
-                           subtitleEnglish={props.subtitleEnglish}
-                           formatSub={props.formatSub}
-                           setSubtitle={props.setSubtitle}
-                           notify={props.notify}
-                           isPrimary={false}
-                           configuration={props.configuration}
-                           setConfiguration={props.setConfiguration}
-                           updateSubOriginal={props.updateSubTranslate}
-                           translationApi={props.translationApi}
-                        />
-                        <Subtitles
-                            currentIndex={props.currentIndex}
-                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
-                            checkSub={props.checkSub}
-                            player={props.player}
-                            updateSub={props.updateSub}
-                            language={props.language}
-                            setLanguage={props.setLanguage}
-                            setLoading={props.setLoading}
-                            subtitleEnglish={props.subtitleEnglish}
-                            formatSub={props.formatSub}
-                            setSubtitle={props.setSubtitle}
-                            notify={props.notify}
-                            isPrimary={true}
-                            clearedSubs={props.clearedSubs} //extra
-                            setClearedSubs={props.setClearedSubs} //extra
-                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
-                            configuration={props.configuration}
-                            setConfiguration={props.setConfiguration}
-                            translationApi={props.translationApi}
-                            isTranslateClicked={props.isTranslateClicked} //added
-                            setIsTranslateClicked={props.setIsTranslateClicked} //added
-                        />
-                         
+                  
+                        {/* <ScrollSync>
+                            <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
+                                <ScrollSyncPane>
+                                    <div style={{overflow: 'auto'}}>
+                                            <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSubEnglish} 
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={false}
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            updateSubOriginal={props.updateSubTranslate}
+                                            translationApi={props.translationApi}
+                                            />
+                                    </div>
+                                </ScrollSyncPane>
+                                <ScrollSyncPane>
+                                    <div style={{overflow: 'auto'}}>
+                                        <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSub}
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={true}
+                                            clearedSubs={props.clearedSubs} //extra
+                                            setClearedSubs={props.setClearedSubs} //extra
+                                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            translationApi={props.translationApi}
+                                            isTranslateClicked={props.isTranslateClicked} //added
+                                            setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                        />
+                                    </div>
+                                </ScrollSyncPane>
+                            </div>
+                         </ScrollSync> */}
+                          <ScrollSync>
+                            <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
+                         <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSubEnglish} 
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={false}
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            updateSubOriginal={props.updateSubTranslate}
+                                            translationApi={props.translationApi}
+                                            />
+                                            <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSub}
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={true}
+                                            clearedSubs={props.clearedSubs} //extra
+                                            setClearedSubs={props.setClearedSubs} //extra
+                                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            translationApi={props.translationApi}
+                                            isTranslateClicked={props.isTranslateClicked} //added
+                                            setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                        />
+                                        </div>
+                         </ScrollSync>
                     </>
                 )}
 

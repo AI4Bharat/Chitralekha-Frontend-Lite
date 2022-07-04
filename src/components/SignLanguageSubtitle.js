@@ -276,7 +276,7 @@ export default function SignLanguageSubtitles({
                     width={250}
                     height={height}
                     rowHeight={80}
-                    scrollToIndex={currentIndex}
+                    scrollToIndex={currentIndex+2}
                     rowCount={subtitle.length}
                     rowGetter={({ index }) => subtitle[index]}
                     headerRowRenderer={() => null}

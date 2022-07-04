@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import languages from '../libs/languages';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Table } from 'react-virtualized';
+import { Table, Column, MultiGrid } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { ReactTransliterate } from 'react-transliterate';
@@ -14,6 +14,7 @@ import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
 import GetTranslationLanguagesAPI from "../redux/actions/api/Translation/GetTranslationLanguages"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
+import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 const Style = styled.div`
     position: relative;
@@ -81,21 +82,28 @@ const Style = styled.div`
     }
 
     .ReactVirtualized__Table {
+        overflow: visible
+       
         .ReactVirtualized__Table__Grid {
             outline: none;
+            overflow: hidden !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
-            overflow: visible !important;
+            overflow: hidden !important;
+            border: 1px solid red;
         }
 
         .ReactVirtualized__Table__row {
-            overflow: visible !important;
+            overflow: hidden !important;
+            
             .item {
                 height: 100%;
                 padding: 10px;
+                
 
                 ul {
+                    
                     position: absolute !important;
                     bottom: 200px !important;
                     left: 0 !important;
@@ -492,18 +500,14 @@ export default function Subtitles({
     }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
     return (
-        subtitle && (
+         subtitle && (
+
             <Style className="subtitles">
                 {console.log('when translate button clicked '+isTranslateClicked)}
                  {/* <CalendarView />  */}
                 {isPrimary && translate && languageAvailable && (
                     <div className="translate">
-                        {/* <div className="heading">
-                            <h4>Translation</h4>
-                        </div> */}
-                        
-                         {/* <TestSticky />  */}
-                        
+      
                         <div className="options">
 
                             <select
@@ -544,21 +548,22 @@ export default function Subtitles({
                         {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}
-               
-               {(!isPrimary || isTranslateClicked ) && (
+                <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
+                <ScrollSyncPane>
+                    
+                
                 <Table
                     headerHeight={40}
                     width={250}
                     height={height}
                     rowHeight={80}
+                    style={{overflow: 'hidden'}}
                     scrollToIndex={currentIndex}
+                    ScrollSync={true}
                     rowCount={subtitle.length}
                     rowGetter={({ index }) => subtitle[index]}
                     headerRowRenderer={() => null}
                     rowRenderer={(props) => {
-                        // {
-                        //     console.log(unescape(props.rowData.text))
-                        // }
                         return (
                             <div
                                 key={props.key}
@@ -618,6 +623,7 @@ export default function Subtitles({
                                             : localStorage.getItem('langTranscribe')
                                         }
                                         maxOptions={5}
+                                        readOnly={isPrimary? false : true}
                                         renderComponent={(props) => <textarea {...props} />}
                                     />
                                     {/* <textarea
@@ -641,9 +647,15 @@ export default function Subtitles({
                             </div>
                         );
                     }}
-                ></Table>
-                )}
+                >
+                </Table>
+       
+                                </ScrollSyncPane>
+                                </div>
+
+
             </Style>
         )
+            
     );
 }

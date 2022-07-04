@@ -74,6 +74,7 @@ const Style = styled.div`
                 user-select: all;
                 pointer-events: all;
                 background-color: rgb(0 0 0 / 0);
+                
                 text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px, rgb(0 0 0) -1px 0px 1px,
                     rgb(0 0 0) 0px -1px 1px;
 

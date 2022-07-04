@@ -600,6 +600,9 @@ export default function Header({
     const onYouTubeChange = useCallback(
         (event) => {
             if (youtubeURL.length > 0) {
+                
+                console.log('called');
+       //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
                 setLoading(t('LOADING'));
 
                 fetch(
@@ -910,6 +913,7 @@ export default function Header({
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
                                 // localStorage.setItem('videoSrc', '/sample.mp4');
+                           //     window.localStorage.clear(); //added this to clear the remaining localstorage values
                                 localStorage.setItem('videoSrc', null);
                                 localStorage.setItem('isVideoPresent', false);
                                 localStorage.setItem('lang', 'en');

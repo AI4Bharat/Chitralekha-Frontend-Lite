@@ -207,7 +207,7 @@ export default function SameLanguageSubtitles({
                 localStorage.setItem('langTranscribe', langArray[0].key);
                 setTranscribe(langArray[0].key);
               //  console.log("transcribe");
-                console.log(langArray);
+             //   console.log(langArray);
             })
             .catch((err) => {
                 console.log(err);
@@ -302,6 +302,7 @@ export default function SameLanguageSubtitles({
                 clearSubs();
                 const suburl = vtt2url(resp.output);
                 url2sub(suburl).then((urlsub) => {
+                 //   console.log('urlsub '+ urlsub);
                     setSubtitle(formatSub(urlsub));
                     setSubtitleEnglish(formatSub(urlsub));
                     localStorage.setItem('subtitle', JSON.stringify(urlsub));
@@ -368,7 +369,7 @@ export default function SameLanguageSubtitles({
                                     
                                 }}
                             >
-                                { console.log("transcribe "+localStorage.getItem('langTranscribe'))}
+                                {/* { console.log("transcribe "+localStorage.getItem('langTranscribe'))} */}
                               {/*  <option key="please-select" value="please-select" >Please Select</option> */}
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
                                     (item) =>

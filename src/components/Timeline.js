@@ -39,6 +39,7 @@ const Timeline = styled.div`
         justify-content: center;
         align-items: center;
         text-align: center;
+        word-wrap: break-word;
         color: #fff;
         font-size: 14px;
         cursor: move;
@@ -80,17 +81,16 @@ const Timeline = styled.div`
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            word-break: break-all;
-            white-space: nowrap;
+            
             text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px, rgb(0 0 0) -1px 0px 1px,
                 rgb(0 0 0) 0px -1px 1px;
-            width: 100%;
+            
             height: 100%;
+            word-wrap: break-word;
 
             p {
                 margin: 2px 0;
                 line-height: 1;
-
                 &.bilingual {
                     transform: scale(0.8);
                 }

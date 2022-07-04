@@ -331,13 +331,13 @@ export default function SameLanguageSubtitles({
     }
 
     useEffect(() => {
-        if (transcribeReq && Transcript?.data) {
+        if (transcribeReq && Transcript.data?.output) {
             setTranscribeReq(false);
             parseSubtitles(Transcript.data.output);
         } else if (transcribeReq) {
             generateTranscription();
         }
-    }, [Transcript]);
+    }, [Transcript, transcribeReq]);
 
     useEffect(() => {
         if (transcribeReq && GeneratedTrascript?.data) {

@@ -396,7 +396,7 @@ export default function Subtitles({
     }, [Translations, APIStatus, translateReq]);
 
     useEffect(() => {
-        if (translateReq && GeneratedTranslations.payload?.translations?.length > 0 && GeneratedTranslations.target_lang === localStorage.getItem("langTranslate")) {
+        if (translateReq && GeneratedTranslations.payload?.translations?.length > 0 && (languageChoices[GeneratedTranslations.target_lang] === localStorage.getItem("langTranslate") || GeneratedTranslations.target_lang === localStorage.getItem("langTranslate"))) {
             parseTranslations(GeneratedTranslations.payload.translations);
             localStorage.setItem("translation_id", GeneratedTranslations.id);
             setTranslateReq(false);

@@ -349,9 +349,9 @@ export default function Subtitles({
             //         });
             // }
 
-            if (translationApi === 'AI4Bharat') {
+            if (translationApi == 'AI4Bharat') {
                 console.log("here1", "translate");
-                return ai4BharatBatchTranslate(
+                 return ai4BharatBatchTranslate(
                     formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
                     'en',
                     translate,

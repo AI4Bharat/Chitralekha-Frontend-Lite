@@ -1041,7 +1041,6 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - basic');
-                                
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                             }}

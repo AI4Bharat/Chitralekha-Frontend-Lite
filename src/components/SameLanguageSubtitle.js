@@ -371,12 +371,7 @@ export default function SameLanguageSubtitles({
     }, [Transcript, transcribeReq, APIStatus]);
 
     useEffect(() => {
-        console.log(GeneratedTranscript, "generate")
-        if (transcribeReq && GeneratedTranscript.data?.payload?.ouput) {
-            setTranscribeReq(false);
-            localStorage.setItem("transcript_id", GeneratedTranscript.id);
-            parseSubtitles(GeneratedTranscript.data.payload.output);
-        } else if (transcribeReq && GeneratedTranscript.data?.output) {
+        if (transcribeReq && GeneratedTranscript.data?.output) {
             setTranscribeReq(false);
             localStorage.setItem("transcript_id", GeneratedTranscript.id);
             parseSubtitles(GeneratedTranscript.data.output);

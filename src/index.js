@@ -9,6 +9,8 @@ import i18n from './i18n';
 import App from './App';
 import Mobile from './Mobile';
 import GlobalStyle from './GlobalStyle';
+import {Provider} from 'react-redux';
+import store from './redux/store/store';
 
 setTranslations(i18n);
 const language = navigator.language.toLowerCase();
@@ -18,8 +20,10 @@ setLocale(defaultLang);
 // Add comment for triggering push - 2
 ReactDOM.render(
     <React.Fragment>
-        <GlobalStyle />
-        {isMobile ? <Mobile /> : <App defaultLang={defaultLang} />}
+        <Provider store={store}>
+            <GlobalStyle />
+            {isMobile ? <Mobile /> : <App defaultLang={defaultLang} />}
+        </Provider>
     </React.Fragment>,
     document.getElementById('root'),
 );

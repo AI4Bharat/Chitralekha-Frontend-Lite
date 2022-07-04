@@ -10,6 +10,7 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import Links from './components/Links';
+import LoginForm from './components/Login';
 // import BottomLinks from './components/BottomLinks';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
@@ -61,6 +62,7 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
 
@@ -92,7 +94,6 @@ export default function App({ defaultLang }) {
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
-            // console.log('Here');
             if (!isEqual(newSubtitle, subtitle)) {
                 if (saveToHistory) {
                     if (subtitleHistory.current.length >= 1000) {
@@ -356,7 +357,6 @@ export default function App({ defaultLang }) {
      
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
-                //console.log(localSubtitle);
                 if (localSubtitle.length) {
                     setSubtitleOriginal(localSubtitle.map((item) => new Sub(item)));
                 } else {
@@ -614,6 +614,23 @@ export default function App({ defaultLang }) {
                         />
                     </>
                 )}
+                <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
+                <div style={{zIndex: 200}}>
+                    {localStorage.getItem("user_id") ? 
+                        <div>
+                            <div className="user-details">
+                                <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
+                                <span className='user-name'>{localStorage.getItem("username")}</span>
+                            </div>
+                            <ul className='user-menu'>
+                                <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
+                            </ul>
+                        </div> 
+                        : 
+                        <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                            Sign In
+                        </span>}
+                </div>
                 <Tool {...props} />
             </div>
             {isSetVideo && <Footer {...props} />}

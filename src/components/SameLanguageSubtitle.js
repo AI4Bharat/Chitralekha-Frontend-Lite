@@ -547,7 +547,9 @@ export default function SameLanguageSubtitles({
                                             });
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
-                                        enabled={true}
+                                        enabled={!(!localStorage.getItem('langTranscribe') ||
+                                            localStorage.getItem('langTranscribe') === 'en' ||
+                                            localStorage.getItem('langTranscribe') === 'en-k')}
                                         lang={localStorage.getItem('langTranscribe')}
                                         // lang={
                                         //     isPrimary

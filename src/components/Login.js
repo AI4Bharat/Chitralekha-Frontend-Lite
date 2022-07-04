@@ -93,7 +93,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
             <input type="password" className="login-box" value={credentials.password} onChange={(e) => setCredentials({...credentials, password: e.currentTarget.value})}/>
             <br></br>
             <button className="login-btn" onClick={handleLogin}>Login</button>
-            <p className="form-text">Don't have an account? <span className="link" onClick={() => {setErr(""); setIsSignIn(!isSignIn)}}>Sign up</span></p>
+            {/* <p className="form-text">Don't have an account? <span className="link" onClick={() => {setErr(""); setIsSignIn(!isSignIn)}}>Sign up</span></p> */}
           </form> 
           :
           <form className="login-form-form">

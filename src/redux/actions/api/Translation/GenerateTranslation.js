@@ -9,7 +9,7 @@
    constructor(transcriptId, language, timeout = 2000) {
      super("GET", timeout, false);
      this.type = constants.GENERATE_TRANSLATION;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.translation}generate/?transcript_id=${transcriptId}&target_lang=${language}`;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.translation}generate?transcript_id=${transcriptId}&target_lang=${language}`;
    }
  
    processResponse(res) {
@@ -29,7 +29,7 @@
      this.headers = {
        headers: {
          "Content-Type": "application/json",
-         "Authorization":`Token ${localStorage.getItem('chitralekha_access_token')}`
+         ...(localStorage.getItem('chitralekha_access_token')) && {"Authorization":`Token ${localStorage.getItem('chitralekha_access_token')}`}
        },
      };
      return this.headers;

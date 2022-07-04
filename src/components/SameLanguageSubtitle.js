@@ -185,7 +185,12 @@ export default function SameLanguageSubtitles({
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranscriptLanguages.data);
     const Transcript = useSelector(state => state.fetchTranscript.data);
-    const GeneratedTrascript = useSelector(state => state.generateTranscript.data);
+    const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
+    const APIStatus = useSelector(state => state.apiStatus);
+
+    const saveTranscript = () => {
+        // const saveObj = 
+    }
 
     const fetchTranscriptionLanguages = () => {
         const langObj = new GetTranscriptLanguagesAPI();
@@ -331,20 +336,31 @@ export default function SameLanguageSubtitles({
     }
 
     useEffect(() => {
+        console.log(Transcript, "transcript");
         if (transcribeReq && Transcript.data?.output) {
             setTranscribeReq(false);
+            localStorage.setItem("transcript_id", Transcript.id);
             parseSubtitles(Transcript.data.output);
-        } else if (transcribeReq) {
+        } else if (transcribeReq && APIStatus?.error) {
             generateTranscription();
         }
-    }, [Transcript, transcribeReq]);
+    }, [Transcript, transcribeReq, APIStatus]);
 
     useEffect(() => {
-        if (transcribeReq && GeneratedTrascript?.data) {
+        console.log(GeneratedTranscript, "generate")
+        if (transcribeReq && GeneratedTranscript.data?.payload?.ouput) {
             setTranscribeReq(false);
-            parseSubtitles(GeneratedTrascript.data.output);
+            localStorage.setItem("transcript_id", GeneratedTranscript.id);
+            parseSubtitles(GeneratedTranscript.data.payload.output);
+        } else if (transcribeReq && GeneratedTranscript.data?.output) {
+            setTranscribeReq(false);
+            localStorage.setItem("transcript_id", GeneratedTranscript.id);
+            parseSubtitles(GeneratedTranscript.data.output);
         }
-    }, [GeneratedTrascript]);
+    }, [GeneratedTranscript]);
+
+    console.log(GeneratedTranscript, "generate")
+
 //
     const onTranscribe = useCallback(() => {
         // console.log(localStorage.getItem('youtubeURL'));
@@ -407,6 +423,7 @@ export default function SameLanguageSubtitles({
     }, []);
     end of change*/
 
+
     return (
         
         // subtitle && 
@@ -421,7 +438,7 @@ export default function SameLanguageSubtitles({
                 {isPrimary && (
                     <div className="transcribe">
                         <div className="heading">
-                            <h4>Speech-To-Text</h4>
+                            <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
                         </div>
                         {/* {console.log('rendering here')} */}
                         <div className="options">

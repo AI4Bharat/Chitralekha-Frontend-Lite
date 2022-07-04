@@ -187,3 +187,16 @@
     display: block;
     background-color: #3f51b5;
   }
+
+  .save-btn {
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 100%;
+  }
+
+  .save-btn:hover {
+    transform: scale(1.2);
+    background-color:  	#202020;
+  }

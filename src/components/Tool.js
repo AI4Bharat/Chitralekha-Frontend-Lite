@@ -967,7 +967,7 @@ export default function Header({
                         >
                             <Translate value="MAIN_LANGUAGE" />
                         </div>
-                        <div
+                        {/* <div
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - sign');
@@ -976,7 +976,7 @@ export default function Header({
                             }}
                         >
                             <Translate value="SIGN_LANGUAGE" />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>

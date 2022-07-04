@@ -228,10 +228,12 @@ export default function Subtitles({
     useEffect(() => {
         if (localStorage.getItem('langTranslate')) {
             setTranslate(localStorage.getItem('langTranslate')); //changes in both
+            setModeTranslate(localStorage.getItem('langTranslate'));
         } else {
             localStorage.setItem('langTranslate', 'en') //added 
             //setTranslate('en');
             setTranslate(localStorage.getItem('langTranslate'));
+            setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
     }, []);
@@ -246,11 +248,13 @@ export default function Subtitles({
                 setLanguageAvailable(langArray);
                 localStorage.setItem('langTranslate', langArray[0].key);
                 setTranslate(langArray[0].key);
+                setModeTranslate(langArray[0].key);
             }
         } else {
             setLanguageAvailable(languages);
             localStorage.setItem('langTranslate', languages['en'][1].key); //changes
             setTranslate(languages['en'][1].key);
+            setModeTranslate(languages['en'][1].key);
         }
     }, [languageChoices, translationApi]);
 
@@ -319,7 +323,42 @@ export default function Subtitles({
 
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
+    const saveTranslation = async () => {
+        if (subtitle?.length > 0) {
+            setLoading(t('SAVING'));
+            let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            const payload = {
+                translations: subtitle.map((item, i) => {
+                    return {
+                        source: transcript[i].text,
+                        target: item.text,
+                    };
+                })
+            }
+            const saveObj = new SaveTranslationAPI(localStorage.getItem("translation_id"), localStorage.getItem("langTranslate"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+              });
+            const resp = await res.json();
+            console.log(resp);
+            if (res.ok) {
+                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                notify({
+                    message: 'Translation saved successfully', 
+                    level: 'success'});
+            } else {
+                notify({
+                    message: 'Translation could not be saved', 
+                    level: 'error'});
+            }
+            setLoading('');
+        }
+    }
+
     const parseTranslations = (translations) => {
+        console.log("hi")
         let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
         for (let i = 0; i < transcript.length; i++) {
             if (transcript[i].text === translations[i].source) {
@@ -347,8 +386,7 @@ export default function Subtitles({
     }
 
     useEffect(() => {
-        console.log(Translations);
-        if (translateReq && Translations.payload?.translations?.length > 0 && Translations.target_lang === localStorage.getItem("langTranslate")) {
+        if (translateReq && Translations.payload?.translations?.length > 0 && (languageChoices[Translations.target_lang] === localStorage.getItem("langTranslate") || Translations.target_lang === localStorage.getItem("langTranslate"))) {
             setTranslateReq(false);
             localStorage.setItem("translation_id", Translations.id);
             parseTranslations(Translations.payload.translations);
@@ -625,7 +663,7 @@ export default function Subtitles({
 
                 {!isPrimary && (
                     <div className="reference">
-                        <h4>Reference Subtitles</h4>
+                        <h4>Reference Subtitles {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}</h4>
                         {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}

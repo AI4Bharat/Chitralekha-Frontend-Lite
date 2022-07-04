@@ -64,6 +64,7 @@ export default function App({ defaultLang }) {
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
+    const [isTranslateClicked, setIsTranslateClicked] = useState(false);
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -184,7 +185,7 @@ export default function App({ defaultLang }) {
             if (subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
                 subsEnglish.splice(index, 0, formatSub(sub));
-                setSubtitleEnglish(subs);
+                setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }
         },
@@ -353,7 +354,7 @@ export default function App({ defaultLang }) {
         //         });
 
         if (localSubtitleString) {
-          //  {console.log("sub other app" + subtitleEnglish + subtitle)}
+     
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
                 if (localSubtitle.length) {
@@ -368,7 +369,7 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
         if (localSubtitleEnglish) {
-            //{console.log("subEng other app" + subtitleEnglish + subtitle)}
+      
             try {
                 const localSubtitle = JSON.parse(localSubtitleEnglish);
                 if (localSubtitle.length) {
@@ -384,7 +385,7 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
     }, [setSubtitleOriginal, setSubtitleEnglish]);
-    // {console.log("subEng other app" + subtitleEnglish + subtitle)}
+
     const props = {
         player,
         setPlayer,
@@ -436,12 +437,14 @@ export default function App({ defaultLang }) {
         setIsSetConfiguration,
         translationApi,
         setTranslationApi,
+        isTranslateClicked,
+        setIsTranslateClicked,
     };
 
     return (
         
         <Style>
-            {/* {console.log("subEng other app" + subtitleEnglish + subtitle)} */}
+     
             <div className="main">
                 <Links />
                 <Player {...props} />
@@ -507,6 +510,8 @@ export default function App({ defaultLang }) {
                             configuration={props.configuration}
                             setConfiguration={props.setConfiguration}
                             translationApi={props.translationApi}
+                            isTranslateClicked={props.isTranslateClicked} //added
+                            setIsTranslateClicked={props.setIsTranslateClicked} //added
                         />
                          
                     </>
@@ -582,8 +587,6 @@ export default function App({ defaultLang }) {
                             
                         /> */}
     
-                        {/* {console.log("subtitleEnglish App " + subtitleEnglish)}
-                            {console.log("subtitle App "+subtitle)} */}
                         {/* final */}
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}

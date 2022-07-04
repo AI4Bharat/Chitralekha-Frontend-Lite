@@ -679,6 +679,9 @@ export default function Header({
         (event) => {
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
+                
+                console.log('called');
+       //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
                 setLoading(t('LOADING'));
                 dispatch(APITransport(videoObj));
 
@@ -990,6 +993,7 @@ export default function Header({
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
                                 // localStorage.setItem('videoSrc', '/sample.mp4');
+                           //     window.localStorage.clear(); //added this to clear the remaining localstorage values
                                 localStorage.setItem('videoSrc', null);
                                 localStorage.setItem('isVideoPresent', false);
                                 localStorage.setItem('lang', 'en');
@@ -1044,7 +1048,8 @@ export default function Header({
                         >
                             <Translate value="MAIN_LANGUAGE" />
                         </div>
-                        <div
+
+                        {/* <div
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - sign');
@@ -1053,7 +1058,8 @@ export default function Header({
                             }}
                         >
                             <Translate value="SIGN_LANGUAGE" />
-                        </div>
+                        </div> */}
+                        
                     </div>
                 </div>
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>

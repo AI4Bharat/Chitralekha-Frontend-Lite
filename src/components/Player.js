@@ -122,6 +122,7 @@ const VideoWrap = memo(
 );
 
 export default function Player(props) {
+    console.log(props);
     const [currentSub, setCurrentSub] = useState(null);
     const [focusing, setFocusing] = useState(false);
     const [inputItemCursor, setInputItemCursor] = useState(0);
@@ -135,7 +136,11 @@ export default function Player(props) {
     }, [$player, props.player]);
 
     useMemo(() => {
-        setCurrentSub(props.subtitle[props.currentIndex]);
+        setCurrentSub(
+            (props.configuration === 'Subtitling')
+           ? props.subtitle[props.currentIndex]
+           : props.subtitleEnglish[props.currentIndex]
+    );
     }, [props.subtitle, props.currentIndex]);
 
     const onChange = useCallback(
@@ -180,7 +185,7 @@ export default function Player(props) {
                 <VideoWrap {...props} />
                 {props.player && currentSub ? (
                     <div className="subtitle">
-                        {/* {focusing ? (
+                        {focusing ? (
                             <div className="operate" onClick={onSplit}>
                                 <Translate value="SPLIT" />
                             </div>
@@ -194,7 +199,7 @@ export default function Player(props) {
                             onBlur={onBlur}
                             onKeyDown={onFocus}
                             spellCheck={false}
-                        /> */}
+                        />
                     </div>
                 ) : null}
             </div>

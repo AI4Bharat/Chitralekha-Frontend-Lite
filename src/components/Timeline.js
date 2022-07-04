@@ -203,7 +203,7 @@ export default React.memo(
                 $subs.style.width = `${width}px`;
                 const start = DT.d2t(previou.endTime);
                 const end = DT.d2t(next.startTime);
-                console.log('in onDoubleClick')
+         
                 updateSub(sub, {
                     start,
                     end,
@@ -212,27 +212,27 @@ export default React.memo(
         };
 
         const onDocumentMouseMove = useCallback((event) => {
-           // console.log('in OnDocumentMouseMove');
+   
             if (isDroging && lastTarget) {
                 lastDiffX = event.pageX - lastX;
                 if (lastType === 'left') {
-                    console.log('in OnDocumentMouseMove left');
+      
                     lastTarget.style.width = `${lastWidth - lastDiffX}px`;
                     lastTarget.style.transform = `translate(${lastDiffX}px)`;
                 } else if (lastType === 'right') {
-                    console.log('in OnDocumentMouseMove right');
+         
                     lastTarget.style.width = `${lastWidth + lastDiffX}px`;
                 } else {
-                    console.log('in OnDocumentMouseMove else');
+          
                     lastTarget.style.transform = `translate(${lastDiffX}px)`;
                 }
             }
         }, []);
 
         const onDocumentMouseUp = useCallback(() => {
-            console.log('in OnDocumentMouseUp');
+
             if (isDroging && lastTarget && lastDiffX) {
-                console.log('in OnDocumentMouseUp if');
+       
                 const timeDiff = lastDiffX / gridGap / 10;
                 const index = hasSub(lastSub);
                 const previou = subtitle[index - 1];
@@ -244,14 +244,14 @@ export default React.memo(
 
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
                     //
-                    console.log('here in if');
+   
                 } else {
-                    console.log('here in else');
+              
                     if (lastType === 'left') {
                         if (startTime >= 0 && lastSub.endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             updateSub(lastSub, { start });
-                            console.log('lastSub left ' + lastSub);
+                     
                             updateSubEnglish(lastSub, { start });
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -260,7 +260,7 @@ export default React.memo(
                         if (endTime >= 0 && endTime - lastSub.startTime >= 0.2) {
                             const end = DT.d2t(endTime);
                             updateSub(lastSub, { end });
-                            console.log('lastSub right ' + lastSub);
+               
                             updateSubEnglish(lastSub, { end });
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -269,7 +269,7 @@ export default React.memo(
                         if (startTime > 0 && endTime > 0 && endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             const end = DT.d2t(endTime);
-                            console.log('lastSub else ' + lastSub);
+                 
                             updateSub(lastSub, {
                                 start,
                                 end,
@@ -283,10 +283,10 @@ export default React.memo(
                         }
                     }
                 }
-                console.log('in OnDocumentMouseUp end of if');
+ 
                 lastTarget.style.transform = `translate(0)`;
             }
-            console.log('in OnDocumentMouseUp - outside if');
+   
             lastType = '';
             lastX = 0;
             lastWidth = 0;
@@ -296,15 +296,15 @@ export default React.memo(
 
         const onKeyDown = useCallback(
             (event) => {
-                console.log('in OnKeyDown');
+    
                 const sub = currentSubs[lastIndex];
                 if (sub && lastTarget) {
-                    console.log('in onKeyDown if');
+          
                     const keyCode = getKeyCode(event);
-                    console.log('keyCode '+keyCode)
+        
                     switch (keyCode) {
                         case 37:
-                            console.log('in case 37')
+                
                             updateSub(sub, {
                                 start: DT.d2t(sub.startTime - 0.1),
                                 end: DT.d2t(sub.endTime - 0.1),
@@ -312,7 +312,7 @@ export default React.memo(
                             player.currentTime = sub.startTime - 0.1;
                             break;
                         case 39:
-                            console.log('in case 39')
+              
                             updateSub(sub, {
                                 start: DT.d2t(sub.startTime + 0.1),
                                 end: DT.d2t(sub.endTime + 0.1),
@@ -349,7 +349,7 @@ export default React.memo(
                 {}
                 <div ref={$subsRef}>
               
-                {console.log('configuration '+configuration)}
+                {/* {console.log('configuration '+configuration)} */}
               
                 {/* {console.log('currentSubs '+currentSubs[0].text)} */}
                     

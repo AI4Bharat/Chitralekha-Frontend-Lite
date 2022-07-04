@@ -202,6 +202,8 @@ export default function Subtitles({
     configuration,
     updateSubOriginal = null,
     translationApi,
+    isTranslateClicked=false,
+    setIsTranslateClicked,
 }) {
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
@@ -215,6 +217,7 @@ export default function Subtitles({
         dispatch(APITransport(langObj));
     }
 
+    //console.log('isTranslateClicked '+isTranslateClicked);
     useEffect(() => {
         if (localStorage.getItem('langTranslate')) {
             setTranslate(localStorage.getItem('langTranslate')); //changes in both
@@ -312,6 +315,9 @@ export default function Subtitles({
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
     const onTranslate = useCallback(() => {
+        setIsTranslateClicked(true);
+        
+        console.log('when translate button clicked '+isTranslateClicked);
         console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
         setLoading(t('TRANSLATING'));
 
@@ -488,6 +494,7 @@ export default function Subtitles({
     return (
         subtitle && (
             <Style className="subtitles">
+                {console.log('when translate button clicked '+isTranslateClicked)}
                  {/* <CalendarView />  */}
                 {isPrimary && translate && languageAvailable && (
                     <div className="translate">
@@ -498,7 +505,7 @@ export default function Subtitles({
                          {/* <TestSticky />  */}
                         
                         <div className="options">
-                              {/* <CalendarView />   */}
+
                             <select
                             
                                // value="kn"
@@ -538,6 +545,7 @@ export default function Subtitles({
                     </div>
                 )}
                
+               {(!isPrimary || isTranslateClicked ) && (
                 <Table
                     headerHeight={40}
                     width={250}
@@ -634,6 +642,7 @@ export default function Subtitles({
                         );
                     }}
                 ></Table>
+                )}
             </Style>
         )
     );

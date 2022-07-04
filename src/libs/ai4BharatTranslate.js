@@ -26,7 +26,7 @@ export async function ai4BharatBatchTranslate(subtitle = [], from_lang, to_lang)
                         return resp.json();
                     })
                     .then((resp) => {
-                      //  console.log(resp);
+                       console.log(resp, "translate");
                         for (let i = 0; i < resp.text_lines.length; i++) {
                             entireArray[i].text = resp.text_lines[i];
                         }

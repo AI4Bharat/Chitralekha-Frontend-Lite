@@ -475,7 +475,7 @@ export default function SameLanguageSubtitles({
                                     
                                 }}
                             >
-                                { console.log("transcribe "+localStorage.getItem('langTranscribe'))}
+                                {/* { console.log("transcribe "+localStorage.getItem('langTranscribe'))} */}
                               {/*  <option key="please-select" value="please-select" >Please Select</option> */}
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
                                     (item) =>

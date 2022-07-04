@@ -237,8 +237,6 @@ export default function Subtitles({
                     langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
                 }
                 setLanguageAvailable(langArray);
-                console.log(langArray);
-                console.log(languageChoices);
                 localStorage.setItem('langTranslate', langArray[0].key);
                 setTranslate(langArray[0].key);
             }
@@ -320,7 +318,6 @@ export default function Subtitles({
         console.log('when translate button clicked '+isTranslateClicked);
         console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
         setLoading(t('TRANSLATING'));
-
         if (clearedSubs) {
             // if (translate === 'en-k') {
             //     return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), 'en')
@@ -353,13 +350,16 @@ export default function Subtitles({
             // }
 
             if (translationApi === 'AI4Bharat') {
+                console.log("here1", "translate");
                 return ai4BharatBatchTranslate(
                     formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
                     'en',
                     translate,
                 )
                     .then((res) => {
+                        console.log("here2", "translate");
                         setLoading('');
+                        console.log(res, "translate")
                         setSubtitle(formatSub(res));
                         localStorage.setItem('langTranslate', translate);
                         console.log('langTranslate '+localStorage.getItem('langTranslate'));

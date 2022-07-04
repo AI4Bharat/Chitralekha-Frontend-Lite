@@ -193,7 +193,7 @@ export default function SameLanguageSubtitles({
         if (localStorage.getItem('subtitle')) {
             setLoading(t('SAVING'));
             const payload = {
-                output: sub2vtt(JSON.parse(localStorage.getItem('subtitle')))
+                output: sub2vtt(subtitle)
             }
             const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), payload);
             const res = await fetch(saveObj.apiEndPoint(), {

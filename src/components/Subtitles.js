@@ -728,7 +728,9 @@ export default function Subtitles({
                                             //         ? false
                                             //         : true
                                             //     : true
-                                            true
+                                            !(!localStorage.getItem('langTranslate') ||
+                                            localStorage.getItem('langTranslate') === 'en' ||
+                                            localStorage.getItem('langTranslate') === 'en-k')
                                         }
                                         lang={
                                             // isPrimary

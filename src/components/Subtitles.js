@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useDeferredValue } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
@@ -12,6 +12,9 @@ import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
 // import { ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
 // import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
 import GetTranslationLanguagesAPI from "../redux/actions/api/Translation/GetTranslationLanguages"
+import FetchTranslationAPI from "../redux/actions/api/Translation/FetchTranslation"
+import GenerateTranslationAPI from "../redux/actions/api/Translation/GenerateTranslation"
+import SaveTranslationAPI from "../redux/actions/api/Translation/SaveTranslation"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -208,9 +211,13 @@ export default function Subtitles({
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
+    const [translateReq, setTranslateReq] = useState(false);
 
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranslationLanguages.data);
+    const Translations = useSelector(state => state.fetchTranslation.data);
+    const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
+    const APIStatus = useSelector(state => state.apiStatus);
 
     const fetchTranslationLanguages = () => {
         const langObj = new GetTranslationLanguagesAPI();
@@ -312,8 +319,55 @@ export default function Subtitles({
 
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
+    const parseTranslations = (translations) => {
+        let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+        for (let i = 0; i < transcript.length; i++) {
+            if (transcript[i].text === translations[i].source) {
+                transcript[i].text = translations[i].target;
+            }
+        }
+        console.log(transcript)
+        localStorage.setItem('subtitle', JSON.stringify(transcript));
+        setSubtitle(transcript);
+        setLoading('');
+        notify({
+            message: t('TRANSLAT_SUCCESS'),
+            level: 'success',
+        });
+    }
+
+    const getTranslations = () => {
+        const translationObj = new FetchTranslationAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranslate"), true);
+        dispatch(APITransport(translationObj));
+    }
+
+    const generateTranslations = () => {
+        const translationObj = new GenerateTranslationAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranslate"));
+        dispatch(APITransport(translationObj));
+    }
+
+    useEffect(() => {
+        console.log(Translations);
+        if (translateReq && Translations.payload?.translations?.length > 0 && Translations.target_lang === localStorage.getItem("langTranslate")) {
+            setTranslateReq(false);
+            localStorage.setItem("translation_id", Translations.id);
+            parseTranslations(Translations.payload.translations);
+        } else if (translateReq && APIStatus?.error) {
+            generateTranslations();
+        }
+    }, [Translations, APIStatus, translateReq]);
+
+    useEffect(() => {
+        if (translateReq && GeneratedTranslations.payload?.translations?.length > 0 && GeneratedTranslations.target_lang === localStorage.getItem("langTranslate")) {
+            parseTranslations(GeneratedTranslations.payload.translations);
+            localStorage.setItem("translation_id", GeneratedTranslations.id);
+            setTranslateReq(false);
+        }
+    }, [GeneratedTranslations]);
+
     const onTranslate = useCallback(() => {
         setIsTranslateClicked(true);
+        setTranslateReq(true);
         
         console.log('when translate button clicked '+isTranslateClicked);
         console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
@@ -349,54 +403,54 @@ export default function Subtitles({
             //         });
             // }
 
-            if (translationApi === 'AI4Bharat') {
-                console.log("here1", "translate");
-                return ai4BharatBatchTranslate(
-                    formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
-                    'en',
-                    translate,
-                )
-                    .then((res) => {
-                        console.log("here2", "translate");
-                        setLoading('');
-                        console.log(res, "translate")
-                        setSubtitle(formatSub(res));
-                        localStorage.setItem('langTranslate', translate);
-                        console.log('langTranslate '+localStorage.getItem('langTranslate'));
-                        notify({
-                            message: t('TRANSLAT_SUCCESS'),
-                            level: 'success',
-                        });
-                    })
-                    .catch((err) => {
-                        setLoading('');
-                        notify({
-                            message: err.message,
-                            level: 'error',
-                        });
-                    });
-            }
+        //     if (translationApi === 'AI4Bharat') {
+        //         console.log("here1", "translate");
+        //         return ai4BharatBatchTranslate(
+        //             formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
+        //             'en',
+        //             translate,
+        //         )
+        //             .then((res) => {
+        //                 console.log("here2", "translate");
+        //                 setLoading('');
+        //                 console.log(res, "translate")
+        //                 setSubtitle(formatSub(res));
+        //                 localStorage.setItem('langTranslate', translate);
+        //                 console.log('langTranslate '+localStorage.getItem('langTranslate'));
+        //                 notify({
+        //                     message: t('TRANSLAT_SUCCESS'),
+        //                     level: 'success',
+        //                 });
+        //             })
+        //             .catch((err) => {
+        //                 setLoading('');
+        //                 notify({
+        //                     message: err.message,
+        //                     level: 'error',
+        //                 });
+        //             });
+        //     }
 
-            return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
-                .then((res) => {
-                    setLoading('');
-                    console.log('Format Sub');
-                    //console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
-                    setSubtitle(formatSub(res));
-                    localStorage.setItem('langTranslate', translate);
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
-        }
+        //     return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
+        //         .then((res) => {
+        //             setLoading('');
+        //             console.log('Format Sub');
+        //             //console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
+        //             setSubtitle(formatSub(res));
+        //             localStorage.setItem('langTranslate', translate);
+        //             notify({
+        //                 message: t('TRANSLAT_SUCCESS'),
+        //                 level: 'success',
+        //             });
+        //         })
+        //         .catch((err) => {
+        //             setLoading('');
+        //             notify({
+        //                 message: err.message,
+        //                 level: 'error',
+        //             });
+        //         });
+        // }
 
         // if (translate === 'en-k') {
         //     return googleTranslate(formatSub(subtitle), 'en')
@@ -427,10 +481,10 @@ export default function Subtitles({
         //             });
         //         });
         // }
-        if (translationApi === 'AI4Bharat') {
+        // if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
            // console.log("localstorage get item");
-            console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
+            // console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
             // return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
             //     .then((res) => {
             //         setLoading('');
@@ -472,9 +526,39 @@ export default function Subtitles({
         }
 
         // console.log('google api');
-        return googleTranslate(formatSub(subtitleEnglish), translate)
+
+        if (translationApi === 'AI4Bharat') {
+            console.log("here1", "translate");
+            getTranslations();
+            // return ai4BharatBatchTranslate(
+            //     formatSub(JSON.parse(window.localStorage.getItem('subtitleEnglish'))),
+            //     'en',
+            //     translate,
+            // )
+            //     .then((res) => {
+            //         console.log("here2", "translate");
+            //         setLoading('');
+            //         console.log(res, "translate")
+            //         setSubtitle(formatSub(res));
+            //         localStorage.setItem('langTranslate', translate);
+            //         console.log('langTranslate '+localStorage.getItem('langTranslate'));
+            //         notify({
+            //             message: t('TRANSLAT_SUCCESS'),
+            //             level: 'success',
+            //         });
+            //     })
+            //     .catch((err) => {
+            //         setLoading('');
+            //         notify({
+            //             message: err.message,
+            //             level: 'error',
+            //         });
+            //     });
+        } else {
+            googleTranslate(formatSub(subtitleEnglish), translate)
             .then((res) => {
                 setLoading('');
+                console.log(res);
                 setSubtitle(formatSub(res));
                 localStorage.setItem('langTranslate', translate);
                 notify({
@@ -489,6 +573,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
+        }
     }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
     return (

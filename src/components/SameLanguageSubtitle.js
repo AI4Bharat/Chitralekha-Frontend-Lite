@@ -204,6 +204,8 @@ export default function SameLanguageSubtitles({
             const resp = await res.json();
             console.log(resp);
             if (res.ok) {
+                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
                 notify({
                     message: 'Subtitle saved successfully', 
                     level: 'success'});

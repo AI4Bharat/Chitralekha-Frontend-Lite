@@ -1,6 +1,7 @@
 import { sleep } from '../utils';
 
 function translate(query = '', lang) {
+    console.log("google translate clicked1");
     if (!query.trim()) return Promise.resolve('');
     const url = new URL('https://translate.googleapis.com/translate_a/single');
     url.searchParams.append('client', 'gtx');
@@ -26,6 +27,7 @@ function translate(query = '', lang) {
 }
 
 export default async function googleTranslate(subtitle = [], lang) {
+    console.log("google translate clicked");
     return new Promise((resolve, reject) => {
         const result = [];
         (function loop() {

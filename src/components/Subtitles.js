@@ -721,16 +721,13 @@ export default function Subtitles({
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
-                                            // isPrimary
-                                            //     ? !localStorage.getItem('lang') ||
-                                            //         localStorage.getItem('lang') === 'en' ||
-                                            //         localStorage.getItem('lang') === 'en-k'
-                                            //         ? false
-                                            //         : true
-                                            //     : true
-                                            !(!localStorage.getItem('langTranslate') ||
-                                            localStorage.getItem('langTranslate') === 'en' ||
-                                            localStorage.getItem('langTranslate') === 'en-k')
+                                            isPrimary
+                                                ? !(!localStorage.getItem('langTranslate') ||
+                                                    localStorage.getItem('langTranslate') === 'en' ||
+                                                    localStorage.getItem('langTranslate') === 'en-k')
+                                                : !(!localStorage.getItem('langTranscribe') ||
+                                                    localStorage.getItem('langTranscribe') === 'en' ||
+                                                    localStorage.getItem('langTranscribe') === 'en-k')
                                         }
                                         lang={
                                             // isPrimary

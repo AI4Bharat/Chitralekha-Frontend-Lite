@@ -619,6 +619,24 @@ export default function Header({
             player.src = VideoDetails.direct_video_url;
             player.currentTime = 0;
             clearSubs();
+            if (VideoDetails.subtitles) {
+                fetch(VideoDetails.subtitles)
+                .then((subtext) => {
+                    return subtext.text();
+                })
+                .then((subtext) => {
+                    const suburl = vtt2url(subtext);
+                    url2sub(suburl).then((urlsub) => {
+                        setSubtitle(urlsub);
+                        setSubtitleEnglish(urlsub);
+                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            }
         }
         // if (resp.subtitles) {
         //     const sub = resp.subtitles;

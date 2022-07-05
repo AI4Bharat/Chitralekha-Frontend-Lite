@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import languages from '../libs/languages';
 import React, { useState, useCallback, useEffect } from 'react';
 import { Table, Column, MultiGrid } from 'react-virtualized';
+import React, { useState, useCallback, useEffect, useDeferredValue } from 'react';
+import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { ReactTransliterate } from 'react-transliterate';
@@ -12,6 +14,9 @@ import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
 // import { ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
 // import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
 import GetTranslationLanguagesAPI from "../redux/actions/api/Translation/GetTranslationLanguages"
+import FetchTranslationAPI from "../redux/actions/api/Translation/FetchTranslation"
+import GenerateTranslationAPI from "../redux/actions/api/Translation/GenerateTranslation"
+import SaveTranslationAPI from "../redux/actions/api/Translation/SaveTranslation"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
@@ -216,9 +221,13 @@ export default function Subtitles({
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
+    const [translateReq, setTranslateReq] = useState(false);
 
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranslationLanguages.data);
+    const Translations = useSelector(state => state.fetchTranslation.data);
+    const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
+    const APIStatus = useSelector(state => state.apiStatus);
 
     const fetchTranslationLanguages = () => {
         const langObj = new GetTranslationLanguagesAPI();
@@ -229,10 +238,12 @@ export default function Subtitles({
     useEffect(() => {
         if (localStorage.getItem('langTranslate')) {
             setTranslate(localStorage.getItem('langTranslate')); //changes in both
+            setModeTranslate(localStorage.getItem('langTranslate'));
         } else {
             localStorage.setItem('langTranslate', 'en') //added 
             //setTranslate('en');
             setTranslate(localStorage.getItem('langTranslate'));
+            setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
     }, []);
@@ -247,11 +258,13 @@ export default function Subtitles({
                 setLanguageAvailable(langArray);
                 localStorage.setItem('langTranslate', langArray[0].key);
                 setTranslate(langArray[0].key);
+                setModeTranslate(langArray[0].key);
             }
         } else {
             setLanguageAvailable(languages);
             localStorage.setItem('langTranslate', languages['en'][1].key); //changes
             setTranslate(languages['en'][1].key);
+            setModeTranslate(languages['en'][1].key);
         }
     }, [languageChoices, translationApi]);
 
@@ -320,8 +333,89 @@ export default function Subtitles({
 
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
+    const saveTranslation = async () => {
+        if (subtitle?.length > 0) {
+            setLoading(t('SAVING'));
+            let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            const payload = {
+                translations: subtitle.map((item, i) => {
+                    return {
+                        source: transcript[i].text,
+                        target: item.text,
+                    };
+                })
+            }
+            const saveObj = new SaveTranslationAPI(localStorage.getItem("translation_id"), localStorage.getItem("langTranslate"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+              });
+            const resp = await res.json();
+            console.log(resp);
+            if (res.ok) {
+                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                notify({
+                    message: 'Translation saved successfully', 
+                    level: 'success'});
+            } else {
+                notify({
+                    message: 'Translation could not be saved', 
+                    level: 'error'});
+            }
+            setLoading('');
+        }
+    }
+
+    const parseTranslations = (translations) => {
+        console.log("hi")
+        let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+        for (let i = 0; i < transcript.length; i++) {
+            if (transcript[i].text === translations[i].source) {
+                transcript[i].text = translations[i].target;
+            }
+        }
+        console.log(transcript)
+        localStorage.setItem('subtitle', JSON.stringify(transcript));
+        setSubtitle(transcript);
+        setLoading('');
+        notify({
+            message: t('TRANSLAT_SUCCESS'),
+            level: 'success',
+        });
+    }
+
+    const getTranslations = () => {
+        const translationObj = new FetchTranslationAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranslate"), true);
+        dispatch(APITransport(translationObj));
+    }
+
+    const generateTranslations = () => {
+        const translationObj = new GenerateTranslationAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranslate"));
+        dispatch(APITransport(translationObj));
+    }
+
+    useEffect(() => {
+        if (translateReq && Translations.payload?.translations?.length > 0 && (languageChoices[Translations.target_lang] === localStorage.getItem("langTranslate") || Translations.target_lang === localStorage.getItem("langTranslate"))) {
+            setTranslateReq(false);
+            localStorage.setItem("translation_id", Translations.id);
+            parseTranslations(Translations.payload.translations);
+        } else if (translateReq && APIStatus?.error) {
+            generateTranslations();
+        }
+    }, [Translations, APIStatus, translateReq]);
+
+    useEffect(() => {
+        if (translateReq && GeneratedTranslations.payload?.translations?.length > 0 && (languageChoices[GeneratedTranslations.target_lang] === localStorage.getItem("langTranslate") || GeneratedTranslations.target_lang === localStorage.getItem("langTranslate"))) {
+            parseTranslations(GeneratedTranslations.payload.translations);
+            localStorage.setItem("translation_id", GeneratedTranslations.id);
+            setTranslateReq(false);
+        }
+    }, [GeneratedTranslations]);
+
     const onTranslate = useCallback(() => {
         setIsTranslateClicked(true);
+        setTranslateReq(true);
         
         console.log('when translate button clicked '+isTranslateClicked);
         console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
@@ -357,54 +451,54 @@ export default function Subtitles({
             //         });
             // }
 
-            if (translationApi === 'AI4Bharat') {
-                console.log("here1", "translate");
-                return ai4BharatBatchTranslate(
-                    formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
-                    'en',
-                    translate,
-                )
-                    .then((res) => {
-                        console.log("here2", "translate");
-                        setLoading('');
-                        console.log(res, "translate")
-                        setSubtitle(formatSub(res));
-                        localStorage.setItem('langTranslate', translate);
-                        console.log('langTranslate '+localStorage.getItem('langTranslate'));
-                        notify({
-                            message: t('TRANSLAT_SUCCESS'),
-                            level: 'success',
-                        });
-                    })
-                    .catch((err) => {
-                        setLoading('');
-                        notify({
-                            message: err.message,
-                            level: 'error',
-                        });
-                    });
-            }
+        //     if (translationApi === 'AI4Bharat') {
+        //         console.log("here1", "translate");
+        //         return ai4BharatBatchTranslate(
+        //             formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))),
+        //             'en',
+        //             translate,
+        //         )
+        //             .then((res) => {
+        //                 console.log("here2", "translate");
+        //                 setLoading('');
+        //                 console.log(res, "translate")
+        //                 setSubtitle(formatSub(res));
+        //                 localStorage.setItem('langTranslate', translate);
+        //                 console.log('langTranslate '+localStorage.getItem('langTranslate'));
+        //                 notify({
+        //                     message: t('TRANSLAT_SUCCESS'),
+        //                     level: 'success',
+        //                 });
+        //             })
+        //             .catch((err) => {
+        //                 setLoading('');
+        //                 notify({
+        //                     message: err.message,
+        //                     level: 'error',
+        //                 });
+        //             });
+        //     }
 
-            return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
-                .then((res) => {
-                    setLoading('');
-                    console.log('Format Sub');
-                    //console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
-                    setSubtitle(formatSub(res));
-                    localStorage.setItem('langTranslate', translate);
-                    notify({
-                        message: t('TRANSLAT_SUCCESS'),
-                        level: 'success',
-                    });
-                })
-                .catch((err) => {
-                    setLoading('');
-                    notify({
-                        message: err.message,
-                        level: 'error',
-                    });
-                });
-        }
+        //     return googleTranslate(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))), translate)
+        //         .then((res) => {
+        //             setLoading('');
+        //             console.log('Format Sub');
+        //             //console.log(formatSub(JSON.parse(window.localStorage.getItem('subsBeforeClear'))));
+        //             setSubtitle(formatSub(res));
+        //             localStorage.setItem('langTranslate', translate);
+        //             notify({
+        //                 message: t('TRANSLAT_SUCCESS'),
+        //                 level: 'success',
+        //             });
+        //         })
+        //         .catch((err) => {
+        //             setLoading('');
+        //             notify({
+        //                 message: err.message,
+        //                 level: 'error',
+        //             });
+        //         });
+        // }
 
         // if (translate === 'en-k') {
         //     return googleTranslate(formatSub(subtitle), 'en')
@@ -435,10 +529,10 @@ export default function Subtitles({
         //             });
         //         });
         // }
-        if (translationApi === 'AI4Bharat') {
+        // if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
            // console.log("localstorage get item");
-            console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
+            // console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
             // return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
             //     .then((res) => {
             //         setLoading('');
@@ -480,9 +574,39 @@ export default function Subtitles({
         }
 
         // console.log('google api');
-        return googleTranslate(formatSub(subtitleEnglish), translate)
+
+        if (translationApi === 'AI4Bharat') {
+            console.log("here1", "translate");
+            getTranslations();
+            // return ai4BharatBatchTranslate(
+            //     formatSub(JSON.parse(window.localStorage.getItem('subtitleEnglish'))),
+            //     'en',
+            //     translate,
+            // )
+            //     .then((res) => {
+            //         console.log("here2", "translate");
+            //         setLoading('');
+            //         console.log(res, "translate")
+            //         setSubtitle(formatSub(res));
+            //         localStorage.setItem('langTranslate', translate);
+            //         console.log('langTranslate '+localStorage.getItem('langTranslate'));
+            //         notify({
+            //             message: t('TRANSLAT_SUCCESS'),
+            //             level: 'success',
+            //         });
+            //     })
+            //     .catch((err) => {
+            //         setLoading('');
+            //         notify({
+            //             message: err.message,
+            //             level: 'error',
+            //         });
+            //     });
+        } else {
+            googleTranslate(formatSub(subtitleEnglish), translate)
             .then((res) => {
                 setLoading('');
+                console.log(res);
                 setSubtitle(formatSub(res));
                 localStorage.setItem('langTranslate', translate);
                 notify({
@@ -497,6 +621,7 @@ export default function Subtitles({
                     level: 'error',
                 });
             });
+        }
     }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
     return (
@@ -544,7 +669,7 @@ export default function Subtitles({
 
                 {!isPrimary && (
                     <div className="reference">
-                        <h4>Reference Subtitles</h4>
+                        <h4>Reference Subtitles {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}</h4>
                         {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}
@@ -601,14 +726,13 @@ export default function Subtitles({
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
-                                            // isPrimary
-                                            //     ? !localStorage.getItem('lang') ||
-                                            //         localStorage.getItem('lang') === 'en' ||
-                                            //         localStorage.getItem('lang') === 'en-k'
-                                            //         ? false
-                                            //         : true
-                                            //     : true
-                                            true
+                                            isPrimary
+                                                ? !(!localStorage.getItem('langTranslate') ||
+                                                    localStorage.getItem('langTranslate') === 'en' ||
+                                                    localStorage.getItem('langTranslate') === 'en-k')
+                                                : !(!localStorage.getItem('langTranscribe') ||
+                                                    localStorage.getItem('langTranscribe') === 'en' ||
+                                                    localStorage.getItem('langTranscribe') === 'en-k')
                                         }
                                         lang={
                                             // isPrimary

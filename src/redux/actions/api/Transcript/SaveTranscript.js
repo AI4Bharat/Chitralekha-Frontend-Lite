@@ -38,7 +38,7 @@ export default class SaveTranscriptAPI extends API {
         this.headers = {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Token ${localStorage.getItem('chitralekha_access_token')}`,
+                ...(localStorage.getItem('chitralekha_access_token')) && {"Authorization":`Token ${localStorage.getItem('chitralekha_access_token')}`}
             },
         };
         return this.headers;

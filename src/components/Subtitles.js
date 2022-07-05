@@ -350,6 +350,7 @@ export default function Subtitles({
                 headers: saveObj.getHeaders().headers,
               });
             const resp = await res.json();
+            console.log('resp')
             console.log(resp);
             if (res.ok) {
                 localStorage.setItem('subtitle', JSON.stringify(subtitle));
@@ -661,13 +662,14 @@ export default function Subtitles({
                             <div className="btn" onClick={onTranslate}>
                                 <Translate value="TRANSLATE" />
                             </div>
+                            {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}
                         </div>
                     </div>
                 )}
 
                 {!isPrimary && (
                     <div className="reference">
-                        <h4>Reference Subtitles {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}</h4>
+                        <h4>Reference Subtitles </h4>
                         {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}

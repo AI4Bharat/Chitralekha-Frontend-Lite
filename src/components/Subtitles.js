@@ -332,11 +332,14 @@ export default function Subtitles({
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
     const saveTranslation = async () => {
-        if (subtitle?.length > 0) {
+        console.log(subtitle, subtitle[0])
+        console.log(subtitleEnglish, localStorage.getItem('subtitle'))
+        if (localStorage.getItem('subtitle')) {
             setLoading(t('SAVING'));
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            let subtitles = JSON.parse(localStorage.getItem('subtitle'));
             const payload = {
-                translations: subtitle.map((item, i) => {
+                translations: subtitles.map((item, i) => {
                     return {
                         source: transcript[i].text,
                         target: item.text,
@@ -376,7 +379,7 @@ export default function Subtitles({
         }
         console.log(transcript)
         localStorage.setItem('subtitle', JSON.stringify(transcript));
-        setSubtitle(transcript);
+        setSubtitle(formatSub(transcript));
         setLoading('');
         notify({
             message: t('TRANSLAT_SUCCESS'),
@@ -605,7 +608,7 @@ export default function Subtitles({
             googleTranslate(formatSub(subtitleEnglish), translate)
             .then((res) => {
                 setLoading('');
-                console.log(res);
+                console.log(res, "google");
                 setSubtitle(formatSub(res));
                 localStorage.setItem('langTranslate', translate);
                 notify({

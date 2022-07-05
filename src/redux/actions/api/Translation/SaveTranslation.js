@@ -27,6 +27,7 @@
      }
  
      getBody() {
+        console.log('this.lang '+this.language)
          return {
              translation_id: this.translationId,
              target_lang: this.language,

@@ -1062,6 +1062,7 @@ export default function Header({
                                 
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
+                                clearSubs();
                             }}
                         >
                             <Translate value="MAIN_LANGUAGE" />

@@ -367,7 +367,7 @@ export default function Subtitles({
         }
         console.log(transcript)
         localStorage.setItem('subtitle', JSON.stringify(transcript));
-        setSubtitle(transcript);
+        setSubtitle(formatSub(transcript));
         setLoading('');
         notify({
             message: t('TRANSLAT_SUCCESS'),
@@ -596,7 +596,7 @@ export default function Subtitles({
             googleTranslate(formatSub(subtitleEnglish), translate)
             .then((res) => {
                 setLoading('');
-                console.log(res);
+                console.log(res, "google");
                 setSubtitle(formatSub(res));
                 localStorage.setItem('langTranslate', translate);
                 notify({

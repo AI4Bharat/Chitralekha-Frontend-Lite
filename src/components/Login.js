@@ -4,9 +4,10 @@ import RegisterAPI from "../redux/actions/api/User/Register";
 import "../utils/Login.css";
 
 const LoginForm = ({ showLogin, setShowLogin }) => {
-
-    const [credentials, setCredentials] = useState({username: "", password: ""});
-    const [details, setDetails] = useState({username: "", password: "", password2: "", email: "", first_name: "", last_name: ""});
+    const initCredentials = {username: "", password: ""}
+    const initDetails = {username: "", password: "", password2: "", email: "", first_name: "", last_name: ""}
+    const [credentials, setCredentials] = useState(initCredentials);
+    const [details, setDetails] = useState(initDetails);
     const [err, setErr] = useState("");
     const [isSignIn, setIsSignIn] = useState(true);
 
@@ -30,8 +31,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
               localStorage.setItem("email", rsp_data.user?.email);
               localStorage.setItem("first_name", rsp_data.user?.first_name);
               localStorage.setItem("last_name", rsp_data.user?.last_name);
-              setErr("");
-              setShowLogin(false);
+              handleClose();
             }
           })
           .catch((error) => {
@@ -63,8 +63,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
               localStorage.setItem("email", rsp_data.user?.email);
               localStorage.setItem("first_name", rsp_data.user?.first_name);
               localStorage.setItem("last_name", rsp_data.user?.last_name);
-              setErr("");
-              setShowLogin(false);
+              handleClose();
             }
           })
           .catch((error) => {
@@ -76,11 +75,18 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
           });
     }
 
+    const handleClose = () => {
+        setShowLogin(false);
+        setCredentials(initCredentials);
+        setDetails(initDetails);
+        setErr("");
+    }
+
   return (
     <div className={`${showLogin ? "" : "active"} show`}>
       <div className="login-form">
         <div className="form-box solid">
-          <button type="button" className="close-btn" onClick={() => setShowLogin(false)}>x</button>
+          <button type="button" className="close-btn" onClick={handleClose}>x</button>
           {isSignIn ? <form className="login-form-form">
             <h1 className="login-text">Sign In</h1>
             {err && <p className="err-msg">{err}</p>}

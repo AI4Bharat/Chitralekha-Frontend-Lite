@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect } from 'react';
-import { Table, Column, MultiGrid } from 'react-virtualized';
 import React, { useState, useCallback, useEffect, useDeferredValue } from 'react';
-import { Table } from 'react-virtualized';
+import { Table, Column, MultiGrid } from 'react-virtualized';
+// import React, {useCallback, useEffect, useDeferredValue } from 'react';
+// import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { ReactTransliterate } from 'react-transliterate';

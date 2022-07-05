@@ -91,7 +91,7 @@ const Style = styled.div`
 
         .ReactVirtualized__Grid__innerScrollContainer {
             overflow: visible !important;
-            border: 1px solid red;
+
         }
 
         .ReactVirtualized__Table__row {

@@ -324,11 +324,14 @@ export default function Subtitles({
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
     const saveTranslation = async () => {
-        if (subtitle?.length > 0) {
+        console.log(subtitle, subtitle[0])
+        console.log(subtitleEnglish, localStorage.getItem('subtitle'))
+        if (localStorage.getItem('subtitle')) {
             setLoading(t('SAVING'));
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            let subtitles = JSON.parse(localStorage.getItem('subtitle'));
             const payload = {
-                translations: subtitle.map((item, i) => {
+                translations: subtitles.map((item, i) => {
                     return {
                         source: transcript[i].text,
                         target: item.text,

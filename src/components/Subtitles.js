@@ -81,16 +81,16 @@ const Style = styled.div`
         }
     }
 
+
     .ReactVirtualized__Table {
-        overflow: visible
+  
        
         .ReactVirtualized__Table__Grid {
             outline: none;
-            overflow: hidden !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
-            overflow: hidden !important;
+            overflow: visible !important;
             border: 1px solid red;
         }
 
@@ -550,16 +550,14 @@ export default function Subtitles({
                 )}
                 <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
                 <ScrollSyncPane>
-                    
-                
+                <div style={{overflow: 'auto'}}>
+   
                 <Table
                     headerHeight={40}
                     width={250}
                     height={height}
                     rowHeight={80}
-                    style={{overflow: 'hidden'}}
-                    scrollToIndex={currentIndex}
-                    ScrollSync={true}
+                    scrollToIndex={currentIndex+2}
                     rowCount={subtitle.length}
                     rowGetter={({ index }) => subtitle[index]}
                     headerRowRenderer={() => null}
@@ -649,6 +647,7 @@ export default function Subtitles({
                     }}
                 >
                 </Table>
+                </div>
        
                                 </ScrollSyncPane>
                                 </div>

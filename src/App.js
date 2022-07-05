@@ -465,7 +465,7 @@ export default function App({ defaultLang }) {
                 <Player {...props} />
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <>
+                    <div className={{overflow: 'visible'}}>
                        {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}
@@ -587,7 +587,7 @@ export default function App({ defaultLang }) {
                                         />
                                         </div>
                          </ScrollSync>
-                    </>
+                    </div>
                 )}
 
                 {configuration === 'Sign Language Subtitling' && (

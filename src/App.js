@@ -693,7 +693,6 @@ export default function App({ defaultLang }) {
                         <div>
                             <div className="user-details">
                                 <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
-                                <span className='user-name'>{localStorage.getItem("username")}</span>
                             </div>
                             <ul className='user-menu'>
                                 <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>

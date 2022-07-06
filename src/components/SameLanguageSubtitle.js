@@ -2,7 +2,7 @@
 
 import styled from 'styled-components';
 import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
@@ -188,10 +188,11 @@ export default function SameLanguageSubtitles({
     const Transcript = useSelector(state => state.fetchTranscript.data);
     const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
     const APIStatus = useSelector(state => state.apiStatus);
+    const waiting = useRef(false);
 
     const saveTranscript = async () => {
-        if (localStorage.getItem('subtitle')) {
-            setLoading(t('SAVING'));
+        if (subtitle?.length > 0) {
+            // setLoading(t('SAVING'));
             const payload = {
                 output: sub2vtt(subtitle)
             }
@@ -204,16 +205,15 @@ export default function SameLanguageSubtitles({
             const resp = await res.json();
             console.log(resp, "resp");
             if (res.ok) {
-                localStorage.setItem('subtitle', JSON.stringify(subtitle));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
                 localStorage.setItem('transcript_id', resp.id);
-                notify({
-                    message: 'Subtitle saved successfully', 
-                    level: 'success'});
+                // notify({
+                //     message: 'Subtitle saved successfully', 
+                //     level: 'success'});
             } else {
-                notify({
-                    message: 'Subtitle could not be saved', 
-                    level: 'error'});
+                // notify({
+                //     message: 'Subtitle could not be saved', 
+                //     level: 'error'});
             }
             setLoading('');
         }
@@ -241,7 +241,21 @@ export default function SameLanguageSubtitles({
             setTranscribe('en');
         }
         fetchTranscriptionLanguages();
+
+        return () => {
+            saveTranscript();
+        }
     }, []);
+
+    useEffect(() => {
+        if (subtitle?.length > 0 && !waiting.current) {
+            waiting.current = true;
+            setTimeout(() => {
+                waiting.current = false;
+                saveTranscript();
+            }, 10000);
+        }
+    }, [subtitle]);
 
     useEffect(() => {
         if (languageChoices?.data) {
@@ -354,9 +368,7 @@ export default function SameLanguageSubtitles({
     const parseSubtitles = (subtitles) => {
         const suburl = vtt2url(subtitles);
         url2sub(suburl).then((urlsub) => {
-            setSubtitle(formatSub(urlsub));
             setSubtitleEnglish(formatSub(urlsub));
-            localStorage.setItem('subtitle', JSON.stringify(urlsub));
             localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
             setLoading('');
         });
@@ -460,7 +472,9 @@ export default function SameLanguageSubtitles({
                 {isPrimary && (
                     <div className="transcribe">
                         <div className="heading">
-                            <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
+                            <h4>Speech-To-Text  
+                            {/* {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>} */}
+                            </h4>
                         </div>
                         {/* {console.log('rendering here')} */}
                         <div className="options">

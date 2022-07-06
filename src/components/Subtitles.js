@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect, useDeferredValue } from 'react';
+import React, { useState, useCallback, useEffect, useDeferredValue, useRef } from 'react';
 import { Table, Column, MultiGrid } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
@@ -226,10 +226,46 @@ export default function Subtitles({
     const Translations = useSelector(state => state.fetchTranslation.data);
     const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
     const APIStatus = useSelector(state => state.apiStatus);
+    const waiting = useRef(false);
 
     const fetchTranslationLanguages = () => {
         const langObj = new GetTranslationLanguagesAPI();
         dispatch(APITransport(langObj));
+    }
+
+    const saveTranslation = async () => {
+        if (subtitle?.length > 0) {
+            // setLoading(t('SAVING'));
+            let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            // let subtitles = JSON.parse(localStorage.getItem('subtitle'));
+            const payload = {
+                translations: subtitle.map((item, i) => {
+                    return {
+                        source: transcript[i].text,
+                        target: item.text,
+                    };
+                })
+            }
+            const saveObj = new SaveTranslationAPI(localStorage.getItem("translation_id"), localStorage.getItem("langTranslate"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+              });
+            const resp = await res.json();
+            console.log(resp);
+            // if (res.ok) {
+                // localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                // notify({
+                //     message: 'Translation saved successfully', 
+                //     level: 'success'});
+            // } else {
+                // notify({
+                //     message: 'Translation could not be saved', 
+                //     level: 'error'});
+            // }
+            // setLoading('');
+        }
     }
 
     //console.log('isTranslateClicked '+isTranslateClicked);
@@ -244,7 +280,21 @@ export default function Subtitles({
             setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
+
+        return () => {
+            saveTranslation();
+        }
     }, []);
+
+    useEffect(() => {
+        if (subtitle?.length > 0 && !waiting.current) {
+            waiting.current = true;
+            setTimeout(() => {
+                waiting.current = false;
+                saveTranslation();
+            }, 10000);
+        }
+    }, [subtitle]);
 
     useEffect(() => {
         if (translationApi === "AI4Bharat") {
@@ -330,44 +380,6 @@ export default function Subtitles({
     }, [resize]);
 
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
-
-    const saveTranslation = async () => {
-        console.log(subtitle, subtitle[0])
-        console.log(subtitleEnglish, localStorage.getItem('subtitle'))
-        if (localStorage.getItem('subtitle')) {
-            setLoading(t('SAVING'));
-            let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
-            let subtitles = JSON.parse(localStorage.getItem('subtitle'));
-            const payload = {
-                translations: subtitles.map((item, i) => {
-                    return {
-                        source: transcript[i].text,
-                        target: item.text,
-                    };
-                })
-            }
-            const saveObj = new SaveTranslationAPI(localStorage.getItem("translation_id"), localStorage.getItem("langTranslate"), payload);
-            const res = await fetch(saveObj.apiEndPoint(), {
-                method: "POST",
-                body: JSON.stringify(saveObj.getBody()),
-                headers: saveObj.getHeaders().headers,
-              });
-            const resp = await res.json();
-            console.log('resp')
-            console.log(resp);
-            if (res.ok) {
-                localStorage.setItem('subtitle', JSON.stringify(subtitle));
-                notify({
-                    message: 'Translation saved successfully', 
-                    level: 'success'});
-            } else {
-                notify({
-                    message: 'Translation could not be saved', 
-                    level: 'error'});
-            }
-            setLoading('');
-        }
-    }
 
     const parseTranslations = (translations) => {
         console.log("hi")
@@ -665,7 +677,7 @@ export default function Subtitles({
                             <div className="btn" onClick={onTranslate}>
                                 <Translate value="TRANSLATE" />
                             </div>
-                            {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}
+                            {/* {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} */}
                         </div>
                     </div>
                 )}

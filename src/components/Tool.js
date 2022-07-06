@@ -1115,10 +1115,10 @@ export default function Header({
                             </div>
                         </div>
                     ) : null}
-                    <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Your Subtitles</b>
-                    </p>
-                    <div className="export" style={{ marginTop: '-20px' }}>
+                    {configuration !== "Same Language Subtitling" && <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                        <b>Export Translation</b>
+                    </p>}
+                    {configuration !== "Same Language Subtitling" && <div className="export" style={{ marginTop: '-20px' }}>
                         <div className="btn" onClick={() => downloadSub('ass')}>
                             <Translate value="EXPORT_ASS" />
                         </div>
@@ -1128,9 +1128,9 @@ export default function Header({
                         <div className="btn" onClick={() => downloadSub('vtt')}>
                             <Translate value="EXPORT_VTT" />
                         </div>
-                    </div>
+                    </div>}
                     <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Reference Subtitles</b>
+                        <b>Export Transcript</b>
                     </p>
                     <div className="export" style={{ marginTop: '-20px' }}>
                         <div className="btn" onClick={() => downloadSubReference('ass')}>

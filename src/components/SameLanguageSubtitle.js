@@ -241,24 +241,21 @@ export default function SameLanguageSubtitles({
             setTranscribe('en');
         }
         fetchTranscriptionLanguages();
+
+        return () => {
+            saveTranscript();
+        }
     }, []);
 
     useEffect(() => {
         if (subtitle?.length > 0 && !waiting.current) {
             waiting.current = true;
-            console.log(subtitle)
             setTimeout(() => {
                 waiting.current = false;
                 saveTranscript();
             }, 10000);
         }
-    }, [subtitle])
-
-    useEffect(() => {
-        return () => {
-            saveTranscript();
-        }
-    }, []);
+    }, [subtitle]);
 
     useEffect(() => {
         if (languageChoices?.data) {

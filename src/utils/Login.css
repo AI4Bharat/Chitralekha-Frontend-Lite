@@ -141,14 +141,13 @@
   .user-details {
     display: flex;
     flex-direction: row;
-    column-gap: 0.5rem;
     margin-left: 1rem;
-    align-items: center;
     font-size: 1rem;
     font-weight: 500;
     margin-top: 0.5rem;
     cursor: pointer;
-    padding-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    justify-content: flex-end;
   }
 
   .user-initials {
@@ -164,14 +163,13 @@
   }
 
   .user-menu {
-    display: none;
+    visibility: hidden;
     position: relative;
     float: right;
     list-style: none; 
     padding: 0.25rem 0.5rem;
     margin: 0;
     background: #5264cc;
-    min-width: 60%;
     text-align: right;
     font-size: 0.8rem;
     font-weight: 600;
@@ -180,11 +178,11 @@
 
 
   .user-details:hover + .user-menu {
-    display: block !important;
+    visibility: visible;
   }
 
   .user-menu:hover {
-    display: block;
+    visibility: visible;
     background-color: #3f51b5;
   }
 

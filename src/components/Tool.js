@@ -464,6 +464,7 @@ export default function Header({
 
         // setSubtitleOriginal(tempSubs);
         setClearedSubs(true);
+        player?.pause();
     };
 
     const decodeAudioData = useCallback(
@@ -505,6 +506,7 @@ export default function Header({
     );
 
     const burnSubtitles = useCallback(async () => {
+        player?.pause();
         try {
             const { createFFmpeg, fetchFile } = FFmpeg;
             const ffmpeg = createFFmpeg({ log: true });
@@ -893,6 +895,7 @@ export default function Header({
 
     const downloadSub = useCallback(
         (type) => {
+            player?.pause();
             let text = '';
             const name = `${Date.now()}.${type}`;
             switch (type) {
@@ -922,6 +925,7 @@ export default function Header({
 
     const downloadSubReference = useCallback(
         (type) => {
+            player?.pause();
             let text = '';
             const name = `${Date.now()}.${type}`;
             switch (type) {
@@ -1051,6 +1055,7 @@ export default function Header({
                               //  console.log("lang " + langTranscribe);
                                 setConfiguration('Same Language Subtitling');
                                 setIsSetConfiguration(true);
+                                player?.pause();
                             }}
                         >
                             <Translate value="SAME_LANGUAGE" />
@@ -1063,6 +1068,7 @@ export default function Header({
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                                 clearSubs();
+                                player?.pause();
                             }}
                         >
                             <Translate value="MAIN_LANGUAGE" />
@@ -1093,6 +1099,7 @@ export default function Header({
                                     onChange={(e) => {
                                         // console.log(e.target.value);
                                         setTranslationApi(e.target.value);
+                                        player?.pause();
                                     }}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>

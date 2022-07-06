@@ -234,12 +234,12 @@ export default function Subtitles({
     }
 
     const saveTranslation = async () => {
-        if (subtitle?.length > 0) {
+        if (localStorage.getItem('subtitle')) {
             // setLoading(t('SAVING'));
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
-            // let subtitles = JSON.parse(localStorage.getItem('subtitle'));
+            let subtitles = JSON.parse(localStorage.getItem('subtitle'));
             const payload = {
-                translations: subtitle.map((item, i) => {
+                translations: subtitles.map((item, i) => {
                     return {
                         source: transcript[i].text,
                         target: item.text,

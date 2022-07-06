@@ -177,14 +177,19 @@ export default function App({ defaultLang }) {
     const removeSub = useCallback(
         (sub) => {
             const index = hasSub(sub);
-            if (index < 0) return;
-            const subs = copySubs();
-            subs.splice(index, 1);
-            setSubtitle(subs);
-            if (subtitleEnglish) {
-                //console.log('here');
+            const index2 = hasSubEnglish(sub);
+            console.log(subtitleEnglish)
+            console.log(index, index2);
+            if (index >= 0){
+                const subs = copySubs();
+                subs.splice(index, 1);
+                setSubtitle(subs);
+            }
+            if ((index >=0 || index2 >= 0) && subtitleEnglish) {
+                console.log('here');
                 const subsEnglish = copySubsEnglish();
-                subsEnglish.splice(index, 1);
+                subsEnglish.splice(index >= 0 ? index : index2, 1);
+                console.log(subsEnglish);
                 setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }
@@ -252,29 +257,32 @@ export default function App({ defaultLang }) {
     const mergeSub = useCallback(
         (sub) => {
             const index = hasSub(sub);
-            if (index < 0) return;
-            const subs = copySubs();
-            const next = subs[index + 1];
-            if (!next) return;
-            const merge = newSub({
-                start: sub.start,
-                end: next.end,
-                text: sub.text.trim() + '\n' + next.text.trim(),
-            });
-            subs[index] = merge;
-            subs.splice(index + 1, 1);
-            setSubtitle(subs);
-            if (subtitleEnglish) {
+            const index2 = hasSubEnglish(sub);
+            if (index >= 0) {
+                const subs = copySubs();
+                const next = subs[index + 1];
+                if (next) {
+                    const merge = newSub({
+                        start: sub.start,
+                        end: next.end,
+                        text: sub.text.trim() + '\n' + next.text.trim(),
+                    });
+                    subs[index] = merge;
+                    subs.splice(index + 1, 1);
+                    setSubtitle(subs);
+                }
+            }
+            if ((index >=0 || index2 >= 0) && subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
-                const nextEnglish = subsEnglish[index + 1];
+                const nextEnglish = subsEnglish[index >= 0 ? index + 1 : index2 + 1];
                 if (!nextEnglish) return;
                 const mergeEnglish = newSub({
                     start: sub.start,
                     end: nextEnglish.end,
-                    text: subsEnglish[index].text.trim() + '\n' + nextEnglish.text.trim(),
+                    text: subsEnglish[index >= 0 ? index : index2].text.trim() + '\n' + nextEnglish.text.trim(),
                 });
-                subsEnglish[index] = mergeEnglish;
-                subsEnglish.splice(index + 1, 1);
+                subsEnglish[index >= 0 ? index : index2] = mergeEnglish;
+                subsEnglish.splice(index >= 0 ? index + 1 : index2 + 1, 1);
                 setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }

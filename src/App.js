@@ -68,6 +68,7 @@ export default function App({ defaultLang }) {
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
+    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -462,6 +463,8 @@ export default function App({ defaultLang }) {
         setTranslationApi,
         isTranslateClicked,
         setIsTranslateClicked,
+        transcriptSource,
+        setTranscriptSource,
     };
 
     return (
@@ -692,6 +695,8 @@ export default function App({ defaultLang }) {
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             updateSubOriginal={props.updateSubTranslate}
                             translationApi={props.translationApi}
+                            transcriptSource={props.transcriptSource}
+                            setTranscriptSource={props.setTranscriptSource}
                         />
                     </>
                 )}

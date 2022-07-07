@@ -172,13 +172,18 @@ export default function SameLanguageSubtitles({
     clearSubs,
     setSubtitleEnglish,
     translationApi,
-    
+    transcriptSource,
+    setTranscriptSource,
 }) {
    // console.log('at start ' + subtitle )
     //console.log('at start ' + subtitleEnglish )
     const [height, setHeight] = useState(100);
     const dispatch = useDispatch();
     // const [translate, setTranslate] = useState(null);
+    const TRANSCRIPT_TYPES = {
+        'Youtube': 'original_source',
+        'AI4Bharat': 'human_edited'
+    }
     
     //change
     const [transcribe, setTranscribe] = useState(null);
@@ -225,7 +230,9 @@ export default function SameLanguageSubtitles({
     }
 
     const fetchTranscription = () => {
-        const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), true);
+        console.log(transcriptSource, "transcriptSource");
+        console.log(TRANSCRIPT_TYPES[transcriptSource], "transcriptSource");
+        const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), TRANSCRIPT_TYPES[transcriptSource], true);
         dispatch(APITransport(transcriptObj));
     }
 
@@ -381,7 +388,12 @@ export default function SameLanguageSubtitles({
             localStorage.setItem("transcript_id", Transcript.id);
             parseSubtitles(Transcript.data.output);
         } else if (transcribeReq && APIStatus?.error) {
-            generateTranscription();
+            if (transcriptSource === 'AI4Bharat') {
+                generateTranscription();
+            } else {
+                setTranscribeReq(false);
+                setLoading('');
+            }
         }
     }, [Transcript, transcribeReq, APIStatus]);
 
@@ -394,6 +406,7 @@ export default function SameLanguageSubtitles({
     }, [GeneratedTranscript]);
 
     console.log(GeneratedTranscript, "generate")
+    console.log(transcriptSource, "transcriptSource")
 
 //
     const onTranscribe = useCallback(() => {
@@ -438,7 +451,7 @@ export default function SameLanguageSubtitles({
         //             level: 'error',
         //         });
         //     });
-    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish]);
+    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);
 
     // useEffect(() => {
     //     if (localStorage.getItem('lang')) {

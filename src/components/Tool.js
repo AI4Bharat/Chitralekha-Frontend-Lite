@@ -1146,7 +1146,7 @@ export default function Header({
                     </div>
                 </div>
                 <div className="">
-                    <BottomLinks />
+                    {/* <BottomLinks /> */}
                 </div>
 
                 {/* <div className="translate">

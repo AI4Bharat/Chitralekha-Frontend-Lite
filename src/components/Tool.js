@@ -10,14 +10,22 @@ import sub2ass from '../libs/readSub/sub2ass';
 import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
 import HamburgerMenu from 'react-hamburger-menu';
-import '../utils/ToolNavigation.css';
+//import '../utils/ToolNavigation.css';
 import BottomLinks from './BottomLinks';
 import GetVideoDetailsAPI from "../redux/actions/api/Video/GetVideoDetails"
 import { useDispatch, useSelector } from "react-redux"
 import APITransport from "../redux/actions/apitransport/apitransport"
+import Navbar from './Header';
 
 const Style = styled.div`
     border-left: 1px solid white;
+    background: #63D471;
+height: 85px;
+display: flex;
+width: 100%;
+justify-content: space-between;
+padding: 0.2rem calc((100vw - 1000px) / 2);
+z-index: 12;
 
     .tool-button {
         display: flex;
@@ -960,7 +968,8 @@ export default function Header({
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
-            <div className={`tool-button`}>
+           
+            {/* <div className={`tool-button`}>
                 <div
                     className="icon"
                     onClick={() => {
@@ -979,7 +988,7 @@ export default function Header({
                         animationDuration={0.5}
                     />
                 </div>
-            </div>
+            </div> */}
 
             <div className="top">
             {/* <CalendarView />  */}

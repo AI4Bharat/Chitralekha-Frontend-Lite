@@ -18,6 +18,8 @@ import SameLanguageSubtitles from './components/SameLanguageSubtitle';
 import SignLanguageSubtitles from './components/SignLanguageSubtitle';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 import debounce from 'lodash/debounce';
+import {render} from 'react-dom';
+import Header from './components/Tool';
 
 const Style = styled.div`
     height: 100%;
@@ -45,6 +47,8 @@ const Style = styled.div`
     }
 `;
 
+
+
 export default function App({ defaultLang }) {
     const subtitleHistory = useRef([]);
     const notificationSystem = useRef(null);
@@ -68,6 +72,30 @@ export default function App({ defaultLang }) {
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
+  //  const [visited, setVisited] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const DisplayPopup = () =>{
+        let visited = localStorage.getItem('hasVisited');
+        console.log('visited initial '+visited);
+        if(visited){
+            setShowPopup(false);
+        }
+        else{
+            localStorage.setItem('hasVisited', true);
+          //  console.log(localStorage.getItem('hasVisited'));
+            setShowPopup(true);
+        }
+        console.log('showPopup '+showPopup);
+            return (
+                <>
+                {showPopup
+                    ?(<div>Test </div>)
+                    : console.log('in else')
+                }
+                </>
+            );
+        
+    }
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -459,8 +487,11 @@ export default function App({ defaultLang }) {
     return (
         
         <Style>
-     
+      {/* <Header /> */}
+      <Tool {...props} />
             <div className="main">
+               
+                <DisplayPopup />
                 <Links />
                 <Player {...props} />
                 {configuration === '' && <></>}
@@ -704,7 +735,7 @@ export default function App({ defaultLang }) {
                             Sign In
                         </span>}
                 </div>
-                <Tool {...props} />
+               
             </div>
             {isSetVideo && <Footer {...props} />}
             {loading ? <Loading loading={loading} /> : null}

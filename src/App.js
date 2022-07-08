@@ -16,7 +16,7 @@ import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
 import SignLanguageSubtitles from './components/SignLanguageSubtitle';
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+// import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 import debounce from 'lodash/debounce';
 
 const Style = styled.div`
@@ -587,7 +587,7 @@ export default function App({ defaultLang }) {
                                 </ScrollSyncPane>
                             </div>
                          </ScrollSync> */}
-                          <ScrollSync>
+                          {/* <ScrollSync> */}
                             <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
                          <Subtitles
                                             currentIndex={props.currentIndex}
@@ -632,7 +632,7 @@ export default function App({ defaultLang }) {
                                             setIsTranslateClicked={props.setIsTranslateClicked} //added
                                         />
                                         </div>
-                         </ScrollSync>
+                         {/* </ScrollSync> */}
                     </div>
                 )}
 

@@ -295,17 +295,13 @@ export default function App({ defaultLang }) {
         (sub, start) => {
             const index = hasSub(sub);
             const index2 = hasSubEnglish(sub);
-            console.log(index, index2, sub, subtitleEnglish, start);
-            console.log("if1")
             if ((index < 0 && index2 < 0) || !sub.text || !start) return;
             if (index >= 0) {
             const subs = copySubs();
             const text1 = sub.text.slice(0, start).trim();
             const text2 = sub.text.slice(start).trim();
-            console.log("if2", text1, text2);
             if (!text1 || !text2) return;
             const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
-            console.log("if3")
             if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
             subs.splice(index, 1);
             const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
@@ -327,17 +323,14 @@ export default function App({ defaultLang }) {
                     text: text2,
                 }),
             );
-            console.log(subs);
             setSubtitle(subs);
             }
-            if (index2 > 0) {
+            if (index2 >= 0) {
                 const subsEnglish = copySubsEnglish();
                 const text1 = sub.text.slice(0, start).trim();
                 const text2 = sub.text.slice(start).trim();
-                console.log("if2", text1, text2);
                 if (!text1 || !text2) return;
                 const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
-                console.log("if3")
                 if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
                 subsEnglish.splice(index2, 1);
                 const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
@@ -359,7 +352,6 @@ export default function App({ defaultLang }) {
                         text: text2,
                     }),
                 );
-                console.log(subsEnglish);
                 setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }

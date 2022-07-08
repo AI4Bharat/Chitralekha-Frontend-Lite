@@ -296,35 +296,35 @@ export default function App({ defaultLang }) {
             const index = hasSub(sub);
             const index2 = hasSubEnglish(sub);
             if ((index < 0 && index2 < 0) || !sub.text || !start) return;
-            if (index >= 0) {
-            const subs = copySubs();
-            const text1 = sub.text.slice(0, start).trim();
-            const text2 = sub.text.slice(start).trim();
-            if (!text1 || !text2) return;
-            const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
-            if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
-            subs.splice(index, 1);
-            const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
-            subs.splice(
-                index,
-                0,
-                newSub({
-                    start: sub.start,
-                    end: middleTime,
-                    text: text1,
-                }),
-            );
-            subs.splice(
-                index + 1,
-                0,
-                newSub({
-                    start: middleTime,
-                    end: sub.end,
-                    text: text2,
-                }),
-            );
-            setSubtitle(subs);
-            }
+            // if (index >= 0) {
+            // const subs = copySubs();
+            // const text1 = sub.text.slice(0, start).trim();
+            // const text2 = sub.text.slice(start).trim();
+            // if (!text1 || !text2) return;
+            // const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+            // if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
+            // subs.splice(index, 1);
+            // const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
+            // subs.splice(
+            //     index,
+            //     0,
+            //     newSub({
+            //         start: sub.start,
+            //         end: middleTime,
+            //         text: text1,
+            //     }),
+            // );
+            // subs.splice(
+            //     index + 1,
+            //     0,
+            //     newSub({
+            //         start: middleTime,
+            //         end: sub.end,
+            //         text: text2,
+            //     }),
+            // );
+            // setSubtitle(subs);
+            // }
             if (index2 >= 0) {
                 const subsEnglish = copySubsEnglish();
                 const text1 = sub.text.slice(0, start).trim();

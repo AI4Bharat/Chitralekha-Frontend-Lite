@@ -71,7 +71,7 @@ const Style = styled.div`
                 color: #fff;
                 font-size: 20px;
                 padding: 5px 10px;
-                user-select: all;
+                ${'' /* user-select: all; */}
                 pointer-events: all;
                 background-color: rgb(0 0 0 / 0);
                 
@@ -147,7 +147,9 @@ export default function Player(props) {
     const onChange = useCallback(
         (event) => {
             props.player.pause();
-            props.updateSub(currentSub, { text: event.target.value });
+            props.configuration === 'Subtitling' ? 
+            props.updateSub(currentSub, { text: event.target.value })
+            : props.updateSubEnglish(currentSub, { text: event.target.value });
             if (event.target.selectionStart) {
                 setInputItemCursor(event.target.selectionStart);
             }

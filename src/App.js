@@ -294,12 +294,18 @@ export default function App({ defaultLang }) {
     const splitSub = useCallback(
         (sub, start) => {
             const index = hasSub(sub);
-            if (index < 0 || !sub.text || !start) return;
+            const index2 = hasSubEnglish(sub);
+            console.log(index, index2, sub, subtitleEnglish, start);
+            console.log("if1")
+            if ((index < 0 && index2 < 0) || !sub.text || !start) return;
+            if (index >= 0) {
             const subs = copySubs();
             const text1 = sub.text.slice(0, start).trim();
             const text2 = sub.text.slice(start).trim();
+            console.log("if2", text1, text2);
             if (!text1 || !text2) return;
             const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+            console.log("if3")
             if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
             subs.splice(index, 1);
             const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
@@ -321,9 +327,44 @@ export default function App({ defaultLang }) {
                     text: text2,
                 }),
             );
+            console.log(subs);
             setSubtitle(subs);
+            }
+            if (index2 > 0) {
+                const subsEnglish = copySubsEnglish();
+                const text1 = sub.text.slice(0, start).trim();
+                const text2 = sub.text.slice(start).trim();
+                console.log("if2", text1, text2);
+                if (!text1 || !text2) return;
+                const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+                console.log("if3")
+                if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
+                subsEnglish.splice(index2, 1);
+                const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
+                subsEnglish.splice(
+                    index2,
+                    0,
+                    newSub({
+                        start: sub.start,
+                        end: middleTime,
+                        text: text1,
+                    }),
+                );
+                subsEnglish.splice(
+                    index2 + 1,
+                    0,
+                    newSub({
+                        start: middleTime,
+                        end: sub.end,
+                        text: text2,
+                    }),
+                );
+                console.log(subsEnglish);
+                setSubtitleEnglish(subsEnglish);
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
+            }
         },
-        [hasSub, copySubs, setSubtitle, newSub],
+        [hasSub, hasSubEnglish, copySubs, copySubsEnglish, setSubtitle, setSubtitleEnglish, newSub],
     );
 
     const onKeyDown = useCallback(
@@ -359,7 +400,9 @@ export default function App({ defaultLang }) {
     }, [onKeyDown]);
 
     useMemo(() => {
-        const currentIndex = subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
+        const currentIndex = configuration === 'Subtitling' ? 
+        subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime)
+        : subtitleEnglish.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
         setCurrentIndex(currentIndex);
     }, [currentTime, subtitle]);
 

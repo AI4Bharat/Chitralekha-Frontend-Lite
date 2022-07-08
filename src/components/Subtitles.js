@@ -17,7 +17,7 @@ import GenerateTranslationAPI from "../redux/actions/api/Translation/GenerateTra
 import SaveTranslationAPI from "../redux/actions/api/Translation/SaveTranslation"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+// import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 
 const Style = styled.div`
     position: relative;
@@ -238,6 +238,7 @@ export default function Subtitles({
             // setLoading(t('SAVING'));
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
             let subtitles = JSON.parse(localStorage.getItem('subtitle'));
+            if (subtitles?.length === 0) return;
             const payload = {
                 translations: subtitles.map((item, i) => {
                     return {
@@ -281,8 +282,26 @@ export default function Subtitles({
         }
         fetchTranslationLanguages();
 
+        const scrollDivs = document.getElementsByClassName('ReactVirtualized__Table__Grid');
+        const syncScroll = (e) => {
+            scrollDivs[e.currentTarget.scrollNum === scrollDivs.length - 1 ? 0 : e.currentTarget.scrollNum + 1].scrollTop = e.currentTarget.scrollTop;
+        }
+
+        if (scrollDivs.length >=2 ) {
+            for (let i = 0; i < scrollDivs.length; i++) {
+                scrollDivs[i].scrollNum = i;
+                scrollDivs[i].addEventListener('scroll', syncScroll);
+            }
+
+        }
+
         return () => {
             saveTranslation();
+            if (scrollDivs.length >=2 ) {
+                for (let i = 0; i < scrollDivs.length; i++) {
+                    scrollDivs[i].removeEventListener('scroll', syncScroll);
+                }
+            }
         }
     }, []);
 
@@ -689,8 +708,8 @@ export default function Subtitles({
                     </div>
                 )}
                 <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
-                <ScrollSyncPane>
-                <div style={{overflow: 'auto'}}>
+                {/* <ScrollSyncPane> */}
+                {/* <div style={{overflow: 'auto'}}> */}
    
                 <Table
                     headerHeight={40}
@@ -788,8 +807,8 @@ export default function Subtitles({
                 </Table>
                 </div>
        
-                                </ScrollSyncPane>
-                                </div>
+                                {/* </ScrollSyncPane> */}
+                                {/* </div> */}
 
 
             </Style>

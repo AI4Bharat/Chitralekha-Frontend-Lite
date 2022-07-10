@@ -16,7 +16,7 @@ import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
 import SignLanguageSubtitles from './components/SignLanguageSubtitle';
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+// import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 import debounce from 'lodash/debounce';
 
 const Style = styled.div`
@@ -81,6 +81,7 @@ export default function App({ defaultLang }) {
     const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
+    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -306,36 +307,69 @@ export default function App({ defaultLang }) {
     const splitSub = useCallback(
         (sub, start) => {
             const index = hasSub(sub);
-            if (index < 0 || !sub.text || !start) return;
-            const subs = copySubs();
-            const text1 = sub.text.slice(0, start).trim();
-            const text2 = sub.text.slice(start).trim();
-            if (!text1 || !text2) return;
-            const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
-            if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
-            subs.splice(index, 1);
-            const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
-            subs.splice(
-                index,
-                0,
-                newSub({
-                    start: sub.start,
-                    end: middleTime,
-                    text: text1,
-                }),
-            );
-            subs.splice(
-                index + 1,
-                0,
-                newSub({
-                    start: middleTime,
-                    end: sub.end,
-                    text: text2,
-                }),
-            );
-            setSubtitle(subs);
+            const index2 = hasSubEnglish(sub);
+            if ((index < 0 && index2 < 0) || !sub.text || !start) return;
+            // if (index >= 0) {
+            // const subs = copySubs();
+            // const text1 = sub.text.slice(0, start).trim();
+            // const text2 = sub.text.slice(start).trim();
+            // if (!text1 || !text2) return;
+            // const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+            // if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
+            // subs.splice(index, 1);
+            // const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
+            // subs.splice(
+            //     index,
+            //     0,
+            //     newSub({
+            //         start: sub.start,
+            //         end: middleTime,
+            //         text: text1,
+            //     }),
+            // );
+            // subs.splice(
+            //     index + 1,
+            //     0,
+            //     newSub({
+            //         start: middleTime,
+            //         end: sub.end,
+            //         text: text2,
+            //     }),
+            // );
+            // setSubtitle(subs);
+            // }
+            if (index2 >= 0) {
+                const subsEnglish = copySubsEnglish();
+                const text1 = sub.text.slice(0, start).trim();
+                const text2 = sub.text.slice(start).trim();
+                if (!text1 || !text2) return;
+                const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+                if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
+                subsEnglish.splice(index2, 1);
+                const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
+                subsEnglish.splice(
+                    index2,
+                    0,
+                    newSub({
+                        start: sub.start,
+                        end: middleTime,
+                        text: text1,
+                    }),
+                );
+                subsEnglish.splice(
+                    index2 + 1,
+                    0,
+                    newSub({
+                        start: middleTime,
+                        end: sub.end,
+                        text: text2,
+                    }),
+                );
+                setSubtitleEnglish(subsEnglish);
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
+            }
         },
-        [hasSub, copySubs, setSubtitle, newSub],
+        [hasSub, hasSubEnglish, copySubs, copySubsEnglish, setSubtitle, setSubtitleEnglish, newSub],
     );
 
     const onKeyDown = useCallback(
@@ -371,7 +405,9 @@ export default function App({ defaultLang }) {
     }, [onKeyDown]);
 
     useMemo(() => {
-        const currentIndex = subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
+        const currentIndex = configuration === 'Subtitling' ? 
+        subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime)
+        : subtitleEnglish.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
         setCurrentIndex(currentIndex);
     }, [currentTime, subtitle]);
 
@@ -475,6 +511,8 @@ export default function App({ defaultLang }) {
         setTranslationApi,
         isTranslateClicked,
         setIsTranslateClicked,
+        transcriptSource,
+        setTranscriptSource,
     };
 
     return (
@@ -581,7 +619,7 @@ export default function App({ defaultLang }) {
                                 </ScrollSyncPane>
                             </div>
                          </ScrollSync> */}
-                          <ScrollSync>
+                          {/* <ScrollSync> */}
                             <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
                          <Subtitles
                                             currentIndex={props.currentIndex}
@@ -626,7 +664,7 @@ export default function App({ defaultLang }) {
                                             setIsTranslateClicked={props.setIsTranslateClicked} //added
                                         />
                                         </div>
-                         </ScrollSync>
+                         {/* </ScrollSync> */}
                     </div>
                 )}
 
@@ -724,6 +762,8 @@ export default function App({ defaultLang }) {
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             updateSubOriginal={props.updateSubTranslate}
                             translationApi={props.translationApi}
+                            transcriptSource={props.transcriptSource}
+                            setTranscriptSource={props.setTranscriptSource}
                         />
                     </>
                 )}

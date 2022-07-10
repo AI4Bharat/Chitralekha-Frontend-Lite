@@ -17,6 +17,8 @@
 
 .tool-open {
     width: 300px !important;
+    max-width: 32vw;
+    min-width: 220px;
     transform: scaleX(1) !important;
 }
 

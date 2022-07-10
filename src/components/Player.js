@@ -11,7 +11,7 @@ const Style = styled.div`
     justify-content: center;
     height: 100%;
     width: 100%;
-    padding: 5%;
+    padding-bottom: 2%;
 
     margin-top: -13px;
 

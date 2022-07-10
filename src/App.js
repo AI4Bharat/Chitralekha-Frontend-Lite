@@ -27,12 +27,25 @@ const Style = styled.div`
         display: flex;
         height: calc(100% - 200px);
 
-        .player {
+        .main-center {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            .header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .player {
+                flex: 1;
+            }
         }
 
         .subtitles {
             width: 250px;
+            max-width: 32vw;
         }
 
         .tool {
@@ -469,8 +482,27 @@ export default function App({ defaultLang }) {
         <Style>
      
             <div className="main">
-                <Links />
-                <Player {...props} />
+                <div className="main-center">
+                    <div className="header">
+                        <Links />
+                        <div style={{zIndex: 200}}>
+                            {localStorage.getItem("user_id") ? 
+                                <div>
+                                    <div className="user-details">
+                                        <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
+                                    </div>
+                                    <ul className='user-menu'>
+                                        <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
+                                    </ul>
+                                </div> 
+                                : 
+                                <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                                    Sign In
+                                </span>}
+                        </div>
+                    </div>
+                    <Player {...props} />
+                </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
                     <div className={{overflow: 'visible'}}>
@@ -696,21 +728,6 @@ export default function App({ defaultLang }) {
                     </>
                 )}
                 <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
-                <div style={{zIndex: 200}}>
-                    {localStorage.getItem("user_id") ? 
-                        <div>
-                            <div className="user-details">
-                                <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
-                            </div>
-                            <ul className='user-menu'>
-                                <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
-                            </ul>
-                        </div> 
-                        : 
-                        <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
-                            Sign In
-                        </span>}
-                </div>
                 <Tool {...props} />
             </div>
             {isSetVideo && <Footer {...props} />}

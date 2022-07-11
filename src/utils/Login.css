@@ -198,3 +198,25 @@
     transform: scale(1.2);
     background-color:  	#202020;
   }
+
+  .login-btn:disabled {
+    background-color: #202020;
+    pointer-events: none;
+  }
+
+  .found-toggle {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    column-gap: 1rem;
+  }
+
+  .found-num {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    white-space: nowrap;
+    margin-bottom: 1rem;
+    margin-top: 5px;
+  }

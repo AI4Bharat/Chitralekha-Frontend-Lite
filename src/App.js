@@ -596,7 +596,9 @@ export default function App({ defaultLang }) {
         setFound,
         handleReplace,
         handleReplaceAll,
-        handleFind
+        handleFind,
+        currentFound,
+        setCurrentFound,
     };
 
     return (
@@ -723,6 +725,8 @@ export default function App({ defaultLang }) {
                                             setConfiguration={props.setConfiguration}
                                             updateSubOriginal={props.updateSubTranslate}
                                             translationApi={props.translationApi}
+                                            found={props.found}
+                                            currentFound={props.currentFound}
                                             />
                                             <Subtitles
                                             currentIndex={props.currentIndex}
@@ -746,9 +750,8 @@ export default function App({ defaultLang }) {
                                             translationApi={props.translationApi}
                                             isTranslateClicked={props.isTranslateClicked} //added
                                             setIsTranslateClicked={props.setIsTranslateClicked} //added
-                                            find={props.find}
-                                            replace={props.replace}
                                             found={props.found}
+                                            currentFound={props.currentFound}
                                         />
                                         </div>
                          {/* </ScrollSync> */}
@@ -851,9 +854,8 @@ export default function App({ defaultLang }) {
                             translationApi={props.translationApi}
                             transcriptSource={props.transcriptSource}
                             setTranscriptSource={props.setTranscriptSource}
-                            find={props.find}
-                            replace={props.replace}
                             found={props.found}
+                            currentFound={props.currentFound}
                         />
                     </>
                 )}
@@ -871,6 +873,8 @@ export default function App({ defaultLang }) {
                     handleReplace={props.handleReplace}
                     handleReplaceAll={props.handleReplaceAll}
                     handleFind={props.handleFind}
+                    currentFound={props.currentFound}
+                    setCurrentFound={props.setCurrentFound}
                 />
             </div>
             {isSetVideo && <Footer {...props} />}

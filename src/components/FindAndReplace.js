@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import "../utils/Login.css";
 
 const FindAndReplace = ({ 
@@ -12,7 +11,9 @@ const FindAndReplace = ({
     setFound,
     handleReplace,
     handleReplaceAll,
-    handleFind
+    handleFind,
+    currentFound,
+    setCurrentFound,
  }) => {
 
     const handleClose = () => {
@@ -20,9 +21,8 @@ const FindAndReplace = ({
         setFind("");
         setReplace("");
         setFound([]);
+        setCurrentFound();
     }
-
-    console.log(found)
 
   return (
     <div className={`${showFindAndReplace ? "" : "active"} show`}>
@@ -36,12 +36,19 @@ const FindAndReplace = ({
             <input type="text" className="login-box" value={find} onChange={(e) => setFind(e.currentTarget.value)} />
             <br></br>
             <button type="button" className="login-btn" onClick={handleFind}>Find</button>
+            {currentFound !== null && found.length >0 && <div className="found-toggle">
+              <p className="found-num">{currentFound+1} / {found.length}</p>
+              <button type="button" className="login-btn" onClick={() => setCurrentFound(currentFound-1)} disabled={currentFound === 0}>Prev</button>
+              <button type="button" className="login-btn" onClick={() => setCurrentFound(currentFound+1)} disabled={currentFound === found.length - 1}>Next</button>
+            </div>}
             <label>Replace</label>
             <br></br>
             <input type="text" className="login-box" value={replace} onChange={(e) => setReplace(e.currentTarget.value)}/>
             <br></br>
-            <button type="button" className="login-btn" onClick={handleReplaceAll}>Replace All</button>
-            <button type="button" className="login-btn" onClick={handleReplace}>Replace</button>
+            <div className="found-toggle">
+              <button type="button" className="login-btn" onClick={handleReplace} disabled={found.length === 0}>Replace</button>
+              <button type="button" className="login-btn" onClick={handleReplaceAll} disabled={found.length === 0}>Replace All</button>
+            </div>
           </form> 
         </div>
       </div>

@@ -12,20 +12,67 @@ import SimpleFS from '@forlagshuset/simple-fs';
 import HamburgerMenu from 'react-hamburger-menu';
 //import '../utils/ToolNavigation.css';
 import BottomLinks from './BottomLinks';
+import Links from './Links';
 import GetVideoDetailsAPI from "../redux/actions/api/Video/GetVideoDetails"
 import { useDispatch, useSelector } from "react-redux"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import Navbar from './Header';
+import LoginForm from './Login';
+import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript";
+import ReactModal from 'react-modal';
+
 
 const Style = styled.div`
-    border-left: 1px solid white;
-    background: #63D471;
-height: 85px;
-display: flex;
-width: 100%;
-justify-content: space-between;
-padding: 0.2rem calc((100vw - 1000px) / 2);
-z-index: 12;
+    border-bottom: 1px solid #63D471;
+
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.2rem calc((100vw - 1000px) / 2);
+    z-index: 100;
+
+    .top{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        select {
+            outline: none;
+            padding: 0 10px;
+            height: 40px;
+            border-radius: 3px;
+            border: none;
+        }
+    }
+
+    .btn {
+        position: relative;
+        opacity: 0.85;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 35px;
+        width: 48%;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        background-color: #3f51b5;
+        transition: all 0.2s ease 0s;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+    .save-transcript {
+        padding: 5px 0;
+        margin-left: 20px;
+        width: 100px;
+
+        .save-btn{
+            width: 100px;
+        }
+    }
 
     .tool-button {
         display: flex;
@@ -43,7 +90,6 @@ z-index: 12;
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .btn {
             position: relative;
@@ -77,7 +123,11 @@ z-index: 12;
         }
     }
 
-    .seconday-options {
+    .export{
+        text-align: center;
+    }
+
+    .secondary-options {
         transform: scaleY(1) !important;
         transition: all 0.25s 0.4s;
         transform-origin: top;
@@ -96,7 +146,6 @@ z-index: 12;
     }
 
     .select-translation-api-container {
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
         display: flex;
         flex-direction: column;
         // justify-content: center;
@@ -120,7 +169,6 @@ z-index: 12;
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .btn {
             position: relative;
@@ -147,7 +195,6 @@ z-index: 12;
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .btn {
             position: relative;
@@ -174,7 +221,6 @@ z-index: 12;
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .btn {
             position: relative;
@@ -201,6 +247,9 @@ z-index: 12;
         transform: scaleY(1) !important;
         transition: all 0.25s 0.4s;
         transform-origin: top;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
         &-heading {
             opacity: 1;
@@ -211,11 +260,8 @@ z-index: 12;
         &-options {
             opacity: 1;
             display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-            border-bottom: 1px solid rgb(255 255 255 / 20%);
             // align-items: center;
-            margin-top: -10px;
+            
             padding-left: 10px;
 
             .btn {
@@ -232,8 +278,9 @@ z-index: 12;
                 font-size: 13px;
                 background-color: #009688;
                 transition: all 0.2s ease 0s;
-                margin-bottom: 10px;
+                margin-right: 10px;
                 letter-spacing: 1.3px;
+                padding: 2px 5px;
 
                 &:hover {
                     opacity: 1;
@@ -262,7 +309,6 @@ z-index: 12;
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         select {
             width: 65%;
@@ -294,7 +340,6 @@ z-index: 12;
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .youtube-textarea {
             width: 65%;
@@ -329,7 +374,8 @@ z-index: 12;
         padding: 10px;
 
         span {
-            width: 49%;
+            width: 100px;
+            margin-left: 10px;
             font-size: 13px;
             padding: 5px 0;
             border-radius: 3px;
@@ -351,7 +397,6 @@ z-index: 12;
                 color: #ffeb3b;
                 padding: 5px 10px;
                 animation: animation 3s infinite;
-                border-bottom: 1px solid rgb(255 255 255 / 30%);
             }
 
             @keyframes animation {
@@ -455,7 +500,36 @@ export default function Header({
     const [toolOpen, setToolOpen] = useState(true);
     const dispatch = useDispatch();
     const VideoDetails = useSelector(state => state.getVideoDetails.data);
+    const [showLogin, setShowLogin] = useState(false);
     // const [isSetVideo, setIsSetVideo] = useState(false);
+    const saveTranscript = async () => {
+        if (localStorage.getItem('subtitle')) {
+            setLoading(t('SAVING'));
+            const payload = {
+                output: sub2vtt(subtitle)
+            }
+            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+              });
+            const resp = await res.json();
+            console.log(resp);
+            if (res.ok) {
+                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
+                notify({
+                    message: 'Subtitle saved successfully', 
+                    level: 'success'});
+            } else {
+                notify({
+                    message: 'Subtitle could not be saved', 
+                    level: 'error'});
+            }
+            setLoading('');
+        }
+    }
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -573,6 +647,68 @@ export default function Header({
             });
         }
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
+
+
+    class ExampleModal extends React.Component {
+        constructor () {
+          super();
+          this.state = {
+            showModal: false
+          };
+          
+          this.handleOpenModal = this.handleOpenModal.bind(this);
+          this.handleCloseModal = this.handleCloseModal.bind(this);
+        }
+        
+        handleOpenModal () {
+          this.setState({ showModal: true });
+        }
+        
+        handleCloseModal () {
+          this.setState({ showModal: false });
+        }
+        
+        render () {
+          return (
+            <div>
+                <select
+                 onChange={(event)=>{
+                   if(event.target.value=="video")
+                   {
+                    this.handleOpenModal()
+                   }
+                }}
+                >
+                    <option value="" disabled selected>Open</option>
+                    <option value="video">Import Video</option>
+                    <option value="subtitles">Import Subtitles</option>
+                </select>
+              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
+              <ReactModal 
+                 isOpen={this.state.showModal}
+                 contentLabel="Minimal Modal Example"
+              >
+                <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
+                <button onClick={this.handleCloseModal}>Close Modal</button>
+                <div className="youtube-link ">
+                    <textarea
+                        className="youtube-textarea"
+                        placeholder="Enter YouTube Link Here"
+                        value={youtubeURL}
+                        onChange={handleChange}
+                        // onKeyPress={(e) => }
+                    />
+                    <div className="btn" onClick={onYouTubeChange}>
+                        <Translate value="Fetch Video" />
+                    </div>
+                </div>
+              </ReactModal>
+            </div>
+          );
+        }
+      }
+      
+      const props = {};
 
     const onVideoChange = useCallback(
         (event) => {
@@ -968,7 +1104,7 @@ export default function Header({
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
-           
+         <ExampleModal />
             {/* <div className={`tool-button`}>
                 <div
                     className="icon"
@@ -989,10 +1125,16 @@ export default function Header({
                     />
                 </div>
             </div> */}
-
+<Links />
             <div className="top">
-            {/* <CalendarView />  */}
-                <div className="import ">
+            
+
+
+
+                
+
+
+                {/* <div className="import ">
                     <div className="btn">
                         <Translate value="OPEN_VIDEO" />
                         <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
@@ -1001,8 +1143,8 @@ export default function Header({
                         <Translate value="OPEN_SUB" />
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
                     </div>
-                </div>
-                <div className="youtube-link ">
+                </div> */}
+                {/* <div className="youtube-link ">
                     <textarea
                         className="youtube-textarea"
                         placeholder="Enter YouTube Link Here"
@@ -1013,9 +1155,9 @@ export default function Header({
                     <div className="btn" onClick={onYouTubeChange}>
                         <Translate value="Fetch Video" />
                     </div>
-                </div>
+                </div> */}
                 <div className="operate">
-                    <div
+                    {/* <div
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
@@ -1040,7 +1182,7 @@ export default function Header({
                 <div className="operate">
                     <div className="btn" onClick={clearSubsHandler}>
                         <Translate value="Clear Subtitles" />
-                    </div>
+                    </div> */}
                 </div>
 
                 <div
@@ -1049,7 +1191,7 @@ export default function Header({
                 `}
                 >
                     <p className="configuration-heading">
-                        <b>Configuration Options</b>
+                        {/* <b>Configuration Options</b> */}
                     </p>
                     <div className="configuration-options">
                         <div
@@ -1089,6 +1231,12 @@ export default function Header({
                         
                     </div>
                 </div>
+                <div className="export btn">
+                        <Translate value="Export" />
+                </div>
+                <div className="save-transcript">
+                            <h4>{ <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>Save 💾</span>}</h4>
+                        </div>
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
                     {configuration === 'Subtitling' && (
                         <>
@@ -1145,6 +1293,7 @@ export default function Header({
                         </div>
                     </div>
                 </div>
+
                 <div className="">
                     {/* <BottomLinks /> */}
                 </div>
@@ -1167,8 +1316,9 @@ export default function Header({
                         <Translate value="TRANSLATE" />
                     </div>
                 </div> */}
-
+            
                 <div className="hotkey">
+                    
                     <span>
                         <Translate value="HOTKEY_01" />
                     </span>
@@ -1177,6 +1327,24 @@ export default function Header({
                     </span>
                 </div>
             </div>
+            <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
+                <div style={{zIndex: 200}}>
+                {localStorage.getItem("user_id") ? 
+                        <div>
+                            <div className="user-details">
+                                <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
+                                <span className='user-name'>{localStorage.getItem("username")}</span>
+                            </div>
+                            <ul className='user-menu'>
+                                <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
+                            </ul>
+                        </div> 
+                        : 
+                        <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                            Sign In
+                        </span>}
+                </div>
+               
         </Style>
     );
 }

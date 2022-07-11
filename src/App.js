@@ -492,7 +492,7 @@ export default function App({ defaultLang }) {
             <div className="main">
                
                 <DisplayPopup />
-                <Links />
+                {/* <Links /> */}
                 <Player {...props} />
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
@@ -718,7 +718,7 @@ export default function App({ defaultLang }) {
                         />
                     </>
                 )}
-                <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
+                {/* <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
                 <div style={{zIndex: 200}}>
                     {localStorage.getItem("user_id") ? 
                         <div>
@@ -734,7 +734,7 @@ export default function App({ defaultLang }) {
                         <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
                             Sign In
                         </span>}
-                </div>
+                </div> */}
                
             </div>
             {isSetVideo && <Footer {...props} />}

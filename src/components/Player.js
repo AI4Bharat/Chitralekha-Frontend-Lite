@@ -188,7 +188,7 @@ export default function Player(props) {
                 <VideoWrap {...props} />
                 {props.player && currentSub ? (
                     <div className="subtitle">
-                        {focusing ? (
+                        {props.configuration === 'Same Language Subtitling' && focusing ? (
                             <div className="operate" onClick={onSplit}>
                                 <Translate value="SPLIT" />
                             </div>

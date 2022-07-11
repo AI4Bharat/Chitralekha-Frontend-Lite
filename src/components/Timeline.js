@@ -420,9 +420,9 @@ export default React.memo(
                     <MenuItem onClick={() => removeSub(lastSub)}>
                         <Translate value="DELETE" />
                     </MenuItem>
-                    <MenuItem onClick={() => mergeSub(lastSub)}>
+                    {configuration === 'Same Language Subtitling' && <MenuItem onClick={() => mergeSub(lastSub)}>
                         <Translate value="MERGE" />
-                    </MenuItem>
+                    </MenuItem>}
                 </ContextMenu>
             </Timeline>
         );

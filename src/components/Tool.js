@@ -435,8 +435,6 @@ export default function Header({
     setEnableConfiguration,
     isSetConfiguration,
     setIsSetConfiguration,
-    translationApi,
-    setTranslationApi,
     isSetVideo,
     setIsSetVideo,
     transcriptSource,
@@ -1094,7 +1092,7 @@ export default function Header({
                     </div>
                 </div>
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
-                    {configuration === 'Subtitling' && (
+                    {/* {configuration === 'Subtitling' && (
                         <>
                             <div className="select-translation-api-container">
                                 <p className="select-heading">
@@ -1113,7 +1111,7 @@ export default function Header({
                                 </select>
                             </div>
                         </>
-                    )}
+                    )} */}
                     {configuration === 'Same Language Subtitling' && (
                         <>
                             <div className="select-translation-api-container">

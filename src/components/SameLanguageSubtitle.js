@@ -184,7 +184,6 @@ export default function SameLanguageSubtitles({
     updateSubOriginal = null,
     clearSubs,
     setSubtitleEnglish,
-    translationApi,
     transcriptSource,
     setTranscriptSource,
     found,

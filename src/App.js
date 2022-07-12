@@ -16,6 +16,7 @@ import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
 import SignLanguageSubtitles from './components/SignLanguageSubtitle';
+import FindAndReplace from './components/FindAndReplace';
 // import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 import debounce from 'lodash/debounce';
 
@@ -82,6 +83,11 @@ export default function App({ defaultLang }) {
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
     const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
+    const [showFindAndReplace, setShowFindAndReplace] = useState(false);
+    const [find, setFind] = useState('');
+    const [replace, setReplace] = useState('');
+    const [found, setFound] = useState([]);
+    const [currentFound, setCurrentFound] = useState();
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
@@ -392,12 +398,82 @@ export default function App({ defaultLang }) {
                         undoSubs();
                     }
                     break;
+                case 70:
+                    event.preventDefault();
+                    if (event.ctrlKey && (configuration === 'Subtitling' || configuration === 'Same Language Subtitling')) {
+                        event.preventDefault();
+                        player?.pause();
+                        setShowFindAndReplace(true);
+                    }
+                    break;
                 default:
                     break;
             }
         },
-        [player, playing, undoSubs],
+        [player, playing, undoSubs, configuration],
     );
+
+    const handleFind = () => {
+        let foundIndices = [];
+        if (configuration === 'Subtitling') {
+            for (let i = 0; i < subtitle.length; i++) {
+                const sub = subtitle[i];
+                if (sub.text.toLowerCase().includes(find.toLowerCase())) {
+                    foundIndices.push(i);
+                }
+            }
+        } else if (configuration === 'Same Language Subtitling') {
+            for (let i = 0; i < subtitleEnglish.length; i++) {
+                const sub = subtitleEnglish[i];
+                if (sub.text.toLowerCase().includes(find.toLowerCase())) {
+                    foundIndices.push(i);
+                }
+            }
+        }
+        setFound(foundIndices);
+        if (foundIndices.length > 0) {
+            setCurrentFound(0);
+        }
+    }
+
+    const handleReplace = () => {
+        if (currentFound < 0 || currentFound >= found.length) return;
+        const index = found[currentFound];
+        const sub = configuration === 'Subtitling' ? subtitle[index] : subtitleEnglish[index];
+        const text = sub.text.replace(new RegExp(find, 'gi'), replace);
+        if (configuration === 'Subtitling') {
+            const subs = copySubs();
+            subs[index].text = text;
+            setSubtitle(subs);
+        } else if (configuration === 'Same Language Subtitling') {
+            const subs = copySubsEnglish();
+            subs[index].text = text;
+            setSubtitleEnglish(subs);
+        }
+        setCurrentFound(currentFound + 1);
+        setFound(found.filter((i) => i !== index));
+    }
+
+    const handleReplaceAll = () => {
+        if (found.length === 0) return;
+        if (configuration === 'Subtitling') {
+            const subs = copySubs();
+            for (let i = 0; i < found.length; i++) {
+                const index = found[i];
+                subs[index].text = subtitle[index].text.replace(new RegExp(find, 'gi'), replace);
+            }
+            setSubtitle(subs);
+        } else if (configuration === 'Same Language Subtitling') {
+            const subs = copySubsEnglish();
+            for (let i = 0; i < found.length; i++) {
+                const index = found[i];
+                subs[index].text = subtitleEnglish[index].text.replace(new RegExp(find, 'gi'), replace);
+            }
+            setSubtitleEnglish(subs);
+        }
+        setFound([]);
+        setCurrentFound();
+    }
 
     useEffect(() => {
         window.addEventListener('keydown', onKeyDown);
@@ -513,6 +589,19 @@ export default function App({ defaultLang }) {
         setIsTranslateClicked,
         transcriptSource,
         setTranscriptSource,
+        showFindAndReplace,
+        setShowFindAndReplace,
+        find,
+        setFind,
+        replace,
+        setReplace,
+        found,
+        setFound,
+        handleReplace,
+        handleReplaceAll,
+        handleFind,
+        currentFound,
+        setCurrentFound,
     };
 
     return (
@@ -620,7 +709,7 @@ export default function App({ defaultLang }) {
                             </div>
                          </ScrollSync> */}
                           {/* <ScrollSync> */}
-                            <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
+                            <div style={{ display: 'flex', position: 'relative', height:`90%`, zIndex: "200"}}>
                          <Subtitles
                                             currentIndex={props.currentIndex}
                                             subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
@@ -639,6 +728,8 @@ export default function App({ defaultLang }) {
                                             setConfiguration={props.setConfiguration}
                                             updateSubOriginal={props.updateSubTranslate}
                                             translationApi={props.translationApi}
+                                            found={props.found}
+                                            currentFound={props.currentFound}
                                             />
                                             <Subtitles
                                             currentIndex={props.currentIndex}
@@ -662,6 +753,8 @@ export default function App({ defaultLang }) {
                                             translationApi={props.translationApi}
                                             isTranslateClicked={props.isTranslateClicked} //added
                                             setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                            found={props.found}
+                                            currentFound={props.currentFound}
                                         />
                                         </div>
                          {/* </ScrollSync> */}
@@ -764,11 +857,29 @@ export default function App({ defaultLang }) {
                             translationApi={props.translationApi}
                             transcriptSource={props.transcriptSource}
                             setTranscriptSource={props.setTranscriptSource}
+                            found={props.found}
+                            currentFound={props.currentFound}
                         />
                     </>
                 )}
                 <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
                 <Tool {...props} />
+                <FindAndReplace
+                    find={props.find}
+                    replace={props.replace}
+                    found={props.found}
+                    setFind={props.setFind}
+                    setReplace={props.setReplace}
+                    setFound={props.setFound}
+                    showFindAndReplace={props.showFindAndReplace}
+                    setShowFindAndReplace={props.setShowFindAndReplace}
+                    handleReplace={props.handleReplace}
+                    handleReplaceAll={props.handleReplaceAll}
+                    handleFind={props.handleFind}
+                    currentFound={props.currentFound}
+                    setCurrentFound={props.setCurrentFound}
+                    configuration={props.configuration}
+                />
             </div>
             {isSetVideo && <Footer {...props} />}
             {loading ? <Loading loading={loading} /> : null}

@@ -22,6 +22,7 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
+    z-index: 200;
 
     .transcribe {
         display: flex;
@@ -146,6 +147,18 @@ const Style = styled.div`
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
                     }
+
+                    &.found {
+                        background-color: #FFFFCC;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
+
+                    &.current-found {
+                        background-color: #FFFF33;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
                 }
             }
         }
@@ -174,6 +187,8 @@ export default function SameLanguageSubtitles({
     translationApi,
     transcriptSource,
     setTranscriptSource,
+    found,
+    currentFound,
 }) {
    // console.log('at start ' + subtitle )
     //console.log('at start ' + subtitleEnglish )
@@ -563,6 +578,8 @@ export default function SameLanguageSubtitles({
                                             'textarea',
                                             currentIndex === props.index ? 'highlight' : '',
                                             checkSub(props.rowData) ? 'illegal' : '',
+                                            found.includes(props.index) ? 'found' : '',
+                                            found[currentFound] === props.index ? 'current-found' : '',
                                         ]
                                             .join(' ')
                                             .trim()}

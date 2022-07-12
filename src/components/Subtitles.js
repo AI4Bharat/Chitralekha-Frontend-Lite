@@ -23,6 +23,7 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
+    z-index: 200;
 
     .translate {
         display: flex;
@@ -147,6 +148,18 @@ const Style = styled.div`
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
                     }
+
+                    &.found {
+                        background-color: #FFFFCC;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
+
+                    &.current-found {
+                        background-color: #FFFF33;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
                 }
             }
         }
@@ -215,6 +228,8 @@ export default function Subtitles({
     translationApi,
     isTranslateClicked=false,
     setIsTranslateClicked,
+    found,
+    currentFound,
 }) {
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
@@ -743,6 +758,8 @@ export default function Subtitles({
                                             'textarea',
                                             currentIndex === props.index ? 'highlight' : '',
                                             checkSub(props.rowData) ? 'illegal' : '',
+                                            isPrimary && found.includes(props.index) ? 'found' : '',
+                                            isPrimary && found[currentFound] === props.index ? 'current-found' : '',
                                         ]
                                             .join(' ')
                                             .trim()}

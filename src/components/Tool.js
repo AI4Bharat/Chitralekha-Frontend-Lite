@@ -442,6 +442,7 @@ export default function Header({
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
+    const [vidRef, setVidRef] = useState(null);
     // const [isSetVideo, setIsSetVideo] = useState(false);
 
     const clearSubsHandler = () => {
@@ -627,7 +628,7 @@ export default function Header({
                                     return subtext.text();
                                 })
                                 .then((subtext) => {
-                                   // console.log(subtext);
+                                    // console.log(subtext);
                                     player.currentTime = 0;
                                     clearSubs();
                                     const suburl = vtt2url(subtext);
@@ -671,7 +672,7 @@ export default function Header({
                             //     });
                         }
                     });
-                
+
                 // fetch(
                 //     `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
                 //     {
@@ -857,6 +858,20 @@ export default function Header({
         }
     }, [setIsSetVideo, isSetVideo]);
 
+  const handleFullScreenMode=(event)=>{
+    var el = document.getElementById("full-screenVideo");
+    if (el.requestFullscreen) {
+      el.requestFullscreen();
+    } else if (el.msRequestFullscreen) {
+      el.msRequestFullscreen();
+    } else if (el.mozRequestFullScreen) {
+      el.mozRequestFullScreen();
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
+console.log("fullscreenmode")
+
+  }
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
             <div className={`tool-button`}>
@@ -881,7 +896,7 @@ export default function Header({
             </div>
 
             <div className="top">
-            {/* <CalendarView />  */}
+                {/* <CalendarView />  */}
                 <div className="import ">
                     <div className="btn">
                         <Translate value="OPEN_VIDEO" />
@@ -898,7 +913,8 @@ export default function Header({
                         placeholder="Enter YouTube Link Here"
                         value={youtubeURL}
                         onChange={handleChange}
-                        // onKeyPress={(e) => }
+                       
+                    // onKeyPress={(e) => }
                     />
                     <div className="btn" onClick={onYouTubeChange}>
                         <Translate value="Fetch Video" />
@@ -945,7 +961,7 @@ export default function Header({
                             onClick={() => {
                                 console.log('Configuration - same');
                                 const langTranscribe = localStorage.getItem('lang');
-                              //  console.log("lang " + langTranscribe);
+                                //  console.log("lang " + langTranscribe);
                                 setConfiguration('Same Language Subtitling');
                                 setIsSetConfiguration(true);
                             }}
@@ -956,7 +972,7 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - basic');
-                                
+
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                             }}
@@ -1061,6 +1077,11 @@ export default function Header({
                     <span>
                         <Translate value="HOTKEY_02" />
                     </span>
+                </div>
+            </div>
+            <div className="operate">
+                <div className="btn"  onClick={handleFullScreenMode} >
+                    <Translate value="Full screen mode" />
                 </div>
             </div>
         </Style>

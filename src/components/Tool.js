@@ -867,7 +867,7 @@ export default function Header({
     } else if (el.mozRequestFullScreen) {
       el.mozRequestFullScreen();
     } else if (el.webkitRequestFullscreen) {
-      el.webkitRequestFullscreen();
+      el.webkitRequestFullscreen(); 
     }
 console.log("fullscreenmode")
 

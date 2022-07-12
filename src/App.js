@@ -451,6 +451,7 @@ export default function App({ defaultLang }) {
             setSubtitleEnglish(subs);
         }
         setCurrentFound(currentFound + 1);
+        setFound(found.filter((i) => i !== index));
     }
 
     const handleReplaceAll = () => {
@@ -470,6 +471,8 @@ export default function App({ defaultLang }) {
             }
             setSubtitleEnglish(subs);
         }
+        setFound([]);
+        setCurrentFound();
     }
 
     useEffect(() => {
@@ -875,6 +878,7 @@ export default function App({ defaultLang }) {
                     handleFind={props.handleFind}
                     currentFound={props.currentFound}
                     setCurrentFound={props.setCurrentFound}
+                    configuration={props.configuration}
                 />
             </div>
             {isSetVideo && <Footer {...props} />}

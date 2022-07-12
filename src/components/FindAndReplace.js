@@ -1,4 +1,5 @@
 import "../utils/Login.css";
+import { ReactTransliterate } from 'react-transliterate';
 
 const FindAndReplace = ({ 
     showFindAndReplace,
@@ -14,6 +15,7 @@ const FindAndReplace = ({
     handleFind,
     currentFound,
     setCurrentFound,
+    configuration,
  }) => {
 
     const handleClose = () => {
@@ -33,7 +35,28 @@ const FindAndReplace = ({
             <h1 className="login-text">Find and Replace</h1>
             <label>Find</label>
             <br></br>
-            <input type="text" className="login-box" value={find} onChange={(e) => setFind(e.currentTarget.value)} />
+            <ReactTransliterate
+                className="login-box"
+                value={find}
+                spellCheck={false}
+                onChangeText={(event) => {
+                    setFind(event);
+                }}
+                lang={configuration === "Subtitling" ? localStorage.getItem('langTranslate') : localStorage.getItem('langTranscribe')}
+                enabled={
+                  configuration === "Subtitling"
+                    ? !(!localStorage.getItem('langTranslate') ||
+                        localStorage.getItem('langTranslate') === 'en' ||
+                        localStorage.getItem('langTranslate') === 'en-k')
+                    : !(!localStorage.getItem('langTranscribe') ||
+                        localStorage.getItem('langTranscribe') === 'en' ||
+                        localStorage.getItem('langTranscribe') === 'en-k')
+                }
+                maxOptions={5}
+                rows={1}
+                renderComponent={(props) => <textarea {...props} />}
+            />
+            {/* <input type="text" className="login-box" value={find} onChange={(e) => setFind(e.currentTarget.value)} /> */}
             <br></br>
             <button type="button" className="login-btn" onClick={handleFind}>Find</button>
             {currentFound !== null && found.length >0 && <div className="found-toggle">
@@ -43,7 +66,28 @@ const FindAndReplace = ({
             </div>}
             <label>Replace</label>
             <br></br>
-            <input type="text" className="login-box" value={replace} onChange={(e) => setReplace(e.currentTarget.value)}/>
+            <ReactTransliterate
+                className="login-box"
+                value={replace}
+                spellCheck={false}
+                onChangeText={(event) => {
+                    setReplace(event);
+                }}
+                lang={configuration === "Subtitling" ? localStorage.getItem('langTranslate') : localStorage.getItem('langTranscribe')}
+                enabled={
+                  configuration === "Subtitling"
+                    ? !(!localStorage.getItem('langTranslate') ||
+                        localStorage.getItem('langTranslate') === 'en' ||
+                        localStorage.getItem('langTranslate') === 'en-k')
+                    : !(!localStorage.getItem('langTranscribe') ||
+                        localStorage.getItem('langTranscribe') === 'en' ||
+                        localStorage.getItem('langTranscribe') === 'en-k')
+                }
+                maxOptions={5}
+                rows={1}
+                renderComponent={(props) => <textarea {...props} />}
+            />
+            {/* <input type="text" className="login-box" value={replace} onChange={(e) => setReplace(e.currentTarget.value)}/> */}
             <br></br>
             <div className="found-toggle">
               <button type="button" className="login-btn" onClick={handleReplace} disabled={found.length === 0}>Replace</button>

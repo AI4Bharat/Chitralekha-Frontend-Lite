@@ -79,7 +79,7 @@ export default function App({ defaultLang }) {
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
-    const [translationApi, setTranslationApi] = useState('AI4Bharat');
+    // const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
     const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
@@ -583,8 +583,8 @@ export default function App({ defaultLang }) {
         setIsSetVideo,
         isSetConfiguration,
         setIsSetConfiguration,
-        translationApi,
-        setTranslationApi,
+        // translationApi,
+        // setTranslationApi,
         isTranslateClicked,
         setIsTranslateClicked,
         transcriptSource,
@@ -727,7 +727,7 @@ export default function App({ defaultLang }) {
                                             configuration={props.configuration}
                                             setConfiguration={props.setConfiguration}
                                             updateSubOriginal={props.updateSubTranslate}
-                                            translationApi={props.translationApi}
+                                            // translationApi={props.translationApi}
                                             found={props.found}
                                             currentFound={props.currentFound}
                                             />
@@ -750,7 +750,7 @@ export default function App({ defaultLang }) {
                                             setSubtitleOriginal={props.setSubtitleOriginal} //extra
                                             configuration={props.configuration}
                                             setConfiguration={props.setConfiguration}
-                                            translationApi={props.translationApi}
+                                            // translationApi={props.translationApi}
                                             isTranslateClicked={props.isTranslateClicked} //added
                                             setIsTranslateClicked={props.setIsTranslateClicked} //added
                                             found={props.found}
@@ -854,7 +854,7 @@ export default function App({ defaultLang }) {
                             clearSubs={props.clearSubs}
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             updateSubOriginal={props.updateSubTranslate}
-                            translationApi={props.translationApi}
+                            // translationApi={props.translationApi}
                             transcriptSource={props.transcriptSource}
                             setTranscriptSource={props.setTranscriptSource}
                             found={props.found}

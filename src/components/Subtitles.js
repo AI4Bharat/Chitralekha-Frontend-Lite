@@ -711,6 +711,7 @@ export default function Subtitles({
                                 <Translate value="TRANSLATE" />
                             </div>
                             {/* {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} */}
+                            {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} 
                         </div>
                     </div>
                 )}

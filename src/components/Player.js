@@ -11,7 +11,7 @@ const Style = styled.div`
     justify-content: center;
     height: 100%;
     width: 100%;
-    padding: 5%;
+    padding-bottom: 2%;
 
     margin-top: -13px;
 
@@ -71,9 +71,10 @@ const Style = styled.div`
                 color: #fff;
                 font-size: 20px;
                 padding: 5px 10px;
-                user-select: all;
+                ${'' /* user-select: all; */}
                 pointer-events: all;
                 background-color: rgb(0 0 0 / 0);
+                
                 text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px, rgb(0 0 0) -1px 0px 1px,
                     rgb(0 0 0) 0px -1px 1px;
 
@@ -122,6 +123,7 @@ const VideoWrap = memo(
 );
 
 export default function Player(props) {
+    console.log(props);
     const [currentSub, setCurrentSub] = useState(null);
     const [focusing, setFocusing] = useState(false);
     const [inputItemCursor, setInputItemCursor] = useState(0);
@@ -135,13 +137,19 @@ export default function Player(props) {
     }, [$player, props.player]);
 
     useMemo(() => {
-        setCurrentSub(props.subtitle[props.currentIndex]);
+        setCurrentSub(
+            (props.configuration === 'Subtitling')
+           ? props.subtitle[props.currentIndex]
+           : props.subtitleEnglish[props.currentIndex]
+    );
     }, [props.subtitle, props.currentIndex]);
 
     const onChange = useCallback(
         (event) => {
             props.player.pause();
-            props.updateSub(currentSub, { text: event.target.value });
+            props.configuration === 'Subtitling' ? 
+            props.updateSub(currentSub, { text: event.target.value })
+            : props.updateSubEnglish(currentSub, { text: event.target.value });
             if (event.target.selectionStart) {
                 setInputItemCursor(event.target.selectionStart);
             }
@@ -180,7 +188,7 @@ export default function Player(props) {
                 <VideoWrap {...props} />
                 {props.player && currentSub ? (
                     <div className="subtitle">
-                        {focusing ? (
+                        {props.configuration === 'Same Language Subtitling' && focusing ? (
                             <div className="operate" onClick={onSplit}>
                                 <Translate value="SPLIT" />
                             </div>

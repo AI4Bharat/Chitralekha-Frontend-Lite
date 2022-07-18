@@ -39,6 +39,7 @@ const Timeline = styled.div`
         justify-content: center;
         align-items: center;
         text-align: center;
+        word-wrap: break-word;
         color: #fff;
         font-size: 14px;
         cursor: move;
@@ -80,17 +81,16 @@ const Timeline = styled.div`
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            word-break: break-all;
-            white-space: nowrap;
+            
             text-shadow: rgb(0 0 0) 1px 0px 1px, rgb(0 0 0) 0px 1px 1px, rgb(0 0 0) -1px 0px 1px,
                 rgb(0 0 0) 0px -1px 1px;
-            width: 100%;
+            
             height: 100%;
+            word-wrap: break-word;
 
             p {
                 margin: 2px 0;
                 line-height: 1;
-
                 &.bilingual {
                     transform: scale(0.8);
                 }
@@ -111,7 +111,7 @@ const Timeline = styled.div`
 `;
 
 function getCurrentSubs(subs, beginTime, duration) {
-    //console.log('subs ' + subs[0])
+   // console.log('subs ' + subs[0].text)
     return subs.filter((item) => {
         return (
             (item.startTime >= beginTime && item.startTime <= beginTime + duration) ||
@@ -139,9 +139,11 @@ let lastDiffX = 0;
 let isDroging = false;
 
 export default React.memo(
+    
     function ({
         player,
         subtitle,
+        subtitleEnglish,
         render,
         currentTime,
         checkSub,
@@ -150,17 +152,36 @@ export default React.memo(
         updateSub,
         mergeSub,
         updateSubEnglish,
+        configuration,
+        setConfiguration
     }) {
+            
+            //console.log('subtitleEnglish ' +subtitleEnglish[0].text);
+            //console.log('subtitle '+subtitle[0].text);
+      
         const $blockRef = React.createRef();
         const $subsRef = React.createRef();
-        const currentSubs = getCurrentSubs(subtitle, render.beginTime, render.duration);
+
+       let currentSubs = getCurrentSubs(subtitleEnglish, render.beginTime, render.duration)
+        {  
+            (configuration === 'Subtitling')
+            ? currentSubs = getCurrentSubs(subtitle, render.beginTime, render.duration)   
+            : currentSubs = getCurrentSubs(subtitleEnglish, render.beginTime, render.duration)
+        }
+
+       // const currentSubsEnglish = getCurrentSubs(subtitleEnglish, render.beginTime, render.duration); //addition
        // console.log('currentSubs '+currentSubs);
-      // console.log('subtitle '+subtitle[0])
+    //    console.log('subtitle '+subtitle[0].text);
+    
         const gridGap = document.body.clientWidth / render.gridNum;
         const currentIndex = currentSubs.findIndex(
             (item) => item.startTime <= currentTime && item.endTime > currentTime,
         );
 
+        //addition
+        // const currentIndexEnglish = currentSubsEnglish.findIndex(
+        //     (item) => item.startTime <= currentTime && item.endTime > currentTime,
+        // );
         const onMouseDown = (sub, event, type) => {
             lastSub = sub;
             if (event.button !== 0) return;
@@ -182,6 +203,7 @@ export default React.memo(
                 $subs.style.width = `${width}px`;
                 const start = DT.d2t(previou.endTime);
                 const end = DT.d2t(next.startTime);
+         
                 updateSub(sub, {
                     start,
                     end,
@@ -190,21 +212,27 @@ export default React.memo(
         };
 
         const onDocumentMouseMove = useCallback((event) => {
+   
             if (isDroging && lastTarget) {
                 lastDiffX = event.pageX - lastX;
                 if (lastType === 'left') {
+      
                     lastTarget.style.width = `${lastWidth - lastDiffX}px`;
                     lastTarget.style.transform = `translate(${lastDiffX}px)`;
                 } else if (lastType === 'right') {
+         
                     lastTarget.style.width = `${lastWidth + lastDiffX}px`;
                 } else {
+          
                     lastTarget.style.transform = `translate(${lastDiffX}px)`;
                 }
             }
         }, []);
 
         const onDocumentMouseUp = useCallback(() => {
+
             if (isDroging && lastTarget && lastDiffX) {
+       
                 const timeDiff = lastDiffX / gridGap / 10;
                 const index = hasSub(lastSub);
                 const previou = subtitle[index - 1];
@@ -216,13 +244,14 @@ export default React.memo(
 
                 if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
                     //
+   
                 } else {
-                    console.log('here');
+              
                     if (lastType === 'left') {
                         if (startTime >= 0 && lastSub.endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             updateSub(lastSub, { start });
-                            console.log('lastSub left ' + lastSub);
+                     
                             updateSubEnglish(lastSub, { start });
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -231,7 +260,7 @@ export default React.memo(
                         if (endTime >= 0 && endTime - lastSub.startTime >= 0.2) {
                             const end = DT.d2t(endTime);
                             updateSub(lastSub, { end });
-                            console.log('lastSub right ' + lastSub);
+               
                             updateSubEnglish(lastSub, { end });
                         } else {
                             lastTarget.style.width = `${width}px`;
@@ -240,7 +269,7 @@ export default React.memo(
                         if (startTime > 0 && endTime > 0 && endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
                             const end = DT.d2t(endTime);
-                            console.log('lastSub else ' + lastSub);
+                 
                             updateSub(lastSub, {
                                 start,
                                 end,
@@ -254,10 +283,10 @@ export default React.memo(
                         }
                     }
                 }
-
+ 
                 lastTarget.style.transform = `translate(0)`;
             }
-
+   
             lastType = '';
             lastX = 0;
             lastWidth = 0;
@@ -267,11 +296,15 @@ export default React.memo(
 
         const onKeyDown = useCallback(
             (event) => {
+    
                 const sub = currentSubs[lastIndex];
                 if (sub && lastTarget) {
+          
                     const keyCode = getKeyCode(event);
+        
                     switch (keyCode) {
                         case 37:
+                
                             updateSub(sub, {
                                 start: DT.d2t(sub.startTime - 0.1),
                                 end: DT.d2t(sub.endTime - 0.1),
@@ -279,6 +312,7 @@ export default React.memo(
                             player.currentTime = sub.startTime - 0.1;
                             break;
                         case 39:
+              
                             updateSub(sub, {
                                 start: DT.d2t(sub.startTime + 0.1),
                                 end: DT.d2t(sub.endTime + 0.1),
@@ -308,73 +342,87 @@ export default React.memo(
             };
         }, [onDocumentMouseMove, onDocumentMouseUp, onKeyDown]);
 
+
+        {}
         return (
             <Timeline ref={$blockRef}>
+                {}
                 <div ref={$subsRef}>
-                    {currentSubs.map((sub, key) => {
-                        return (
-                            <div
-                                className={[
-                                    'sub-item',
-                                    key === currentIndex ? 'sub-highlight' : '',
-                                    checkSub(sub) ? 'sub-illegal' : '',
-                                ]
-                                    .join(' ')
-                                    .trim()}
-                                key={key}
-                                style={{
-                                    left: render.padding * gridGap + (sub.startTime - render.beginTime) * gridGap * 10,
-                                    width: (sub.endTime - sub.startTime) * gridGap * 10,
-                                }}
-                                onClick={() => {
-                                    if (player.duration >= sub.startTime) {
-                                        player.currentTime = sub.startTime + 0.001;
-                                    }
-                                }}
-                                onDoubleClick={(event) => onDoubleClick(sub, event)}
-                            >
-                                <ContextMenuTrigger id="contextmenu" holdToDisplay={-1}>
-                                    <div
-                                        className="sub-handle"
-                                        style={{
-                                            left: 0,
-                                            width: 10,
-                                        }}
-                                        onMouseDown={(event) => onMouseDown(sub, event, 'left')}
-                                    ></div>
-
-                                    <div
-                                        className="sub-text"
-                                        title={sub.text}
-                                        onMouseDown={(event) => onMouseDown(sub, event)}
-                                    >
-                                        {console.log('sub.text '+sub.text)}
-                                        {`${sub.text}`.split(/\r?\n/).map((line, index) => (
-                                            <p key={index}>{line}</p>
-                                        ))}
-                                    </div>
-
-                                    <div
-                                        className="sub-handle"
-                                        style={{
-                                            right: 0,
-                                            width: 10,
-                                        }}
-                                        onMouseDown={(event) => onMouseDown(sub, event, 'right')}
-                                    ></div>
-                                    <div className="sub-duration">{sub.duration}</div>
-                                </ContextMenuTrigger>
-                            </div>
-                        );
-                    })}
+              
+                {/* {console.log('configuration '+configuration)} */}
+              
+                {/* {console.log('currentSubs '+currentSubs[0].text)} */}
+                    
+                    {
+                        currentSubs.map((sub, key) => {
+                           
+                            return (
+                                <div
+                                    className={[
+                                        'sub-item',
+                                        key === currentIndex ? 'sub-highlight' : '',
+                                        checkSub(sub) ? 'sub-illegal' : '',
+                                    ]
+                                        .join(' ')
+                                        .trim()}
+                                    key={key}
+                                    style={{
+                                        left: render.padding * gridGap + (sub.startTime - render.beginTime) * gridGap * 10,
+                                        width: (sub.endTime - sub.startTime) * gridGap * 10,
+                                    }}
+                                    onClick={() => {
+                                        if (player.duration >= sub.startTime) {
+                                            player.currentTime = sub.startTime + 0.001;
+                                        }
+                                    }}
+                                    onDoubleClick={(event) => onDoubleClick(sub, event)}
+                                >
+                                    <ContextMenuTrigger id="contextmenu" holdToDisplay={-1}>
+                                        <div
+                                            className="sub-handle"
+                                            style={{
+                                                left: 0,
+                                                width: 10,
+                                            }}
+                                            onMouseDown={(event) => onMouseDown(sub, event, 'left')}
+                                        ></div>
+    
+                                        <div
+                                            className="sub-text"
+                                            title={sub.text}
+                                            onMouseDown={(event) => onMouseDown(sub, event)}
+                                        >
+                                        
+                                           { `${sub.text}`.split(/\r?\n/).map((line, index) => (
+                                                <p key={index}>{line}</p>
+                                            ))}
+                                            
+                                        </div>
+    
+                                        <div
+                                            className="sub-handle"
+                                            style={{
+                                                right: 0,
+                                                width: 10,
+                                            }}
+                                            onMouseDown={(event) => onMouseDown(sub, event, 'right')}
+                                        ></div>
+                                        <div className="sub-duration">{sub.duration}</div>
+                                    </ContextMenuTrigger>
+                                </div>
+                            );
+                        })
+                    
+                    
+                    }
                 </div>
                 <ContextMenu id="contextmenu">
                     <MenuItem onClick={() => removeSub(lastSub)}>
                         <Translate value="DELETE" />
                     </MenuItem>
-                    <MenuItem onClick={() => mergeSub(lastSub)}>
+                    {configuration === 'Same Language Subtitling' && <MenuItem onClick={() => mergeSub(lastSub)}>
                         <Translate value="MERGE" />
-                    </MenuItem>
+                    </MenuItem>}
                 </ContextMenu>
             </Timeline>
         );

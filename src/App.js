@@ -10,11 +10,15 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import Links from './components/Links';
+import LoginForm from './components/Login';
 // import BottomLinks from './components/BottomLinks';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
 import SignLanguageSubtitles from './components/SignLanguageSubtitle';
+import FindAndReplace from './components/FindAndReplace';
+// import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+import debounce from 'lodash/debounce';
 
 const Style = styled.div`
     height: 100%;
@@ -24,12 +28,25 @@ const Style = styled.div`
         display: flex;
         height: calc(100% - 200px);
 
-        .player {
+        .main-center {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            .header {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .player {
+                flex: 1;
+            }
         }
 
         .subtitles {
             width: 250px;
+            max-width: 32vw;
         }
 
         .tool {
@@ -61,12 +78,33 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
-    const [translationApi, setTranslationApi] = useState('AI4Bharat');
+    const [showLogin, setShowLogin] = useState(false);
+    // const [translationApi, setTranslationApi] = useState('AI4Bharat');
+    const [isTranslateClicked, setIsTranslateClicked] = useState(false);
+    const [height, setHeight] = useState(100);
+    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
+    const [showFindAndReplace, setShowFindAndReplace] = useState(false);
+    const [find, setFind] = useState('');
+    const [replace, setReplace] = useState('');
+    const [found, setFound] = useState([]);
+    const [currentFound, setCurrentFound] = useState();
 
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
 
+    const resize = useCallback(() => {
+            setHeight(document.body.clientHeight - 240);
+        }, [setHeight]);
+    
+    useEffect(() => {
+        resize();
+        if (!resize.init) {
+            resize.init = true;
+            const debounceResize = debounce(resize, 500);
+            window.addEventListener('resize', debounceResize);
+        }
+    }, [resize]);
 
     const formatSub = useCallback(
         (sub) => {
@@ -91,7 +129,6 @@ export default function App({ defaultLang }) {
 
     const setSubtitle = useCallback(
         (newSubtitle, saveToHistory = true) => {
-            // console.log('Here');
             if (!isEqual(newSubtitle, subtitle)) {
                 if (saveToHistory) {
                     if (subtitleHistory.current.length >= 1000) {
@@ -160,14 +197,19 @@ export default function App({ defaultLang }) {
     const removeSub = useCallback(
         (sub) => {
             const index = hasSub(sub);
-            if (index < 0) return;
-            const subs = copySubs();
-            subs.splice(index, 1);
-            setSubtitle(subs);
-            if (subtitleEnglish) {
-                //console.log('here');
+            const index2 = hasSubEnglish(sub);
+            console.log(subtitleEnglish)
+            console.log(index, index2);
+            if (index >= 0){
+                const subs = copySubs();
+                subs.splice(index, 1);
+                setSubtitle(subs);
+            }
+            if ((index >=0 || index2 >= 0) && subtitleEnglish) {
+                console.log('here');
                 const subsEnglish = copySubsEnglish();
-                subsEnglish.splice(index, 1);
+                subsEnglish.splice(index >= 0 ? index : index2, 1);
+                console.log(subsEnglish);
                 setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }
@@ -183,7 +225,7 @@ export default function App({ defaultLang }) {
             if (subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
                 subsEnglish.splice(index, 0, formatSub(sub));
-                setSubtitleEnglish(subs);
+                setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }
         },
@@ -235,29 +277,32 @@ export default function App({ defaultLang }) {
     const mergeSub = useCallback(
         (sub) => {
             const index = hasSub(sub);
-            if (index < 0) return;
-            const subs = copySubs();
-            const next = subs[index + 1];
-            if (!next) return;
-            const merge = newSub({
-                start: sub.start,
-                end: next.end,
-                text: sub.text.trim() + '\n' + next.text.trim(),
-            });
-            subs[index] = merge;
-            subs.splice(index + 1, 1);
-            setSubtitle(subs);
-            if (subtitleEnglish) {
+            const index2 = hasSubEnglish(sub);
+            if (index >= 0) {
+                const subs = copySubs();
+                const next = subs[index + 1];
+                if (next) {
+                    const merge = newSub({
+                        start: sub.start,
+                        end: next.end,
+                        text: sub.text.trim() + '\n' + next.text.trim(),
+                    });
+                    subs[index] = merge;
+                    subs.splice(index + 1, 1);
+                    setSubtitle(subs);
+                }
+            }
+            if ((index >=0 || index2 >= 0) && subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
-                const nextEnglish = subsEnglish[index + 1];
+                const nextEnglish = subsEnglish[index >= 0 ? index + 1 : index2 + 1];
                 if (!nextEnglish) return;
                 const mergeEnglish = newSub({
                     start: sub.start,
                     end: nextEnglish.end,
-                    text: subsEnglish[index].text.trim() + '\n' + nextEnglish.text.trim(),
+                    text: subsEnglish[index >= 0 ? index : index2].text.trim() + '\n' + nextEnglish.text.trim(),
                 });
-                subsEnglish[index] = mergeEnglish;
-                subsEnglish.splice(index + 1, 1);
+                subsEnglish[index >= 0 ? index : index2] = mergeEnglish;
+                subsEnglish.splice(index >= 0 ? index + 1 : index2 + 1, 1);
                 setSubtitleEnglish(subsEnglish);
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
             }
@@ -268,36 +313,69 @@ export default function App({ defaultLang }) {
     const splitSub = useCallback(
         (sub, start) => {
             const index = hasSub(sub);
-            if (index < 0 || !sub.text || !start) return;
-            const subs = copySubs();
-            const text1 = sub.text.slice(0, start).trim();
-            const text2 = sub.text.slice(start).trim();
-            if (!text1 || !text2) return;
-            const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
-            if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
-            subs.splice(index, 1);
-            const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
-            subs.splice(
-                index,
-                0,
-                newSub({
-                    start: sub.start,
-                    end: middleTime,
-                    text: text1,
-                }),
-            );
-            subs.splice(
-                index + 1,
-                0,
-                newSub({
-                    start: middleTime,
-                    end: sub.end,
-                    text: text2,
-                }),
-            );
-            setSubtitle(subs);
+            const index2 = hasSubEnglish(sub);
+            if ((index < 0 && index2 < 0) || !sub.text || !start) return;
+            // if (index >= 0) {
+            // const subs = copySubs();
+            // const text1 = sub.text.slice(0, start).trim();
+            // const text2 = sub.text.slice(start).trim();
+            // if (!text1 || !text2) return;
+            // const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+            // if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
+            // subs.splice(index, 1);
+            // const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
+            // subs.splice(
+            //     index,
+            //     0,
+            //     newSub({
+            //         start: sub.start,
+            //         end: middleTime,
+            //         text: text1,
+            //     }),
+            // );
+            // subs.splice(
+            //     index + 1,
+            //     0,
+            //     newSub({
+            //         start: middleTime,
+            //         end: sub.end,
+            //         text: text2,
+            //     }),
+            // );
+            // setSubtitle(subs);
+            // }
+            if (index2 >= 0) {
+                const subsEnglish = copySubsEnglish();
+                const text1 = sub.text.slice(0, start).trim();
+                const text2 = sub.text.slice(start).trim();
+                if (!text1 || !text2) return;
+                const splitDuration = (sub.duration * (start / sub.text.length)).toFixed(3);
+                if (splitDuration < 0.2 || sub.duration - splitDuration < 0.2) return;
+                subsEnglish.splice(index2, 1);
+                const middleTime = DT.d2t(sub.startTime + parseFloat(splitDuration));
+                subsEnglish.splice(
+                    index2,
+                    0,
+                    newSub({
+                        start: sub.start,
+                        end: middleTime,
+                        text: text1,
+                    }),
+                );
+                subsEnglish.splice(
+                    index2 + 1,
+                    0,
+                    newSub({
+                        start: middleTime,
+                        end: sub.end,
+                        text: text2,
+                    }),
+                );
+                setSubtitleEnglish(subsEnglish);
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subsEnglish));
+            }
         },
-        [hasSub, copySubs, setSubtitle, newSub],
+        [hasSub, hasSubEnglish, copySubs, copySubsEnglish, setSubtitle, setSubtitleEnglish, newSub],
     );
 
     const onKeyDown = useCallback(
@@ -320,12 +398,82 @@ export default function App({ defaultLang }) {
                         undoSubs();
                     }
                     break;
+                case 70:
+                    event.preventDefault();
+                    if (event.ctrlKey && (configuration === 'Subtitling' || configuration === 'Same Language Subtitling')) {
+                        event.preventDefault();
+                        player?.pause();
+                        setShowFindAndReplace(true);
+                    }
+                    break;
                 default:
                     break;
             }
         },
-        [player, playing, undoSubs],
+        [player, playing, undoSubs, configuration],
     );
+
+    const handleFind = () => {
+        let foundIndices = [];
+        if (configuration === 'Subtitling') {
+            for (let i = 0; i < subtitle.length; i++) {
+                const sub = subtitle[i];
+                if (sub.text.toLowerCase().includes(find.toLowerCase())) {
+                    foundIndices.push(i);
+                }
+            }
+        } else if (configuration === 'Same Language Subtitling') {
+            for (let i = 0; i < subtitleEnglish.length; i++) {
+                const sub = subtitleEnglish[i];
+                if (sub.text.toLowerCase().includes(find.toLowerCase())) {
+                    foundIndices.push(i);
+                }
+            }
+        }
+        setFound(foundIndices);
+        if (foundIndices.length > 0) {
+            setCurrentFound(0);
+        }
+    }
+
+    const handleReplace = () => {
+        if (currentFound < 0 || currentFound >= found.length) return;
+        const index = found[currentFound];
+        const sub = configuration === 'Subtitling' ? subtitle[index] : subtitleEnglish[index];
+        const text = sub.text.replace(new RegExp(find, 'gi'), replace);
+        if (configuration === 'Subtitling') {
+            const subs = copySubs();
+            subs[index].text = text;
+            setSubtitle(subs);
+        } else if (configuration === 'Same Language Subtitling') {
+            const subs = copySubsEnglish();
+            subs[index].text = text;
+            setSubtitleEnglish(subs);
+        }
+        setCurrentFound(currentFound + 1);
+        setFound(found.filter((i) => i !== index));
+    }
+
+    const handleReplaceAll = () => {
+        if (found.length === 0) return;
+        if (configuration === 'Subtitling') {
+            const subs = copySubs();
+            for (let i = 0; i < found.length; i++) {
+                const index = found[i];
+                subs[index].text = subtitle[index].text.replace(new RegExp(find, 'gi'), replace);
+            }
+            setSubtitle(subs);
+        } else if (configuration === 'Same Language Subtitling') {
+            const subs = copySubsEnglish();
+            for (let i = 0; i < found.length; i++) {
+                const index = found[i];
+                subs[index].text = subtitleEnglish[index].text.replace(new RegExp(find, 'gi'), replace);
+            }
+            setSubtitleEnglish(subs);
+        }
+        setFound([]);
+        setCurrentFound();
+    }
 
     useEffect(() => {
         window.addEventListener('keydown', onKeyDown);
@@ -333,7 +481,9 @@ export default function App({ defaultLang }) {
     }, [onKeyDown]);
 
     useMemo(() => {
-        const currentIndex = subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
+        const currentIndex = configuration === 'Subtitling' ? 
+        subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime)
+        : subtitleEnglish.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
         setCurrentIndex(currentIndex);
     }, [currentTime, subtitle]);
 
@@ -352,10 +502,9 @@ export default function App({ defaultLang }) {
         //         });
 
         if (localSubtitleString) {
-          //  {console.log("sub other app" + subtitleEnglish + subtitle)}
+     
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
-                //console.log(localSubtitle);
                 if (localSubtitle.length) {
                     setSubtitleOriginal(localSubtitle.map((item) => new Sub(item)));
                 } else {
@@ -368,7 +517,7 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
         if (localSubtitleEnglish) {
-            //{console.log("subEng other app" + subtitleEnglish + subtitle)}
+      
             try {
                 const localSubtitle = JSON.parse(localSubtitleEnglish);
                 if (localSubtitle.length) {
@@ -384,7 +533,7 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
     }, [setSubtitleOriginal, setSubtitleEnglish]);
-    // {console.log("subEng other app" + subtitleEnglish + subtitle)}
+
     const props = {
         player,
         setPlayer,
@@ -434,20 +583,56 @@ export default function App({ defaultLang }) {
         setIsSetVideo,
         isSetConfiguration,
         setIsSetConfiguration,
-        translationApi,
-        setTranslationApi,
+        // translationApi,
+        // setTranslationApi,
+        isTranslateClicked,
+        setIsTranslateClicked,
+        transcriptSource,
+        setTranscriptSource,
+        showFindAndReplace,
+        setShowFindAndReplace,
+        find,
+        setFind,
+        replace,
+        setReplace,
+        found,
+        setFound,
+        handleReplace,
+        handleReplaceAll,
+        handleFind,
+        currentFound,
+        setCurrentFound,
     };
 
     return (
         
         <Style>
-            {/* {console.log("subEng other app" + subtitleEnglish + subtitle)} */}
+     
             <div className="main">
-                <Links />
-                <Player {...props} />
+                <div className="main-center">
+                    <div className="header">
+                        <Links />
+                        <div style={{zIndex: 200}}>
+                            {localStorage.getItem("user_id") ? 
+                                <div>
+                                    <div className="user-details">
+                                        <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
+                                    </div>
+                                    <ul className='user-menu'>
+                                        <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
+                                    </ul>
+                                </div> 
+                                : 
+                                <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                                    Sign In
+                                </span>}
+                        </div>
+                    </div>
+                    <Player {...props} />
+                </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <>
+                    <div className={{overflow: 'visible'}}>
                        {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}
@@ -468,48 +653,112 @@ export default function App({ defaultLang }) {
                             translationApi={props.translationApi}
                 />*/}
                         {/* here */}
-                        <Subtitles
-                           currentIndex={props.currentIndex}
-                           subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
-                           checkSub={props.checkSub}
-                           player={props.player}
-                           updateSub={props.updateSubEnglish} 
-                           language={props.language}
-                           setLanguage={props.setLanguage}
-                           setLoading={props.setLoading}
-                           subtitleEnglish={props.subtitleEnglish}
-                           formatSub={props.formatSub}
-                           setSubtitle={props.setSubtitle}
-                           notify={props.notify}
-                           isPrimary={false}
-                           configuration={props.configuration}
-                           setConfiguration={props.setConfiguration}
-                           updateSubOriginal={props.updateSubTranslate}
-                           translationApi={props.translationApi}
-                        />
-                        <Subtitles
-                            currentIndex={props.currentIndex}
-                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
-                            checkSub={props.checkSub}
-                            player={props.player}
-                            updateSub={props.updateSub}
-                            language={props.language}
-                            setLanguage={props.setLanguage}
-                            setLoading={props.setLoading}
-                            subtitleEnglish={props.subtitleEnglish}
-                            formatSub={props.formatSub}
-                            setSubtitle={props.setSubtitle}
-                            notify={props.notify}
-                            isPrimary={true}
-                            clearedSubs={props.clearedSubs} //extra
-                            setClearedSubs={props.setClearedSubs} //extra
-                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
-                            configuration={props.configuration}
-                            setConfiguration={props.setConfiguration}
-                            translationApi={props.translationApi}
-                        />
-                         
-                    </>
+                  
+                        {/* <ScrollSync>
+                            <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
+                                <ScrollSyncPane>
+                                    <div style={{overflow: 'auto'}}>
+                                            <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSubEnglish} 
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={false}
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            updateSubOriginal={props.updateSubTranslate}
+                                            translationApi={props.translationApi}
+                                            />
+                                    </div>
+                                </ScrollSyncPane>
+                                <ScrollSyncPane>
+                                    <div style={{overflow: 'auto'}}>
+                                        <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSub}
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={true}
+                                            clearedSubs={props.clearedSubs} //extra
+                                            setClearedSubs={props.setClearedSubs} //extra
+                                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            translationApi={props.translationApi}
+                                            isTranslateClicked={props.isTranslateClicked} //added
+                                            setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                        />
+                                    </div>
+                                </ScrollSyncPane>
+                            </div>
+                         </ScrollSync> */}
+                          {/* <ScrollSync> */}
+                            <div style={{ display: 'flex', position: 'relative', height:`90%`, zIndex: "200"}}>
+                         <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSubEnglish} 
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={false}
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            updateSubOriginal={props.updateSubTranslate}
+                                            // translationApi={props.translationApi}
+                                            found={props.found}
+                                            currentFound={props.currentFound}
+                                            />
+                                            <Subtitles
+                                            currentIndex={props.currentIndex}
+                                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
+                                            checkSub={props.checkSub}
+                                            player={props.player}
+                                            updateSub={props.updateSub}
+                                            language={props.language}
+                                            setLanguage={props.setLanguage}
+                                            setLoading={props.setLoading}
+                                            subtitleEnglish={props.subtitleEnglish}
+                                            formatSub={props.formatSub}
+                                            setSubtitle={props.setSubtitle}
+                                            notify={props.notify}
+                                            isPrimary={true}
+                                            clearedSubs={props.clearedSubs} //extra
+                                            setClearedSubs={props.setClearedSubs} //extra
+                                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
+                                            configuration={props.configuration}
+                                            setConfiguration={props.setConfiguration}
+                                            // translationApi={props.translationApi}
+                                            isTranslateClicked={props.isTranslateClicked} //added
+                                            setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                            found={props.found}
+                                            currentFound={props.currentFound}
+                                        />
+                                        </div>
+                         {/* </ScrollSync> */}
+                    </div>
                 )}
 
                 {configuration === 'Sign Language Subtitling' && (
@@ -582,8 +831,6 @@ export default function App({ defaultLang }) {
                             
                         /> */}
     
-{/* {console.log("subtitleEnglish App " + subtitleEnglish)}
-{console.log("subtitle App "+subtitle)} */}
                         {/* final */}
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
@@ -607,11 +854,32 @@ export default function App({ defaultLang }) {
                             clearSubs={props.clearSubs}
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             updateSubOriginal={props.updateSubTranslate}
-                            translationApi={props.translationApi}
+                            // translationApi={props.translationApi}
+                            transcriptSource={props.transcriptSource}
+                            setTranscriptSource={props.setTranscriptSource}
+                            found={props.found}
+                            currentFound={props.currentFound}
                         />
                     </>
                 )}
+                <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
                 <Tool {...props} />
+                <FindAndReplace
+                    find={props.find}
+                    replace={props.replace}
+                    found={props.found}
+                    setFind={props.setFind}
+                    setReplace={props.setReplace}
+                    setFound={props.setFound}
+                    showFindAndReplace={props.showFindAndReplace}
+                    setShowFindAndReplace={props.setShowFindAndReplace}
+                    handleReplace={props.handleReplace}
+                    handleReplaceAll={props.handleReplaceAll}
+                    handleFind={props.handleFind}
+                    currentFound={props.currentFound}
+                    setCurrentFound={props.setCurrentFound}
+                    configuration={props.configuration}
+                />
             </div>
             {isSetVideo && <Footer {...props} />}
             {loading ? <Loading loading={loading} /> : null}

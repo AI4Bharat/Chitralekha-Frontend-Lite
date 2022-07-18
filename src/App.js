@@ -717,7 +717,8 @@ export default function App({ defaultLang }) {
                             updateSubOriginal={props.updateSubTranslate}
                             translationApi={props.translationApi}
                         />
-                        this.handleOpenTranscriptionModal();
+                       {// this.handleOpenTranscriptionModal();
+                       }
                     </>
                 )}
                 {/* <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>

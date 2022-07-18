@@ -18,6 +18,9 @@ import SaveTranslationAPI from "../redux/actions/api/Translation/SaveTranslation
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
 import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
+import ReactModal from 'react-modal';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 const Style = styled.div`
     position: relative;
@@ -203,6 +206,7 @@ export default function Subtitles({
     updateSub,
     language,
     setLoading,
+    setTranslationApi,
     subtitleEnglish,
     formatSub,
     setSubtitle,
@@ -412,7 +416,7 @@ export default function Subtitles({
     }, [GeneratedTranslations]);
 
     const onTranslate = useCallback(() => {
-        setIsTranslateClicked(true);
+    //    setIsTranslateClicked(true);
         setTranslateReq(true);
         
         console.log('when translate button clicked '+isTranslateClicked);
@@ -622,10 +626,188 @@ export default function Subtitles({
         }
     }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
 
-    return (
-         subtitle && (
 
+    class TranslationModal extends React.Component {
+        constructor () {
+          super();
+          this.state = {
+            showTranslationModal: false,
+            value: ''
+
+          };
+          
+          this.handleOpenTranslationModal = this.handleOpenTranslationModal.bind(this);
+          this.handleCloseTranslationModal = this.handleCloseTranslationModal.bind(this);
+        }
+        
+        handleOpenTranslationModal () {
+          this.setState({ showTranslationModal: true });
+        }
+        
+        handleCloseTranslationModal () {
+          this.setState({ showTranslationModal: false });
+        }
+        
+        render () {
+          return (
+            <Style>
+                
+            <div>
+                <div
+                style={{backgroundColor:"#673ab7", color:"white", padding:"10px"}}
+                            className="btn"
+                            onClick={() => {
+                                // console.log('Configuration - same');
+                                // const langTranscribe = localStorage.getItem('lang');
+                              
+                              //  console.log("lang " + langTranscribe);
+                                //   setConfiguration('Same Language Subtitling');
+                                //   setIsSetConfiguration(true);
+                                  this.handleOpenTranslationModal();
+                            }}
+                        >
+                            <Translate value="Open Options" />
+                        </div>
+              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
+              
+              <ReactModal 
+                 isOpen={this.state.showTranslationModal}
+                 style={{
+                    overlay: {
+                        position: 'absolute',
+                        top: '0',
+                        background: 'none'
+                    },
+                    content: {
+                      position: 'absolute',
+                      
+                      top: '150px',
+                      left: '30%',
+                      bottom: '40px',
+                      width: '40%',
+                      height: '40%',
+                      border: '1px solid #ccc',
+                      background: '#fff',
+                      overflow: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                      borderRadius: '20px',
+                      outline: 'none',
+                      padding: '20px',
+                      zIndex: '1000',
+                    },
+                  }}
+              >
+                    {/* { (localStorage.getItem('selectValue') == "video")
+                    ? <div>
+                        <div>
+                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
+                                <TabList>
+                                <Tab>Youtube URL</Tab>
+                                <Tab>Upload</Tab>
+                                </TabList>
+
+                                <TabPanel>
+                                <div>
+                                        <textarea
+                                            className="modal-textarea"
+                                            placeholder="Enter YouTube Link Here"
+                                            value={youtubeURL}
+
+                                            onChange={handleChange}
+                                            // onKeyPress={(e) => }
+                                        />
+                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
+                                            <Translate value="Fetch Video" />
+                                        </div>
+                                    </div>
+                                </TabPanel>
+
+                                <TabPanel>
+                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
+                                </TabPanel>
+                            </Tabs>
+                        </div>    
+                        <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
+                    </div>
+
+                    : <div>
+                        <div className="btn">
+                            <Translate value="OPEN_SUB" />
+                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
+                        </div>
+                        <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
+                    </div>
+                    }  */}
+                       <select
+                            
+                            // value="kn"
+                             value={modeTranslate} //new - comment out if don't want sticky options
+                             onChange={(event) => {
+                                 setTranslate(event.target.value);
+                                 setModeTranslate(event.target.value); //new
+                                // localStorage.setItem('lang', event.target.value); //maybe remove later
+                                 localStorage.setItem('langTranslate', event.target.value); 
+                                 // console.log('in select');
+                                //  console.log('in onChange translate lang ' +localStorage.getItem('lang'));
+                                  console.log('in onChange translate langTranslate ' +localStorage.getItem('langTranslate'));
+                                 // console.log(event.target.value);
+                             }}
+                         >
+                             {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
+                                 (item) =>
+                                     //item.key !== 'en' && 
+                                     ( 
+                                         <option key={item.key} value={item.key}>
+                                             {item.name}
+                                         </option>
+                                     ),
+                             )}
+                         </select>
+                         {configuration === 'Subtitling' && (
+                        <>
+                            <div className="select-translation-api-container">
+                                <p className="select-heading">
+                                    <b>Translation Api</b>
+                                </p>
+                                <select
+                                    value={translationApi}
+                                    onChange={(e) => {
+                                        // console.log(e.target.value);
+                                        setTranslationApi(e.target.value);
+                                    }}
+                                >
+                                    <option value="AI4Bharat">AI4Bharat</option>
+                                    <option value="Google">Google</option>
+                                </select>
+                            </div>
+                        </>
+                    )}
+
+                    <div>
+                         <div className="btn" onClick={onTranslate} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>
+                             <Translate value="TRANSLATE" />
+                         </div>
+
+
+
+                            <button onClick={this.handleCloseTranslationModal} style={{display:"inline-block"}}>Cancel</button>
+                            </div>      
+              </ReactModal>
+       
+            </div>
+                
+            </Style>
+          );
+        }
+      }
+
+    return (
+        <>
+        {!isPrimary && <TranslationModal /> }
+       {  subtitle && (
+            
             <Style className="subtitles">
+
                 {console.log('when translate button clicked '+isTranslateClicked)}
                  {/* <CalendarView />  */}
                 {isPrimary && translate && languageAvailable && (
@@ -776,7 +958,9 @@ export default function Subtitles({
 
 
             </Style>
-        )
-            
+          
+        )}
+        </>       
     );
+    
 }

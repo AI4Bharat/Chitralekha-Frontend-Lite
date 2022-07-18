@@ -17,6 +17,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import FetchTranscriptAPI from "../redux/actions/api/Transcript/FetchTranscript"
 import GenerateTranscriptAPI from "../redux/actions/api/Transcript/GenerateTranscript"
 import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript"
+import ReactModal from 'react-modal';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 const Style = styled.div`
     position: relative;
@@ -443,19 +446,137 @@ export default function SameLanguageSubtitles({
         }
     }, []);
     end of change*/
+    class TranscriptionModal extends React.Component {
+        constructor () {
+          super();
+          this.state = {
+            showTranscriptionModal: false,
+            value: ''
 
+          };
+          
+          this.handleOpenTranscriptionModal = this.handleOpenTranscriptionModal.bind(this);
+          this.handleCloseTranscriptionModal = this.handleCloseTranscriptionModal.bind(this);
+        }
+        
+        handleOpenTranscriptionModal () {
+          this.setState({ showTranscriptionModal: true });
+        }
+        
+        handleCloseTranscriptionModal () {
+          this.setState({ showTranscriptionModal: false });
+        }
+        
+        render () {
+          return (
+            <Style>
+            <div>
+                <div
+                            className="btn"
+                            onClick={() => {
+                                // console.log('Configuration - same');
+                                // const langTranscribe = localStorage.getItem('lang');
+                              
+                              //  console.log("lang " + langTranscribe);
+                                //   setConfiguration('Same Language Subtitling');
+                                //   setIsSetConfiguration(true);
+                                  this.handleOpenTranscriptionModal();
+                            }}
+                        >
+                            <Translate value="SAME_LANGUAGE" />
+                        </div>
+              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
+              
+              <ReactModal 
+                 isOpen={this.state.showTranscriptionModal}
+                 style={{
+                    overlay: {
+                        position: 'absolute',
+                        top: '0',
+                        background: 'none'
+                    },
+                    content: {
+                      position: 'absolute',
+                      
+                      top: '150px',
+                      left: '30%',
+                      bottom: '40px',
+                      width: '40%',
+                      height: '40%',
+                      border: '1px solid #ccc',
+                      background: '#fff',
+                      overflow: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                      borderRadius: '20px',
+                      outline: 'none',
+                      padding: '20px',
+                      zIndex: '1000',
+                    },
+                  }}
+              >
+                    {/* { (localStorage.getItem('selectValue') == "video")
+                    ? <div>
+                        <div>
+                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
+                                <TabList>
+                                <Tab>Youtube URL</Tab>
+                                <Tab>Upload</Tab>
+                                </TabList>
+
+                                <TabPanel>
+                                <div>
+                                        <textarea
+                                            className="modal-textarea"
+                                            placeholder="Enter YouTube Link Here"
+                                            value={youtubeURL}
+
+                                            onChange={handleChange}
+                                            // onKeyPress={(e) => }
+                                        />
+                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
+                                            <Translate value="Fetch Video" />
+                                        </div>
+                                    </div>
+                                </TabPanel>
+
+                                <TabPanel>
+                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
+                                </TabPanel>
+                            </Tabs>
+                        </div>    
+                        <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
+                    </div>
+
+                    : <div>
+                        <div className="btn">
+                            <Translate value="OPEN_SUB" />
+                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
+                        </div>
+                        <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
+                    </div>
+                    }  */}
+              </ReactModal>
+       
+            </div>
+                
+            </Style>
+          );
+        }
+      }
 
     return (
         
         // subtitle && 
         // (
-            
+            <>
+            <TranscriptionModal />
             <Style className="subtitles">
                {/* {console.log('rendering')}
                 {console.log(subtitle)}
                 {console.log(subtitle.length)}
                 {console.log(subtitleEnglish)}
                 {console.log("subEng" + subtitleEnglish.length)} */}
+            
                 {isPrimary && (
                     <div className="transcribe">
                         <div className="heading">
@@ -584,6 +705,7 @@ export default function SameLanguageSubtitles({
                     }}
                 ></Table>
             </Style>
+            </>
     //    )
     );
 }

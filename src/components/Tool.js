@@ -20,7 +20,8 @@ import Navbar from './Header';
 import LoginForm from './Login';
 import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript";
 import ReactModal from 'react-modal';
-
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 const Style = styled.div`
     border-bottom: 1px solid #63D471;
@@ -29,9 +30,22 @@ const Style = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.2rem calc((100vw - 1000px) / 2);
+  //  padding: 0.2rem calc((100vw - 1000px) / 2);
     z-index: 100;
 
+    .top-panel-select{
+        padding: 6px;
+        border-radius: 4px;
+    }
+
+    .modal-textarea{
+        padding: 20px;
+    }
+
+    .youtube-link .youtube-textarea{
+        padding: 20px;
+    }
+ 
     .top{
         display: flex;
         justify-content: center;
@@ -45,7 +59,7 @@ const Style = styled.div`
         }
     }
 
-    .btn {
+    .modal-fetch-btn {
         position: relative;
         opacity: 0.85;
         display: flex;
@@ -57,13 +71,14 @@ const Style = styled.div`
         color: #fff;
         cursor: pointer;
         font-size: 13px;
-        background-color: #3f51b5;
+        background-color: black;
         transition: all 0.2s ease 0s;
 
         &:hover {
             opacity: 1;
         }
     }
+
     .save-transcript {
         padding: 5px 0;
         margin-left: 20px;
@@ -649,11 +664,13 @@ export default function Header({
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
 
-    class ExampleModal extends React.Component {
+    class OpenModal extends React.Component {
         constructor () {
           super();
           this.state = {
-            showModal: false
+            showModal: false,
+            value: ''
+
           };
           
           this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -670,44 +687,111 @@ export default function Header({
         
         render () {
           return (
+            <Style>
             <div>
                 <select
                  onChange={(event)=>{
-                   if(event.target.value=="video")
-                   {
-                    this.handleOpenModal()
-                   }
+                //    if(event.target.value=="video")
+                //    {
+                //     this.handleOpenModal()
+                //    }
+                //    else if(event.target.value=="subtitles")
+                //    {
+                //     // onSubtitleChange();
+                //     // onInputClick();
+                //    }
+                localStorage.setItem('selectValue', event.target.value);
+                this.handleOpenModal();
+                   
                 }}
+                className="top-panel-select"
                 >
                     <option value="" disabled selected>Open</option>
                     <option value="video">Import Video</option>
-                    <option value="subtitles">Import Subtitles</option>
+                    <option value="subtitles">Import Subtitle</option>
                 </select>
               {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
+              
               <ReactModal 
                  isOpen={this.state.showModal}
-                 contentLabel="Minimal Modal Example"
+                 style={{
+                    overlay: {
+                        position: 'absolute',
+                        top: '0',
+                        background: 'none'
+                    },
+                    content: {
+                      position: 'absolute',
+                      
+                      top: '150px',
+                      left: '30%',
+                      bottom: '40px',
+                      width: '40%',
+                      height: '40%',
+                      border: '1px solid #ccc',
+                      background: '#fff',
+                      overflow: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                      borderRadius: '20px',
+                      outline: 'none',
+                      padding: '20px',
+                      zIndex: '1000',
+                    },
+                  }}
               >
-                <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
-                <button onClick={this.handleCloseModal}>Close Modal</button>
-                <div className="youtube-link ">
-                    <textarea
-                        className="youtube-textarea"
-                        placeholder="Enter YouTube Link Here"
-                        value={youtubeURL}
-                        onChange={handleChange}
-                        // onKeyPress={(e) => }
-                    />
-                    <div className="btn" onClick={onYouTubeChange}>
-                        <Translate value="Fetch Video" />
+                    { (localStorage.getItem('selectValue') == "video")
+                    ? <div>
+                        <div>
+                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
+                                <TabList>
+                                <Tab>Youtube URL</Tab>
+                                <Tab>Upload</Tab>
+                                </TabList>
+
+                                <TabPanel>
+                                <div>
+                                        <textarea
+                                            className="modal-textarea"
+                                            placeholder="Enter YouTube Link Here"
+                                            value={youtubeURL}
+
+                                            onChange={handleChange}
+                                            // onKeyPress={(e) => }
+                                        />
+                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
+                                            <Translate value="Fetch Video" />
+                                        </div>
+                                    </div>
+                                </TabPanel>
+
+                                <TabPanel>
+                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
+                                </TabPanel>
+                            </Tabs>
+                        </div>    
+                        <button onClick={this.handleCloseModal}>Cancel</button>
                     </div>
-                </div>
+
+                    : <div>
+                        <div className="btn">
+                            <Translate value="OPEN_SUB" />
+                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
+                        </div>
+                        <button onClick={this.handleCloseModal}>Cancel</button>
+                    </div>
+                    } 
               </ReactModal>
+       
             </div>
+                
+            </Style>
           );
         }
       }
       
+
+      
+
       const props = {};
 
     const onVideoChange = useCallback(
@@ -999,7 +1083,9 @@ export default function Header({
     );
 
     const handleChange = (e) => {
+        e.preventDefault();
         setYoutubeURL(e.target.value);
+        
     };
 
     const onSubtitleChange = useCallback(
@@ -1104,7 +1190,7 @@ export default function Header({
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
-         <ExampleModal />
+         <OpenModal />
             {/* <div className={`tool-button`}>
                 <div
                     className="icon"
@@ -1200,8 +1286,8 @@ export default function Header({
                                 console.log('Configuration - same');
                                 const langTranscribe = localStorage.getItem('lang');
                               //  console.log("lang " + langTranscribe);
-                                setConfiguration('Same Language Subtitling');
-                                setIsSetConfiguration(true);
+                                 setConfiguration('Same Language Subtitling');
+                                 setIsSetConfiguration(true);
                             }}
                         >
                             <Translate value="SAME_LANGUAGE" />
@@ -1264,10 +1350,10 @@ export default function Header({
                             </div>
                         </div>
                     ) : null}
-                    <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                    {/*<p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
                         <b>Export Your Subtitles</b>
                     </p>
-                    <div className="export" style={{ marginTop: '-20px' }}>
+                     <div className="export" style={{ marginTop: '-20px' }}>
                         <div className="btn" onClick={() => downloadSub('ass')}>
                             <Translate value="EXPORT_ASS" />
                         </div>
@@ -1291,7 +1377,7 @@ export default function Header({
                         <div className="btn" onClick={() => downloadSubReference('vtt')}>
                             <Translate value="EXPORT_VTT" />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="">

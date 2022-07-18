@@ -21,6 +21,7 @@ import debounce from 'lodash/debounce';
 import {render} from 'react-dom';
 import Header from './components/Tool';
 
+
 const Style = styled.div`
     height: 100%;
     width: 100%;
@@ -716,6 +717,7 @@ export default function App({ defaultLang }) {
                             updateSubOriginal={props.updateSubTranslate}
                             translationApi={props.translationApi}
                         />
+                        this.handleOpenTranscriptionModal();
                     </>
                 )}
                 {/* <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>

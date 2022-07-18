@@ -26,6 +26,7 @@
     "react-scripts": "4.0.3",
     "react-scroll-sync": "^0.11.0",
     "react-select": "^5.4.0",
+    "react-tabs": "^4.1.0",
     "react-textarea-autosize": "^8.3.3",
     "react-transliterate": "^1.1.9",
     "react-virtualized": "^9.22.3",

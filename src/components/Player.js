@@ -117,7 +117,7 @@ const VideoWrap = memo(
         //     return <video onClick={onClick} src="/sample.mp4" ref={$video} />;
         // }
 
-        return <video onClick={onClick} src={localStorage.getItem('videoSrc')} ref={$video} />;
+        return <video onClick={onClick} src={localStorage.getItem('videoSrc')} ref={$video} id="full-screenVideo"/>;
     },
     () => true,
 );

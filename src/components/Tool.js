@@ -1370,9 +1370,171 @@ export default function Header({
         }
       }
 
+
+      class ExportModal extends React.Component {
+        constructor () {
+          super();
+          this.state = {
+            showExportModal: false,
+            value: ''
+
+          };
+          
+          this.handleOpenExportModal = this.handleOpenExportModal.bind(this);
+          this.handleCloseExportModal = this.handleCloseExportModal.bind(this);
+        }
+        
+        handleOpenExportModal () {
+          this.setState({ showExportModal: true });
+        }
+        
+        handleCloseExportModal () {
+          this.setState({ showExportModal: false });
+        }
+
+        setSubtitleFormat(event) {
+            console.log(event.target.value);
+            
+          }
+        
+        render () {
+          return (
+            <Style>
+            <div>
+            <div className="export btn" onClick={this.handleOpenExportModal}>
+                        <Translate value="Export Subtitles" />
+                </div>
+              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button>  */}
+              
+              <ReactModal 
+                 isOpen={this.state.showExportModal}
+                 style={{
+                    overlay: {
+                        position: 'absolute',
+                        top: '0',
+                        background: 'none'
+                    },
+                    content: {
+                      position: 'absolute',
+                      
+                      top: '150px',
+                      left: '30%',
+                      bottom: '40px',
+                      width: '40%',
+                      height: '40%',
+                      border: '1px solid #ccc',
+                      background: '#fff',
+                      overflow: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                      borderRadius: '20px',
+                      outline: 'none',
+                      padding: '20px',
+                      zIndex: '1000',
+                    },
+                  }}
+              >
+                     <div>
+                        <div>
+                                <div>
+                                {/* <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                        <b>Export Your Subtitles</b>
+                    </p> */}
+
+                    {/* <div onChange={this.setSubtitleType.bind(this)}>
+                        <input type="radio" value="exportTranslationSubs" name="subtitleType"/> Export Translation Subtitles
+                        <input type="radio" value="exportTranscriptionSubs" name="subtitleType"/> Export Transcription Subtitles
+                    </div> */}
+                     <div className="export">
+                     {/* <input type="radio" value="ass" name="exportSubs" />Export ASS */}
+                        {/* <div className="btn" onClick={() => downloadSub('ass')}>
+                            <Translate value="EXPORT_ASS" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSub('srt')}>
+                            <Translate value="EXPORT_SRT" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSub('vtt')}>
+                            <Translate value="EXPORT_VTT" />
+                        </div> */}
+                        <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
+                                <TabList>
+                                <Tab>Export Transcription Subtitles</Tab>
+                                <Tab>Export Translation Subtitles</Tab>
+                                </TabList>
+
+                                <TabPanel>
+                                <div>
+                                    <h4>Select Format</h4>
+                                <div onChange={this.setSubtitleFormat.bind(this)}>
+                                <input type="radio" value="ass" name="exportSubs"/><label style={{padding: '5px', color:"black", marginRight: '10px'}}>ASS</label>
+                                <input type="radio" value="srt" name="exportSubs"/><label style={{padding: '5px', color:"black", marginRight: '10px'}}>SRT</label>
+                                <input type="radio" value="vtt" name="exportSubs"/><label style={{padding: '5px', color:"black", marginRight: '10px'}}>VTT</label>
+                                </div>
+                                    </div>
+                                    {/* <button>Export</button> */}
+                                    {/*onClick={downloadSubReference('ass')} */}
+                                </TabPanel>
+
+                                <TabPanel>
+                                   
+                                </TabPanel>
+                            </Tabs>
+                    </div>
+                    {/* <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                        <b>Export Reference Subtitles</b>
+                    </p>
+                    <div className="export">
+                        <div className="btn" onClick={() => downloadSubReference('ass')}>
+                            <Translate value="EXPORT_ASS" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSubReference('srt')}>
+                            <Translate value="EXPORT_SRT" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSubReference('vtt')}>
+                            <Translate value="EXPORT_VTT" />
+                        </div>
+                    </div> */}
+                                    </div>
+
+                                   
+                        </div>    
+                        <div>
+                        <button>Export</button>
+                            <button onClick={this.handleCloseExportModal}>Cancel</button>
+                        </div>
+                        
+                    </div>
+
+                 
+                     
+              </ReactModal>
+       
+            </div>
+                
+            </Style>
+          );
+        }
+      }
+
+
+      const handleFullScreenMode=(event)=>{
+        var el = document.getElementById("full-screenVideo");
+        if (el.requestFullscreen) {
+          el.requestFullscreen();
+        } else if (el.msRequestFullscreen) {
+          el.msRequestFullscreen();
+        } else if (el.mozRequestFullScreen) {
+          el.mozRequestFullScreen();
+        } else if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen(); 
+        }
+    console.log("fullscreenmode")
+    
+      }
+
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
          <OpenModal />
+         <ExportModal />
          {/* <TranscriptionModal /> */}
             {/* <div className={`tool-button`}>
                 <div
@@ -1500,9 +1662,7 @@ export default function Header({
                         
                     </div>
                 </div>
-                {/* <div className="export btn">
-                        <Translate value="Export" />
-                </div> */}
+                
                 <div className="save-transcript">
                             <h4>{ <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>Save 💾</span>}</h4>
                         </div>
@@ -1594,6 +1754,11 @@ export default function Header({
                     <span>
                         <Translate value="HOTKEY_02" />
                     </span>
+                </div>
+            </div>
+            <div className="operate">
+                <div className="btn"  onClick={handleFullScreenMode} >
+                    <Translate value="Full screen mode" />
                 </div>
             </div>
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>

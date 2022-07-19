@@ -621,27 +621,23 @@ export default function Header({
             player.src = VideoDetails.direct_video_url;
             player.currentTime = 0;
             clearSubs();
-            if (VideoDetails.transcript_id) {
-                localStorage.setItem('transcript_id', VideoDetails.transcript_id);
-                setSubtitleEnglish(formatSub(VideoDetails.subtitles));
-                localStorage.setItem('subtitleEnglish', JSON.stringify(VideoDetails.subtitles));
-                setTranscriptSource('Youtube');
-                // fetch(VideoDetails.subtitles)
-                // .then((subtext) => {
-                //     return subtext.text();
-                // })
-                // .then((subtext) => {
-                //     const suburl = vtt2url(subtext);
-                //     url2sub(suburl).then((urlsub) => {
-                //         setSubtitle(urlsub);
-                //         setSubtitleEnglish(urlsub);
-                //         localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                //         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                //     });
-                // })
-                // .catch((err) => {
-                //     console.log(err);
-                // });
+            if (VideoDetails.subtitles) {
+                fetch(VideoDetails.subtitles)
+                .then((subtext) => {
+                    return subtext.text();
+                })
+                .then((subtext) => {
+                    const suburl = vtt2url(subtext);
+                    url2sub(suburl).then((urlsub) => {
+                        setSubtitle(urlsub);
+                        setSubtitleEnglish(urlsub);
+                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
             }
         }
         // if (resp.subtitles) {
@@ -1112,7 +1108,7 @@ export default function Header({
                             </div>
                         </>
                     )} */}
-                    {configuration === 'Same Language Subtitling' && (
+                    {/* {configuration === 'Same Language Subtitling' && (
                         <>
                             <div className="select-translation-api-container">
                                 <p className="select-heading">
@@ -1131,7 +1127,7 @@ export default function Header({
                                     <option value="Youtube">Youtube</option>
                                 </select>
                             </div>
-                        </>)}
+                        </>)} */}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">

@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import Links from './components/Links';
-import LoginForm from './components/Login';
+//import LoginForm from './components/Login';
 // import BottomLinks from './components/BottomLinks';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
@@ -83,7 +83,7 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
+   // const [showLogin, setShowLogin] = useState(false);
     // const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
@@ -637,12 +637,12 @@ export default function App({ defaultLang }) {
         
         <Style>
       {/* <Header /> */}
-      <Tool {...props} />
+      <Tool {...props} style={{ marginBottom: "20px"}}/>
             <div className="main">
                 <div className="main-center">
                     <div className="header">
-                        <Links />
-                        <div style={{zIndex: 200}}>
+                        {/* <Links /> */}
+                        {/* <div style={{zIndex: 200}}>
                             {localStorage.getItem("user_id") ? 
                                 <div>
                                     <div className="user-details">
@@ -656,7 +656,7 @@ export default function App({ defaultLang }) {
                                 <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
                                     Sign In
                                 </span>}
-                        </div>
+                        </div> */}
                     </div>
                     <Player {...props} />
                 </div>
@@ -894,8 +894,7 @@ export default function App({ defaultLang }) {
                        }
                     </>
                 )}
-                <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
-                <Tool {...props} />
+                {/* <Tool {...props} /> */}
                 <FindAndReplace
                     find={props.find}
                     replace={props.replace}

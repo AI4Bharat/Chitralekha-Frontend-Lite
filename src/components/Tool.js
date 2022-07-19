@@ -478,6 +478,8 @@ const Style = styled.div`
 FFmpeg.createFFmpeg({ log: true }).load();
 const fs = new SimpleFS.FileSystem();
 
+
+
 export default function Header({
     player,
     waveform,
@@ -521,7 +523,131 @@ export default function Header({
     const VideoDetails = useSelector(state => state.getVideoDetails.data);
     const [showLogin, setShowLogin] = useState(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
+    class OpenModal extends React.Component {
+        constructor () {
+          super();
+          this.state = {
+            showModal: false,
+            value: ''
 
+          };
+          
+          this.handleOpenModal = this.handleOpenModal.bind(this);
+          this.handleCloseModal = this.handleCloseModal.bind(this);
+        }
+        
+        handleOpenModal () {
+          this.setState({ showModal: true });
+        }
+        
+        handleCloseModal () {
+          this.setState({ showModal: false });
+        }
+        
+        render () {
+          return (
+            <Style>
+            <div>
+                <select
+                 onChange={(event)=>{
+                //    if(event.target.value=="video")
+                //    {
+                //     this.handleOpenModal()
+                //    }
+                //    else if(event.target.value=="subtitles")
+                //    {
+                //     // onSubtitleChange();
+                //     // onInputClick();
+                //    }
+                localStorage.setItem('selectValue', event.target.value);
+                this.handleOpenModal();
+                   
+                }}
+                className="top-panel-select"
+                >
+                    <option value="" disabled selected>Open</option>
+                    <option value="video">Import Video</option>
+                    <option value="subtitles">Import Subtitle</option>
+                </select>
+              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
+              
+              <ReactModal 
+                 isOpen={this.state.showModal}
+                 style={{
+                    overlay: {
+                        position: 'absolute',
+                        top: '0',
+                        background: 'none'
+                    },
+                    content: {
+                      position: 'absolute',
+                      
+                      top: '150px',
+                      left: '30%',
+                      bottom: '40px',
+                      width: '40%',
+                      height: '40%',
+                      border: '1px solid #ccc',
+                      background: '#fff',
+                      overflow: 'auto',
+                      WebkitOverflowScrolling: 'touch',
+                      borderRadius: '20px',
+                      outline: 'none',
+                      padding: '20px',
+                      zIndex: '1000',
+                    },
+                  }}
+              >
+                    { (localStorage.getItem('selectValue') == "video")
+                    ? <div>
+                        <div>
+                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
+                                <TabList>
+                                <Tab>Youtube URL</Tab>
+                                <Tab>Upload</Tab>
+                                </TabList>
+
+                                <TabPanel>
+                                <div>
+                                        <textarea
+                                            className="modal-textarea"
+                                            placeholder="Enter YouTube Link Here"
+                                            value={youtubeURL}
+
+                                            onChange={handleChange}
+                                            // onKeyPress={(e) => }
+                                        />
+                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
+                                            <Translate value="Fetch Video" />
+                                        </div>
+                                    </div>
+                                </TabPanel>
+
+                                <TabPanel>
+                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
+                                </TabPanel>
+                            </Tabs>
+                        </div>    
+                        <button onClick={this.handleCloseModal}>Cancel</button>
+                    </div>
+
+                    : <div>
+                        <div className="btn">
+                            <Translate value="OPEN_SUB" />
+                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
+                        </div>
+                        <button onClick={this.handleCloseModal}>Cancel</button>
+                    </div>
+                    } 
+              </ReactModal>
+       
+            </div>
+                
+            </Style>
+          );
+        }
+      }
+      
     
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
@@ -688,131 +814,7 @@ export default function Header({
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
 
-    class OpenModal extends React.Component {
-        constructor () {
-          super();
-          this.state = {
-            showModal: false,
-            value: ''
-
-          };
-          
-          this.handleOpenModal = this.handleOpenModal.bind(this);
-          this.handleCloseModal = this.handleCloseModal.bind(this);
-        }
-        
-        handleOpenModal () {
-          this.setState({ showModal: true });
-        }
-        
-        handleCloseModal () {
-          this.setState({ showModal: false });
-        }
-        
-        render () {
-          return (
-            <Style>
-            <div>
-                <select
-                 onChange={(event)=>{
-                //    if(event.target.value=="video")
-                //    {
-                //     this.handleOpenModal()
-                //    }
-                //    else if(event.target.value=="subtitles")
-                //    {
-                //     // onSubtitleChange();
-                //     // onInputClick();
-                //    }
-                localStorage.setItem('selectValue', event.target.value);
-                this.handleOpenModal();
-                   
-                }}
-                className="top-panel-select"
-                >
-                    <option value="" disabled selected>Open</option>
-                    <option value="video">Import Video</option>
-                    <option value="subtitles">Import Subtitle</option>
-                </select>
-              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
-              
-              <ReactModal 
-                 isOpen={this.state.showModal}
-                 style={{
-                    overlay: {
-                        position: 'absolute',
-                        top: '0',
-                        background: 'none'
-                    },
-                    content: {
-                      position: 'absolute',
-                      
-                      top: '150px',
-                      left: '30%',
-                      bottom: '40px',
-                      width: '40%',
-                      height: '40%',
-                      border: '1px solid #ccc',
-                      background: '#fff',
-                      overflow: 'auto',
-                      WebkitOverflowScrolling: 'touch',
-                      borderRadius: '20px',
-                      outline: 'none',
-                      padding: '20px',
-                      zIndex: '1000',
-                    },
-                  }}
-              >
-                    { (localStorage.getItem('selectValue') == "video")
-                    ? <div>
-                        <div>
-                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
-                                <TabList>
-                                <Tab>Youtube URL</Tab>
-                                <Tab>Upload</Tab>
-                                </TabList>
-
-                                <TabPanel>
-                                <div>
-                                        <textarea
-                                            className="modal-textarea"
-                                            placeholder="Enter YouTube Link Here"
-                                            value={youtubeURL}
-
-                                            onChange={handleChange}
-                                            // onKeyPress={(e) => }
-                                        />
-                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
-                                            <Translate value="Fetch Video" />
-                                        </div>
-                                    </div>
-                                </TabPanel>
-
-                                <TabPanel>
-                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
-                                </TabPanel>
-                            </Tabs>
-                        </div>    
-                        <button onClick={this.handleCloseModal}>Cancel</button>
-                    </div>
-
-                    : <div>
-                        <div className="btn">
-                            <Translate value="OPEN_SUB" />
-                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
-                        </div>
-                        <button onClick={this.handleCloseModal}>Cancel</button>
-                    </div>
-                    } 
-              </ReactModal>
-       
-            </div>
-                
-            </Style>
-          );
-        }
-      }
-      
+   
 
       
 
@@ -1726,7 +1728,7 @@ export default function Header({
                                     }}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
-                                    <option value="Youtube">Youtube</option>
+                                    {/* <option value="Youtube">Youtube</option> */}
                                 </select>
                             </div>
                         </>)}
@@ -1811,7 +1813,7 @@ export default function Header({
                         <div>
                             <div className="user-details">
                                 <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
-                                <span className='user-name'>{localStorage.getItem("username")}</span>
+                                {/* <span className='user-name'>{localStorage.getItem("username")}</span> */}
                             </div>
                             <ul className='user-menu'>
                                 <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>

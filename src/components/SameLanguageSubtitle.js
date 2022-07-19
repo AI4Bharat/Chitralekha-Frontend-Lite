@@ -186,6 +186,7 @@ export default function SameLanguageSubtitles({
     setClearedSubs,
     updateSubOriginal = null,
     clearSubs,
+    clearSubsEnglish,
     configuration,
     setSubtitleEnglish,
     transcriptSource,
@@ -645,6 +646,27 @@ export default function SameLanguageSubtitles({
                             <label for="original" style={{color: "black", padding: "5px"}}>Original Source</label>
                             </span>
                             </div>
+
+                            {configuration === 'Same Language Subtitling' && (
+                        <>
+                            <div className="select-translation-api-container">
+                                <p className="select-heading">
+                                    <b>Transcript Source</b>
+                                </p>
+                                <select
+                                    value={transcriptSource}
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                       // setTranscriptSource(e.target.value);
+                                        clearSubsEnglish();
+                                        player?.pause();
+                                    }}
+                                >
+                                    <option value="AI4Bharat">AI4Bharat</option>
+                                    {/* <option value="Youtube">Youtube</option> */}
+                                </select>
+                            </div>
+                        </>)}
 
                             <div>
                              <div className="btn" onClick={onTranscribe} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>

@@ -226,6 +226,7 @@ export default function Subtitles({
     clearedSubs,
     setClearedSubs,
     configuration,
+    translationApi,
     updateSubOriginal = null,
     isTranslateClicked=false,
     setIsTranslateClicked,

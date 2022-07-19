@@ -17,6 +17,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import FetchTranscriptAPI from "../redux/actions/api/Transcript/FetchTranscript"
 import GenerateTranscriptAPI from "../redux/actions/api/Transcript/GenerateTranscript"
 import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript"
+//import ReactModal from 'react-modal';
+//import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+//import 'react-tabs/style/react-tabs.css';
 
 const Style = styled.div`
     position: relative;
@@ -146,6 +149,7 @@ const Style = styled.div`
                     &.illegal {
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
+
                     }
 
                     &.found {
@@ -153,7 +157,6 @@ const Style = styled.div`
                         color: #000;
                         border: 1px solid rgba(255, 255, 255, 0.3);
                     }
-
                     &.current-found {
                         background-color: #FFFF33;
                         color: #000;
@@ -183,9 +186,9 @@ export default function SameLanguageSubtitles({
     setClearedSubs,
     updateSubOriginal = null,
     clearSubs,
+    configuration,
     setSubtitleEnglish,
-    transcriptSource,
-    setTranscriptSource,
+    translationApi,
     found,
     currentFound,
 }) {
@@ -194,10 +197,6 @@ export default function SameLanguageSubtitles({
     const [height, setHeight] = useState(100);
     const dispatch = useDispatch();
     // const [translate, setTranslate] = useState(null);
-    const TRANSCRIPT_TYPES = {
-        'Youtube': 'original_source',
-        'AI4Bharat': 'human_edited'
-    }
     
     //change
     const [transcribe, setTranscribe] = useState(null);
@@ -222,8 +221,9 @@ export default function SameLanguageSubtitles({
                 headers: saveObj.getHeaders().headers,
               });
             const resp = await res.json();
-            console.log(resp, "resp");
+            console.log(resp);
             if (res.ok) {
+               // localStorage.setItem('subtitle', JSON.stringify(subtitle));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
                 localStorage.setItem('transcript_id', resp.id);
                 // notify({
@@ -241,12 +241,11 @@ export default function SameLanguageSubtitles({
     const fetchTranscriptionLanguages = () => {
         const langObj = new GetTranscriptLanguagesAPI();
         dispatch(APITransport(langObj));
+        
     }
 
     const fetchTranscription = () => {
-        console.log(transcriptSource, "transcriptSource");
-        console.log(TRANSCRIPT_TYPES[transcriptSource], "transcriptSource");
-        const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), TRANSCRIPT_TYPES[transcriptSource], true);
+        const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), true);
         dispatch(APITransport(transcriptObj));
     }
 
@@ -262,11 +261,11 @@ export default function SameLanguageSubtitles({
             setTranscribe('en');
         }
         fetchTranscriptionLanguages();
-
         return () => {
             saveTranscript();
         }
     }, []);
+
 
     useEffect(() => {
         if (subtitle?.length > 0 && !waiting.current) {
@@ -389,7 +388,9 @@ export default function SameLanguageSubtitles({
     const parseSubtitles = (subtitles) => {
         const suburl = vtt2url(subtitles);
         url2sub(suburl).then((urlsub) => {
+           // setSubtitle(formatSub(urlsub));
             setSubtitleEnglish(formatSub(urlsub));
+            //localStorage.setItem('subtitle', JSON.stringify(urlsub));
             localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
             setLoading('');
         });
@@ -402,12 +403,7 @@ export default function SameLanguageSubtitles({
             localStorage.setItem("transcript_id", Transcript.id);
             parseSubtitles(Transcript.data.output);
         } else if (transcribeReq && APIStatus?.error) {
-            if (transcriptSource === 'AI4Bharat') {
-                generateTranscription();
-            } else {
-                setTranscribeReq(false);
-                setLoading('');
-            }
+            generateTranscription();
         }
     }, [Transcript, transcribeReq, APIStatus]);
 
@@ -420,7 +416,6 @@ export default function SameLanguageSubtitles({
     }, [GeneratedTranscript]);
 
     console.log(GeneratedTranscript, "generate")
-    console.log(transcriptSource, "transcriptSource")
 
 //
     const onTranscribe = useCallback(() => {
@@ -465,7 +460,7 @@ export default function SameLanguageSubtitles({
         //             level: 'error',
         //         });
         //     });
-    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);
+    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish]);
 
     // useEffect(() => {
     //     if (localStorage.getItem('lang')) {
@@ -489,24 +484,22 @@ export default function SameLanguageSubtitles({
         
         // subtitle && 
         // (
-            
+            <>
             <Style className="subtitles">
                {/* {console.log('rendering')}
                 {console.log(subtitle)}
                 {console.log(subtitle.length)}
                 {console.log(subtitleEnglish)}
                 {console.log("subEng" + subtitleEnglish.length)} */}
+            
                 {isPrimary && (
                     <div className="transcribe">
-                        <div className="heading">
-                            <h4>Speech-To-Text  
-                            {/* {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>} */}
-                            {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}
-                            </h4>
-                        </div>
+                        {/* <div className="heading">
+                            <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
+                        </div> */}
                         {/* {console.log('rendering here')} */}
-                        <div className="options">
-                            <select
+                         <div className="options">
+                           <select
                                // value={transcribe == null ? '' : transcribe}
                                value={modeTranscribe}
                                 onChange={(event) => {
@@ -520,15 +513,13 @@ export default function SameLanguageSubtitles({
                                     
                                 }}
                             >
-                                {/* { console.log("transcribe "+localStorage.getItem('langTranscribe'))} */}
-                              {/*  <option key="please-select" value="please-select" >Please Select</option> */}
+                               
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
                                     (item) =>
-                                        /*item.key !== 'en' && ( */
                                             <option key={item.key} value={item.key}>
                                                 {item.name}
                                             </option>
-                                      /*  ), */
+                                    
                                 )}
                                 
                             </select>
@@ -629,7 +620,7 @@ export default function SameLanguageSubtitles({
                     }}
                 ></Table>
             </Style>
+            </>
     //    )
     );
 }
-

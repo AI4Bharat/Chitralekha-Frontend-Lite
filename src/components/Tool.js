@@ -509,6 +509,8 @@ export default function Header({
     onTranscribe,
     isSetVideo,
     setIsSetVideo,
+    transcriptSource,
+    setTranscriptSource,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -581,6 +583,7 @@ export default function Header({
 
         // setSubtitleOriginal(tempSubs);
         setClearedSubs(true);
+        player?.pause();
     };
 
     const decodeAudioData = useCallback(
@@ -622,6 +625,7 @@ export default function Header({
     );
 
     const burnSubtitles = useCallback(async () => {
+        player?.pause();
         try {
             const { createFFmpeg, fetchFile } = FFmpeg;
             const ffmpeg = createFFmpeg({ log: true });
@@ -867,23 +871,27 @@ export default function Header({
             player.src = VideoDetails.direct_video_url;
             player.currentTime = 0;
             clearSubs();
-            if (VideoDetails.subtitles) {
-                fetch(VideoDetails.subtitles)
-                .then((subtext) => {
-                    return subtext.text();
-                })
-                .then((subtext) => {
-                    const suburl = vtt2url(subtext);
-                    url2sub(suburl).then((urlsub) => {
-                        setSubtitle(urlsub);
-                        setSubtitleEnglish(urlsub);
-                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                    });
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            if (VideoDetails.transcript_id) {
+                localStorage.setItem('transcript_id', VideoDetails.transcript_id);
+                setSubtitleEnglish(formatSub(VideoDetails.subtitles));
+                localStorage.setItem('subtitleEnglish', JSON.stringify(VideoDetails.subtitles));
+                setTranscriptSource('Youtube');
+                // fetch(VideoDetails.subtitles)
+                // .then((subtext) => {
+                //     return subtext.text();
+                // })
+                // .then((subtext) => {
+                //     const suburl = vtt2url(subtext);
+                //     url2sub(suburl).then((urlsub) => {
+                //         setSubtitle(urlsub);
+                //         setSubtitleEnglish(urlsub);
+                //         localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                //         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                //     });
+                // })
+                // .catch((err) => {
+                //     console.log(err);
+                // });
             }
         }
         // if (resp.subtitles) {
@@ -1143,6 +1151,7 @@ export default function Header({
 
     const downloadSub = useCallback(
         (type) => {
+            player?.pause();
             let text = '';
             const name = `${Date.now()}.${type}`;
             switch (type) {
@@ -1172,6 +1181,7 @@ export default function Header({
 
     const downloadSubReference = useCallback(
         (type) => {
+            player?.pause();
             let text = '';
             const name = `${Date.now()}.${type}`;
             switch (type) {
@@ -1641,8 +1651,9 @@ export default function Header({
                                 console.log('Configuration - same');
                                 const langTranscribe = localStorage.getItem('lang');
                               //  console.log("lang " + langTranscribe);
-                                 setConfiguration('Same Language Subtitling');
-                                 setIsSetConfiguration(true);
+                                setConfiguration('Same Language Subtitling');
+                                setIsSetConfiguration(true);
+                                player?.pause();
                             }}
                         >
                             <Translate value="SAME_LANGUAGE" />
@@ -1654,6 +1665,8 @@ export default function Header({
                                // this.handleOpenTranscriptionModal();
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
+                                clearSubs();
+                                player?.pause();
                             }}
                         >
                             <Translate value="MAIN_LANGUAGE" />
@@ -1688,6 +1701,7 @@ export default function Header({
                                     onChange={(e) => {
                                         // console.log(e.target.value);
                                         setTranslationApi(e.target.value);
+                                        player?.pause();
                                     }}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
@@ -1696,6 +1710,26 @@ export default function Header({
                             </div>
                         </>
                     )} */}
+                    {configuration === 'Same Language Subtitling' && (
+                        <>
+                            <div className="select-translation-api-container">
+                                <p className="select-heading">
+                                    <b>Transcript Source</b>
+                                </p>
+                                <select
+                                    value={transcriptSource}
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                        setTranscriptSource(e.target.value);
+                                        clearSubsEnglish();
+                                        player?.pause();
+                                    }}
+                                >
+                                    <option value="AI4Bharat">AI4Bharat</option>
+                                    <option value="Youtube">Youtube</option>
+                                </select>
+                            </div>
+                        </>)}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">
@@ -1716,9 +1750,9 @@ export default function Header({
                         <div className="btn" onClick={() => downloadSub('vtt')}>
                             <Translate value="EXPORT_VTT" />
                         </div>
-                    </div>
+                    </div>}
                     <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Reference Subtitles</b>
+                        <b>Export Transcript</b>
                     </p>
                     <div className="export" style={{ marginTop: '-20px' }}>
                         <div className="btn" onClick={() => downloadSubReference('ass')}>

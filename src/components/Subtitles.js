@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect, useDeferredValue } from 'react';
+import React, { useState, useCallback, useEffect, useDeferredValue, useRef } from 'react';
 import { Table, Column, MultiGrid } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
@@ -17,15 +17,14 @@ import GenerateTranslationAPI from "../redux/actions/api/Translation/GenerateTra
 import SaveTranslationAPI from "../redux/actions/api/Translation/SaveTranslation"
 import APITransport from "../redux/actions/apitransport/apitransport"
 import { useDispatch, useSelector } from 'react-redux';
-import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 import ReactModal from 'react-modal';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-
+// import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 const Style = styled.div`
-    position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
+    z-index: 200;
 
     .translate {
         display: flex;
@@ -150,6 +149,18 @@ const Style = styled.div`
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
                     }
+
+                    &.found {
+                        background-color: #FFFFCC;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
+
+                    &.current-found {
+                        background-color: #FFFF33;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
                 }
             }
         }
@@ -216,9 +227,10 @@ export default function Subtitles({
     setClearedSubs,
     configuration,
     updateSubOriginal = null,
-    translationApi,
     isTranslateClicked=false,
     setIsTranslateClicked,
+    found,
+    currentFound,
 }) {
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
@@ -230,10 +242,47 @@ export default function Subtitles({
     const Translations = useSelector(state => state.fetchTranslation.data);
     const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
     const APIStatus = useSelector(state => state.apiStatus);
+    const waiting = useRef(false);
 
     const fetchTranslationLanguages = () => {
         const langObj = new GetTranslationLanguagesAPI();
         dispatch(APITransport(langObj));
+    }
+
+    const saveTranslation = async () => {
+        if (localStorage.getItem('subtitle')) {
+            // setLoading(t('SAVING'));
+            let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            let subtitles = JSON.parse(localStorage.getItem('subtitle'));
+            if (subtitles?.length === 0) return;
+            const payload = {
+                translations: subtitles.map((item, i) => {
+                    return {
+                        source: transcript[i].text,
+                        target: item.text,
+                    };
+                })
+            }
+            const saveObj = new SaveTranslationAPI(localStorage.getItem("translation_id"), localStorage.getItem("langTranslate"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+              });
+            const resp = await res.json();
+            console.log(resp);
+            // if (res.ok) {
+                // localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                // notify({
+                //     message: 'Translation saved successfully', 
+                //     level: 'success'});
+            // } else {
+                // notify({
+                //     message: 'Translation could not be saved', 
+                //     level: 'error'});
+            // }
+            // setLoading('');
+        }
     }
 
     //console.log('isTranslateClicked '+isTranslateClicked);
@@ -248,10 +297,42 @@ export default function Subtitles({
             setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
+
+        const scrollDivs = document.getElementsByClassName('ReactVirtualized__Table__Grid');
+        const syncScroll = (e) => {
+            scrollDivs[e.currentTarget.scrollNum === scrollDivs.length - 1 ? 0 : e.currentTarget.scrollNum + 1].scrollTop = e.currentTarget.scrollTop;
+        }
+
+        if (scrollDivs.length >=2 ) {
+            for (let i = 0; i < scrollDivs.length; i++) {
+                scrollDivs[i].scrollNum = i;
+                scrollDivs[i].addEventListener('scroll', syncScroll);
+            }
+
+        }
+
+        return () => {
+            saveTranslation();
+            if (scrollDivs.length >=2 ) {
+                for (let i = 0; i < scrollDivs.length; i++) {
+                    scrollDivs[i].removeEventListener('scroll', syncScroll);
+                }
+            }
+        }
     }, []);
 
     useEffect(() => {
-        if (translationApi === "AI4Bharat") {
+        if (subtitle?.length > 0 && !waiting.current) {
+            waiting.current = true;
+            setTimeout(() => {
+                waiting.current = false;
+                saveTranslation();
+            }, 10000);
+        }
+    }, [subtitle]);
+
+    useEffect(() => {
+        // if (translationApi === "AI4Bharat") {
             if (languageChoices && Object.keys(languageChoices).length > 0) {
                 let langArray = [];
                 for (const key in languageChoices) {
@@ -262,13 +343,13 @@ export default function Subtitles({
                 setTranslate(langArray[0].key);
                 setModeTranslate(langArray[0].key);
             }
-        } else {
-            setLanguageAvailable(languages);
-            localStorage.setItem('langTranslate', languages['en'][1].key); //changes
-            setTranslate(languages['en'][1].key);
-            setModeTranslate(languages['en'][1].key);
-        }
-    }, [languageChoices, translationApi]);
+        // } else {
+        //     setLanguageAvailable(languages);
+        //     localStorage.setItem('langTranslate', languages['en'][1].key); //changes
+        //     setTranslate(languages['en'][1].key);
+        //     setModeTranslate(languages['en'][1].key);
+        // }
+    }, [languageChoices]);
 
     // useEffect(() => {
     //     if (translationApi === 'AI4Bharat') {
@@ -307,17 +388,17 @@ export default function Subtitles({
         }
         //console.log(translationApi);
         //here is what you want to comment out if you don't want translate to be triggered on editing subtitles
-        if (translationApi === 'AI4Bharat') {
+        // if (translationApi === 'AI4Bharat') {
             // return; //changes to both below
          //   ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('langTranslate')).then((resp) => {
             ai4BharatBatchTranslate([{ text: data.text }], localStorage.getItem('langTranscribe'), localStorage.getItem('langTranslate')).then((resp) => {
                 updateSubOriginal(data, resp[0], index);
             });
-        } else {
-            googleTranslate([{ text: data.text }], localStorage.getItem('langTranslate')).then((resp) => {
-                updateSubOriginal(data, resp[0], index);
-            });
-        }
+        // } else {
+        //     googleTranslate([{ text: data.text }], localStorage.getItem('langTranslate')).then((resp) => {
+        //         updateSubOriginal(data, resp[0], index);
+        //     });
+        // }
     };
 
     const resize = useCallback(() => {
@@ -335,40 +416,6 @@ export default function Subtitles({
 
     const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
 
-    const saveTranslation = async () => {
-        if (subtitle?.length > 0) {
-            setLoading(t('SAVING'));
-            let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
-            const payload = {
-                translations: subtitle.map((item, i) => {
-                    return {
-                        source: transcript[i].text,
-                        target: item.text,
-                    };
-                })
-            }
-            const saveObj = new SaveTranslationAPI(localStorage.getItem("translation_id"), localStorage.getItem("langTranslate"), payload);
-            const res = await fetch(saveObj.apiEndPoint(), {
-                method: "POST",
-                body: JSON.stringify(saveObj.getBody()),
-                headers: saveObj.getHeaders().headers,
-              });
-            const resp = await res.json();
-            console.log(resp);
-            if (res.ok) {
-                localStorage.setItem('subtitle', JSON.stringify(subtitle));
-                notify({
-                    message: 'Translation saved successfully', 
-                    level: 'success'});
-            } else {
-                notify({
-                    message: 'Translation could not be saved', 
-                    level: 'error'});
-            }
-            setLoading('');
-        }
-    }
-
     const parseTranslations = (translations) => {
         console.log("hi")
         let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
@@ -379,7 +426,7 @@ export default function Subtitles({
         }
         console.log(transcript)
         localStorage.setItem('subtitle', JSON.stringify(transcript));
-        setSubtitle(transcript);
+        setSubtitle(formatSub(transcript));
         setLoading('');
         notify({
             message: t('TRANSLAT_SUCCESS'),
@@ -420,7 +467,7 @@ export default function Subtitles({
         setTranslateReq(true);
         
         console.log('when translate button clicked '+isTranslateClicked);
-        console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
+        // console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
         setLoading(t('TRANSLATING'));
         if (clearedSubs) {
             // if (translate === 'en-k') {
@@ -577,7 +624,7 @@ export default function Subtitles({
 
         // console.log('google api');
 
-        if (translationApi === 'AI4Bharat') {
+        // if (translationApi === 'AI4Bharat') {
             console.log("here1", "translate");
             getTranslations();
             // return ai4BharatBatchTranslate(
@@ -604,27 +651,27 @@ export default function Subtitles({
             //             level: 'error',
             //         });
             //     });
-        } else {
-            googleTranslate(formatSub(subtitleEnglish), translate)
-            .then((res) => {
-                setLoading('');
-                console.log(res);
-                setSubtitle(formatSub(res));
-                localStorage.setItem('langTranslate', translate);
-                notify({
-                    message: t('TRANSLAT_SUCCESS'),
-                    level: 'success',
-                });
-            })
-            .catch((err) => {
-                setLoading('');
-                notify({
-                    message: err.message,
-                    level: 'error',
-                });
-            });
-        }
-    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationApi]);
+        // } else {
+        //     googleTranslate(formatSub(subtitleEnglish), translate)
+        //     .then((res) => {
+        //         setLoading('');
+        //         console.log(res, "google");
+        //         setSubtitle(formatSub(res));
+        //         localStorage.setItem('langTranslate', translate);
+        //         notify({
+        //             message: t('TRANSLAT_SUCCESS'),
+        //             level: 'success',
+        //         });
+        //     })
+        //     .catch((err) => {
+        //         setLoading('');
+        //         notify({
+        //             message: err.message,
+        //             level: 'error',
+        //         });
+        //     });
+        // }
+    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs]);
 
 
     class TranslationModal extends React.Component {
@@ -843,19 +890,21 @@ export default function Subtitles({
                             <div className="btn" onClick={onTranslate}>
                                 <Translate value="TRANSLATE" />
                             </div>
+                            {/* {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} */}
+                            {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}
                         </div>
                     </div>
                 )}
 
                 {!isPrimary && (
                     <div className="reference">
-                        <h4>Reference Subtitles {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}</h4>
+                        <h4>Reference Subtitles </h4>
                         {/* <span>Language : {languages['en'].filter((item) => item.key === language)[0].name}</span> */}
                     </div>
                 )}
                 <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
-                <ScrollSyncPane>
-                <div style={{overflow: 'auto'}}>
+                {/* <ScrollSyncPane> */}
+                {/* <div style={{overflow: 'auto'}}> */}
    
                 <Table
                     headerHeight={40}
@@ -889,6 +938,8 @@ export default function Subtitles({
                                             'textarea',
                                             currentIndex === props.index ? 'highlight' : '',
                                             checkSub(props.rowData) ? 'illegal' : '',
+                                            isPrimary && found.includes(props.index) ? 'found' : '',
+                                            isPrimary && found[currentFound] === props.index ? 'current-found' : '',
                                         ]
                                             .join(' ')
                                             .trim()}
@@ -953,8 +1004,8 @@ export default function Subtitles({
                 </Table>
                 </div>
        
-                                </ScrollSyncPane>
-                                </div>
+                                {/* </ScrollSyncPane> */}
+                                {/* </div> */}
 
 
             </Style>

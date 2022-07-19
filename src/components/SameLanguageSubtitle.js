@@ -2,7 +2,7 @@
 
 import styled from 'styled-components';
 import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
@@ -25,6 +25,7 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
+    z-index: 200;
 
     .transcribe {
         display: flex;
@@ -148,6 +149,18 @@ const Style = styled.div`
                     &.illegal {
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
+
+                    }
+
+                    &.found {
+                        background-color: #FFFFCC;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                    }
+                    &.current-found {
+                        background-color: #FFFF33;
+                        color: #000;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
                     }
                 }
             }
@@ -176,7 +189,8 @@ export default function SameLanguageSubtitles({
     configuration,
     setSubtitleEnglish,
     translationApi,
-    
+    found,
+    currentFound,
 }) {
    // console.log('at start ' + subtitle )
     //console.log('at start ' + subtitleEnglish )
@@ -192,14 +206,15 @@ export default function SameLanguageSubtitles({
     const Transcript = useSelector(state => state.fetchTranscript.data);
     const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
     const APIStatus = useSelector(state => state.apiStatus);
+    const waiting = useRef(false);
 
     const saveTranscript = async () => {
-        if (localStorage.getItem('subtitle')) {
-            setLoading(t('SAVING'));
+        if (subtitle?.length > 0) {
+            // setLoading(t('SAVING'));
             const payload = {
                 output: sub2vtt(subtitle)
             }
-            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), payload);
+            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), localStorage.getItem("videoId"), payload);
             const res = await fetch(saveObj.apiEndPoint(), {
                 method: "POST",
                 body: JSON.stringify(saveObj.getBody()),
@@ -208,15 +223,16 @@ export default function SameLanguageSubtitles({
             const resp = await res.json();
             console.log(resp);
             if (res.ok) {
-                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+               // localStorage.setItem('subtitle', JSON.stringify(subtitle));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
-                notify({
-                    message: 'Subtitle saved successfully', 
-                    level: 'success'});
+                localStorage.setItem('transcript_id', resp.id);
+                // notify({
+                //     message: 'Subtitle saved successfully', 
+                //     level: 'success'});
             } else {
-                notify({
-                    message: 'Subtitle could not be saved', 
-                    level: 'error'});
+                // notify({
+                //     message: 'Subtitle could not be saved', 
+                //     level: 'error'});
             }
             setLoading('');
         }
@@ -225,6 +241,7 @@ export default function SameLanguageSubtitles({
     const fetchTranscriptionLanguages = () => {
         const langObj = new GetTranscriptLanguagesAPI();
         dispatch(APITransport(langObj));
+        
     }
 
     const fetchTranscription = () => {
@@ -244,7 +261,21 @@ export default function SameLanguageSubtitles({
             setTranscribe('en');
         }
         fetchTranscriptionLanguages();
+        return () => {
+            saveTranscript();
+        }
     }, []);
+
+
+    useEffect(() => {
+        if (subtitle?.length > 0 && !waiting.current) {
+            waiting.current = true;
+            setTimeout(() => {
+                waiting.current = false;
+                saveTranscript();
+            }, 10000);
+        }
+    }, [subtitle]);
 
     useEffect(() => {
         if (languageChoices?.data) {
@@ -357,9 +388,9 @@ export default function SameLanguageSubtitles({
     const parseSubtitles = (subtitles) => {
         const suburl = vtt2url(subtitles);
         url2sub(suburl).then((urlsub) => {
-            setSubtitle(formatSub(urlsub));
+           // setSubtitle(formatSub(urlsub));
             setSubtitleEnglish(formatSub(urlsub));
-            localStorage.setItem('subtitle', JSON.stringify(urlsub));
+            //localStorage.setItem('subtitle', JSON.stringify(urlsub));
             localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
             setLoading('');
         });
@@ -538,6 +569,8 @@ export default function SameLanguageSubtitles({
                                             'textarea',
                                             currentIndex === props.index ? 'highlight' : '',
                                             checkSub(props.rowData) ? 'illegal' : '',
+                                            found.includes(props.index) ? 'found' : '',
+                                            found[currentFound] === props.index ? 'current-found' : '',
                                         ]
                                             .join(' ')
                                             .trim()}

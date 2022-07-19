@@ -1475,7 +1475,17 @@ export default function Header({
                                 </TabPanel>
 
                                 <TabPanel>
-                                   
+                                <div className="export">
+                        <div className="btn" onClick={() => downloadSubReference('ass')} style={{background: "#009688", display:"inline-block", padding:"10px", marginRight:"10px"}}>
+                            <Translate value="EXPORT_ASS" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSubReference('srt')} style={{background: "#009688", display:"inline-block"}}>
+                            <Translate value="EXPORT_SRT" />
+                        </div>
+                        <div className="btn" onClick={() => downloadSubReference('vtt')} style={{background: "#009688", display:"inline-block"}}>
+                            <Translate value="EXPORT_VTT" />
+                        </div>
+                    </div> 
                                 </TabPanel>
                             </Tabs>
                     </div>
@@ -1497,14 +1507,14 @@ export default function Header({
 
                                    
                         </div>    
-                        <div>
-                        <button>Export</button>
-                            <button onClick={this.handleCloseExportModal}>Cancel</button>
-                        </div>
+                        
                         
                     </div>
 
-                 
+                    <div>
+                            {/* <input type="submit" onSubmit={downloadSubReference('vtt')}/> */}
+                            <button onClick={this.handleCloseExportModal}>Cancel</button>
+                        </div>
                      
               </ReactModal>
        

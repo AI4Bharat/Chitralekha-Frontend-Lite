@@ -1174,6 +1174,7 @@ export default function Header({
         [subtitleEnglish],
     );
 
+
     useEffect(() => {
         if (isSetVideo === false) {
             if (window.localStorage.getItem('isVideoPresent') === 'true') {
@@ -1186,6 +1187,7 @@ export default function Header({
    
 
     class ExportSubtitleModal extends React.Component {
+
         constructor() {
             super();
             this.state = {
@@ -1205,9 +1207,7 @@ export default function Header({
             this.setState({ showExportModal: false });
         }
 
-        setSubtitleFormat(event) {
-            console.log(event.target.value);
-        }
+       
 
         render() {
             return (<>
@@ -1222,7 +1222,10 @@ export default function Header({
                 <ExportModal 
                     show={this.state.showExportModal} 
                     onHide={this.handleCloseExportModal}
+                    downloadSub={downloadSub}
+                    downloadSubReference={downloadSubReference}
                 />
+
             </>);
         }
     }

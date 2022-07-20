@@ -13,40 +13,58 @@ import HamburgerMenu from 'react-hamburger-menu';
 //import '../utils/ToolNavigation.css';
 import BottomLinks from './BottomLinks';
 import Links from './Links';
-import GetVideoDetailsAPI from "../redux/actions/api/Video/GetVideoDetails"
-import { useDispatch, useSelector } from "react-redux"
-import APITransport from "../redux/actions/apitransport/apitransport"
+import GetVideoDetailsAPI from '../redux/actions/api/Video/GetVideoDetails';
+import { useDispatch, useSelector } from 'react-redux';
+import APITransport from '../redux/actions/apitransport/apitransport';
 import Navbar from './Header';
 import LoginForm from './Login';
-import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript";
+import SaveTranscriptAPI from '../redux/actions/api/Transcript/SaveTranscript';
 import ReactModal from 'react-modal';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import UploadModal from './UploadModal';
+import ExportModal from './ExportModal';
 
 const Style = styled.div`
-    border-bottom: 1px solid #63D471;
+    border-bottom: 1px solid #63d471;
 
     height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
-  //  padding: 0.2rem calc((100vw - 1000px) / 2);
+    //  padding: 0.2rem calc((100vw - 1000px) / 2);
     z-index: 100;
 
-    .top-panel-select{
-        padding: 6px;
-        border-radius: 4px;
+    .top-panel-select {
+        width: 150px;
+        text-decoration: none;
+        align-items: center;
+        color: #fff;
+        height: 40px;
+        background: #3f51b5;
+        border-radius: 10px;
+        cursor: pointer;
+        border: none;
+        padding: 0 15px;
+        line-height: 2.7;
+
+        option {
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            color: #000;
+        }
     }
 
-    .modal-textarea{
+    .modal-textarea {
         padding: 20px;
     }
 
-    .youtube-link .youtube-textarea{
+    .youtube-link .youtube-textarea {
         padding: 20px;
     }
- 
-    .top{
+
+    .top {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -80,12 +98,21 @@ const Style = styled.div`
     }
 
     .save-transcript {
-        padding: 5px 0;
-        margin-left: 20px;
-        width: 100px;
+        .button-layout {
+            width: 150px;
+            text-decoration: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            height: 40px;
+            background: #3f51b5;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+        }
 
-        .save-btn{
-            width: 100px;
+        .button-layout:hover {
+            background-color: #5264cc;
         }
     }
 
@@ -138,7 +165,7 @@ const Style = styled.div`
         }
     }
 
-    .export{
+    .export {
         text-align: center;
     }
 
@@ -207,11 +234,7 @@ const Style = styled.div`
     }
 
     .export {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-
-        .btn {
+        .export-btn {
             position: relative;
             opacity: 0.85;
             display: flex;
@@ -233,28 +256,22 @@ const Style = styled.div`
     }
 
     .operate {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-
         .btn {
-            position: relative;
-            opacity: 0.85;
-            display: flex;
-            justify-content: center;
+            width: fit-content;
+            text-decoration: none;
             align-items: center;
-            height: 35px;
-            width: 48%;
-            border-radius: 3px;
             color: #fff;
+            height: 40px;
+            background: #3f51b5;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 13px;
-            background-color: #009688;
-            transition: all 0.2s ease 0s;
+            border: none;
+            padding: 0 15px;
+            line-height: 2.4;
+        }
 
-            &:hover {
-                opacity: 1;
-            }
+        .btn:hover {
+            background-color: #5264cc;
         }
     }
 
@@ -276,30 +293,24 @@ const Style = styled.div`
             opacity: 1;
             display: flex;
             // align-items: center;
-            
-            padding-left: 10px;
 
             .btn {
-                position: relative;
-                opacity: 0.85;
-                display: flex;
-                justify-content: center;
+                width: 150px;
+                text-decoration: none;
                 align-items: center;
-                height: 35px;
-                width: 95%;
-                border-radius: 3px;
+                justify-content: center;
                 color: #fff;
+                height: 40px;
+                background: #3f51b5;
+                border-radius: 10px;
                 cursor: pointer;
-                font-size: 13px;
-                background-color: #009688;
-                transition: all 0.2s ease 0s;
-                margin-right: 10px;
-                letter-spacing: 1.3px;
-                padding: 2px 5px;
+                border: none;
+                margin-right: 20px;
+                text-align: center;
+            }
 
-                &:hover {
-                    opacity: 1;
-                }
+            .btn:hover {
+                background-color: #5264cc;
             }
         }
     }
@@ -309,15 +320,18 @@ const Style = styled.div`
         transition: all 0.25s;
         transform-origin: top;
         height: 0;
+        display: none;
     }
     .hide-config .configuration-heading {
         opacity: 0;
         transition: all 0.1s;
+        display: none;
     }
 
     .hide-config .configuration-options {
         opacity: 0;
         transition: all 0.1s;
+        display: none;
     }
 
     .translate {
@@ -389,14 +403,18 @@ const Style = styled.div`
         padding: 10px;
 
         span {
-            width: 100px;
-            margin-left: 10px;
-            font-size: 13px;
-            padding: 5px 0;
-            border-radius: 3px;
-            text-align: center;
-            color: rgb(255 255 255 / 75%);
-            background-color: rgb(255 255 255 / 20%);
+            width: fit-content;
+            text-decoration: none;
+            align-items: center;
+            color: #fff;
+            height: 40px;
+            background: #3f51b5;
+            border-radius: 10px;
+            cursor: not-allowed;
+            border: none;
+            padding: 0 15px;
+            line-height: 2.7;
+            margin: 0 10px;
         }
     }
 
@@ -446,6 +464,34 @@ const Style = styled.div`
             background-color: #ff9800;
             transition: all 0.2s ease 0s;
         }
+    }
+
+    .signin-btn {
+        margin-left: auto;
+    }
+
+    .select-box {
+        margin-left: auto;
+    }
+
+    .export-btn-main {
+        width: 150px;
+        text-decoration: none;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        height: 40px;
+        background: #3f51b5;
+        border-radius: 10px;
+        cursor: pointer;
+        border: none;
+        margin: 0 20px;
+        line-height: 2.7;
+        padding: 0 15px;
+    }
+
+    .export-btn-main:hover {
+        background-color: #5264cc;
     }
 `;
 // function useStickyState(defaultValue, key) {
@@ -516,24 +562,20 @@ export default function Header({
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
     const dispatch = useDispatch();
-    const VideoDetails = useSelector(state => state.getVideoDetails.data);
+    const VideoDetails = useSelector((state) => state.getVideoDetails.data);
     const [showLogin, setShowLogin] = useState(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
 
-    
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
-          const stickyValue = window.localStorage.getItem(key);
-          return stickyValue !== null
-            ? JSON.parse(stickyValue)
-            : defaultValue;
+            const stickyValue = window.localStorage.getItem(key);
+            return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
         });
         React.useEffect(() => {
-          window.localStorage.setItem(key, JSON.stringify(value));
+            window.localStorage.setItem(key, JSON.stringify(value));
         }, [key, value]);
         return [value, setValue];
-      }
-    
+    }
 
     const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
@@ -541,30 +583,36 @@ export default function Header({
         if (localStorage.getItem('subtitle')) {
             setLoading(t('SAVING'));
             const payload = {
-                output: sub2vtt(subtitle)
-            }
-            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), payload);
+                output: sub2vtt(subtitle),
+            };
+            const saveObj = new SaveTranscriptAPI(
+                localStorage.getItem('transcript_id'),
+                localStorage.getItem('langTranscribe'),
+                payload,
+            );
             const res = await fetch(saveObj.apiEndPoint(), {
-                method: "POST",
+                method: 'POST',
                 body: JSON.stringify(saveObj.getBody()),
                 headers: saveObj.getHeaders().headers,
-              });
+            });
             const resp = await res.json();
             console.log(resp);
             if (res.ok) {
                 localStorage.setItem('subtitle', JSON.stringify(subtitle));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
                 notify({
-                    message: 'Subtitle saved successfully', 
-                    level: 'success'});
+                    message: 'Subtitle saved successfully',
+                    level: 'success',
+                });
             } else {
                 notify({
-                    message: 'Subtitle could not be saved', 
-                    level: 'error'});
+                    message: 'Subtitle could not be saved',
+                    level: 'error',
+                });
             }
             setLoading('');
         }
-    }
+    };
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -683,136 +731,59 @@ export default function Header({
         }
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
-
     class OpenModal extends React.Component {
-        constructor () {
-          super();
-          this.state = {
-            showModal: false,
-            value: ''
+        constructor() {
+            super();
+            this.state = {
+                showModal: false,
+                value: '',
+            };
 
-          };
-          
-          this.handleOpenModal = this.handleOpenModal.bind(this);
-          this.handleCloseModal = this.handleCloseModal.bind(this);
+            this.handleOpenModal = this.handleOpenModal.bind(this);
+            this.handleCloseModal = this.handleCloseModal.bind(this);
         }
-        
-        handleOpenModal () {
-          this.setState({ showModal: true });
+
+        handleOpenModal() {
+            this.setState({ showModal: true });
         }
-        
-        handleCloseModal () {
-          this.setState({ showModal: false });
+
+        handleCloseModal() {
+            this.setState({ showModal: false });
         }
-        
-        render () {
-          return (
-            <Style>
-            <div>
-                <select
-                 onChange={(event)=>{
-                //    if(event.target.value=="video")
-                //    {
-                //     this.handleOpenModal()
-                //    }
-                //    else if(event.target.value=="subtitles")
-                //    {
-                //     // onSubtitleChange();
-                //     // onInputClick();
-                //    }
-                localStorage.setItem('selectValue', event.target.value);
-                this.handleOpenModal();
-                   
-                }}
-                className="top-panel-select"
-                >
-                    <option value="" disabled selected>Open</option>
-                    <option value="video">Import Video</option>
-                    <option value="subtitles">Import Subtitle</option>
-                </select>
-              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
-              
-              <ReactModal 
-                 isOpen={this.state.showModal}
-                 style={{
-                    overlay: {
-                        position: 'absolute',
-                        top: '0',
-                        background: 'none'
-                    },
-                    content: {
-                      position: 'absolute',
-                      
-                      top: '150px',
-                      left: '30%',
-                      bottom: '40px',
-                      width: '40%',
-                      height: '40%',
-                      border: '1px solid #ccc',
-                      background: '#fff',
-                      overflow: 'auto',
-                      WebkitOverflowScrolling: 'touch',
-                      borderRadius: '20px',
-                      outline: 'none',
-                      padding: '20px',
-                      zIndex: '1000',
-                    },
-                  }}
-              >
-                    { (localStorage.getItem('selectValue') == "video")
-                    ? <div>
-                        <div>
-                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
-                                <TabList>
-                                <Tab>Youtube URL</Tab>
-                                <Tab>Upload</Tab>
-                                </TabList>
 
-                                <TabPanel>
-                                <div>
-                                        <textarea
-                                            className="modal-textarea"
-                                            placeholder="Enter YouTube Link Here"
-                                            value={youtubeURL}
+        render() {
+            return (
+                <>
+                    <Style>
+                            <select
+                                onChange={(event) => {
+                                    localStorage.setItem('selectValue', event.target.value);
+                                    this.handleOpenModal();
+                                }}
+                                className="top-panel-select"
+                            >
+                                <option value="" disabled selected>
+                                    Open
+                                </option>
+                                <option value="video">Import Video</option>
+                                <option value="subtitles">Import Subtitle</option>
+                            </select>
+                    </Style>
 
-                                            onChange={handleChange}
-                                            // onKeyPress={(e) => }
-                                        />
-                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
-                                            <Translate value="Fetch Video" />
-                                        </div>
-                                    </div>
-                                </TabPanel>
-
-                                <TabPanel>
-                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
-                                </TabPanel>
-                            </Tabs>
-                        </div>    
-                        <button onClick={this.handleCloseModal}>Cancel</button>
-                    </div>
-
-                    : <div>
-                        <div className="btn">
-                            <Translate value="OPEN_SUB" />
-                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
-                        </div>
-                        <button onClick={this.handleCloseModal}>Cancel</button>
-                    </div>
-                    } 
-              </ReactModal>
-       
-            </div>
-                
-            </Style>
-          );
+                    <UploadModal 
+                        show={this.state.showModal} 
+                        onHide={this.handleCloseModal} 
+                        textAreaValue={youtubeURL}
+                        textAreaValueChange={handleChange}
+                        onYouTubeChange={onYouTubeChange}
+                        onVideoChange={onVideoChange}
+                        onSubtitleChange={onSubtitleChange}
+                        onInputClick={onInputClick}
+                    />
+                </>
+            );
         }
-      }
-      
-
-      
-
-      const props = {};
+    }
 
     const onVideoChange = useCallback(
         (event) => {
@@ -869,21 +840,21 @@ export default function Header({
             clearSubs();
             if (VideoDetails.subtitles) {
                 fetch(VideoDetails.subtitles)
-                .then((subtext) => {
-                    return subtext.text();
-                })
-                .then((subtext) => {
-                    const suburl = vtt2url(subtext);
-                    url2sub(suburl).then((urlsub) => {
-                        setSubtitle(urlsub);
-                        setSubtitleEnglish(urlsub);
-                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                    .then((subtext) => {
+                        return subtext.text();
+                    })
+                    .then((subtext) => {
+                        const suburl = vtt2url(subtext);
+                        url2sub(suburl).then((urlsub) => {
+                            setSubtitle(urlsub);
+                            setSubtitleEnglish(urlsub);
+                            localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                            localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                        });
+                    })
+                    .catch((err) => {
+                        console.log(err);
                     });
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
             }
         }
         // if (resp.subtitles) {
@@ -907,7 +878,7 @@ export default function Header({
         //             console.log(err);
         //         });
         //     }
-    // } else {
+        // } else {
         //             // // Auto-transcribe
         //             // const data = {
         //             //     url: youtubeURL,
@@ -945,9 +916,9 @@ export default function Header({
         (event) => {
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
-                
+
                 console.log('called');
-       //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
+                //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
                 setLoading(t('LOADING'));
                 dispatch(APITransport(videoObj));
 
@@ -1020,7 +991,7 @@ export default function Header({
                 //             //     });
                 //         }
                 //     });
-                
+
                 // // fetch(
                 // //     `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
                 // //     {
@@ -1091,21 +1062,13 @@ export default function Header({
             // setIsSetVideo(true);
             // setLoading('')
         },
-        [
-            clearSubs,
-            youtubeURL,
-            translate,
-            player,
-            setSubtitle,
-            setLoading,
-            setIsSetVideo,
-        ],
+        [clearSubs, youtubeURL, translate, player, setSubtitle, setLoading, setIsSetVideo],
     );
 
     const handleChange = (e) => {
         e.preventDefault();
+        console.log(e.target.value);
         setYoutubeURL(e.target.value);
-        
     };
 
     const onSubtitleChange = useCallback(
@@ -1208,81 +1171,79 @@ export default function Header({
         }
     }, [setIsSetVideo, isSetVideo]);
 
-
     class TranscriptionModal extends React.Component {
-        constructor () {
-          super();
-          this.state = {
-            showTranscriptionModal: false,
-            value: ''
+        constructor() {
+            super();
+            this.state = {
+                showTranscriptionModal: false,
+                value: '',
+            };
 
-          };
-          
-          this.handleOpenTranscriptionModal = this.handleOpenTranscriptionModal.bind(this);
-          this.handleCloseTranscriptionModal = this.handleCloseTranscriptionModal.bind(this);
+            this.handleOpenTranscriptionModal = this.handleOpenTranscriptionModal.bind(this);
+            this.handleCloseTranscriptionModal = this.handleCloseTranscriptionModal.bind(this);
         }
-        
-        handleOpenTranscriptionModal () {
-          this.setState({ showTranscriptionModal: true });
+
+        handleOpenTranscriptionModal() {
+            this.setState({ showTranscriptionModal: true });
         }
-        
-        handleCloseTranscriptionModal () {
-          this.setState({ showTranscriptionModal: false });
+
+        handleCloseTranscriptionModal() {
+            this.setState({ showTranscriptionModal: false });
         }
-        
-        render () {
-            if(configuration=='Same Language Subtitling')
-        //     {
-        // //  this.handleOpenTranscriptionModal();
-        //     }
-          return (
-            <Style>
-            <div>
-                <div
-                            className="btn"
-                            onClick={() => {
-                                // console.log('Configuration - same');
-                                // const langTranscribe = localStorage.getItem('lang');
-                              
-                              //  console.log("lang " + langTranscribe);
-                                //   setConfiguration('Same Language Subtitling');
-                                //   setIsSetConfiguration(true);
-                                  this.handleOpenTranscriptionModal();
-                            }}
-                        >
-                            <Translate value="SAME_LANGUAGE" />
-                        </div>
-                        
-              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
-              
-              <ReactModal 
-                 isOpen={this.state.showTranscriptionModal}
-                 style={{
-                    overlay: {
-                        position: 'absolute',
-                        top: '0',
-                        background: 'none'
-                    },
-                    content: {
-                      position: 'absolute',
-                      color: 'black',
-                      top: '150px',
-                      left: '30%',
-                      bottom: '40px',
-                      width: '40%',
-                      height: '40%',
-                      border: '1px solid #ccc',
-                      background: '#fff',
-                      overflow: 'auto',
-                      WebkitOverflowScrolling: 'touch',
-                      borderRadius: '20px',
-                      outline: 'none',
-                      padding: '20px',
-                      zIndex: '1000',
-                    },
-                  }}
-              >
-                    {/* { (localStorage.getItem('selectValue') == "video")
+
+        render() {
+            if (configuration == 'Same Language Subtitling')
+                //     {
+                // //  this.handleOpenTranscriptionModal();
+                //     }
+                return (
+                    <Style>
+                        <div>
+                            <div
+                                className="btn"
+                                onClick={() => {
+                                    // console.log('Configuration - same');
+                                    // const langTranscribe = localStorage.getItem('lang');
+
+                                    //  console.log("lang " + langTranscribe);
+                                    //   setConfiguration('Same Language Subtitling');
+                                    //   setIsSetConfiguration(true);
+                                    this.handleOpenTranscriptionModal();
+                                }}
+                            >
+                                <Translate value="SAME_LANGUAGE" />
+                            </div>
+
+                            {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
+
+                            <ReactModal
+                                isOpen={this.state.showTranscriptionModal}
+                                style={{
+                                    overlay: {
+                                        position: 'absolute',
+                                        top: '0',
+                                        background: 'none',
+                                    },
+                                    content: {
+                                        position: 'absolute',
+                                        color: 'black',
+                                        top: '150px',
+                                        left: '30%',
+                                        bottom: '40px',
+                                        width: '40%',
+                                        height: '40%',
+                                        border: '1px solid #ccc',
+                                        background: '#fff',
+                                        overflow: 'auto',
+                                        WebkitOverflowScrolling: 'touch',
+                                        borderRadius: '20px',
+                                        outline: 'none',
+                                        padding: '20px',
+                                        zIndex: '1000',
+                                    },
+                                }}
+                            >
+                                {/* { (localStorage.getItem('selectValue') == "video")
                     ? <div>
                         <div>
                             <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
@@ -1323,219 +1284,113 @@ export default function Header({
                         <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
                     </div>
                     }  */}
-                     <select
-                               // value={transcribe == null ? '' : transcribe}
-                               value={modeTranscribe}
-                                onChange={(event) => {
-                                    setModeTranscribe(event.target.value);
-                                    localStorage.setItem('langTranscribe', event.target.value);
-                                   
-                                    //console.log(event.target.value);
-                                    //console.log('transcribed view'+localStorage.getItem('transcribed-view'));
-                                    setTranscribe(localStorage.getItem('langTranscribe'));
-                                
-                                    
-                                }}
-                            >
-                                {/* { console.log("transcribe "+localStorage.getItem('langTranscribe'))} */}
-                              {/*  <option key="please-select" value="please-select" >Please Select</option> */}
-                                {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
-                                    (item) =>
-                                        /*item.key !== 'en' && ( */
+                                <select
+                                    // value={transcribe == null ? '' : transcribe}
+                                    value={modeTranscribe}
+                                    onChange={(event) => {
+                                        setModeTranscribe(event.target.value);
+                                        localStorage.setItem('langTranscribe', event.target.value);
+
+                                        //console.log(event.target.value);
+                                        //console.log('transcribed view'+localStorage.getItem('transcribed-view'));
+                                        setTranscribe(localStorage.getItem('langTranscribe'));
+                                    }}
+                                >
+                                    {/* { console.log("transcribe "+localStorage.getItem('langTranscribe'))} */}
+                                    {/*  <option key="please-select" value="please-select" >Please Select</option> */}
+                                    {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
+                                        (item) => (
+                                            /*item.key !== 'en' && ( */
                                             <option key={item.key} value={item.key}>
                                                 {item.name}
                                             </option>
-                                      /*  ), */
-                                )}
-                                
-                            </select>
-
-                            <input type="radio" id="asr" name="asr" value="ASR" />
-                            <label for="asr" style={{color: "black"}}>ASR</label><br />
-                            <input type="radio" id="original" name="original" value="OriginalSource" />
-                            <label for="original" style={{color: "black"}}>Original Source</label> <br />
-
-
-                             <div className="btn">
-                                <Translate value="TRANSCRIBE" />
-                            </div>
-                            <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
-                            
-              </ReactModal>
-       
-            </div>
-                
-            </Style>
-          );
+                                        ),
+                                        /*  ), */
+                                    )}
+                                </select>
+                                <input type="radio" id="asr" name="asr" value="ASR" />
+                                <label for="asr" style={{ color: 'black' }}>
+                                    ASR
+                                </label>
+                                <br />
+                                <input type="radio" id="original" name="original" value="OriginalSource" />
+                                <label for="original" style={{ color: 'black' }}>
+                                    Original Source
+                                </label>{' '}
+                                <br />
+                                <div className="btn">
+                                    <Translate value="TRANSCRIBE" />
+                                </div>
+                                <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
+                            </ReactModal>
+                        </div>
+                    </Style>
+                );
         }
-      }
+    }
 
+    class ExportSubtitleModal extends React.Component {
+        constructor() {
+            super();
+            this.state = {
+                showExportModal: false,
+                value: '',
+            };
 
-      class ExportModal extends React.Component {
-        constructor () {
-          super();
-          this.state = {
-            showExportModal: false,
-            value: ''
-
-          };
-          
-          this.handleOpenExportModal = this.handleOpenExportModal.bind(this);
-          this.handleCloseExportModal = this.handleCloseExportModal.bind(this);
+            this.handleOpenExportModal = this.handleOpenExportModal.bind(this);
+            this.handleCloseExportModal = this.handleCloseExportModal.bind(this);
         }
-        
-        handleOpenExportModal () {
-          this.setState({ showExportModal: true });
+
+        handleOpenExportModal() {
+            this.setState({ showExportModal: true });
         }
-        
-        handleCloseExportModal () {
-          this.setState({ showExportModal: false });
+
+        handleCloseExportModal() {
+            this.setState({ showExportModal: false });
         }
 
         setSubtitleFormat(event) {
             console.log(event.target.value);
-            
-          }
-        
-        render () {
-          return (
-            <Style>
-            <div>
-            <div className="export btn" onClick={this.handleOpenExportModal}>
-                        <Translate value="Export Subtitles" />
-                </div>
-              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button>  */}
-              
-              <ReactModal 
-                 isOpen={this.state.showExportModal}
-                 style={{
-                    overlay: {
-                        position: 'absolute',
-                        top: '0',
-                        background: 'none'
-                    },
-                    content: {
-                      position: 'absolute',
-                      
-                      top: '150px',
-                      left: '30%',
-                      bottom: '40px',
-                      width: '40%',
-                      height: '40%',
-                      border: '1px solid #ccc',
-                      background: '#fff',
-                      overflow: 'auto',
-                      WebkitOverflowScrolling: 'touch',
-                      borderRadius: '20px',
-                      outline: 'none',
-                      padding: '20px',
-                      zIndex: '1000',
-                    },
-                  }}
-              >
-                     <div>
-                        <div>
-                                <div>
-                                {/* <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Your Subtitles</b>
-                    </p> */}
-
-                    {/* <div onChange={this.setSubtitleType.bind(this)}>
-                        <input type="radio" value="exportTranslationSubs" name="subtitleType"/> Export Translation Subtitles
-                        <input type="radio" value="exportTranscriptionSubs" name="subtitleType"/> Export Transcription Subtitles
-                    </div> */}
-                     <div className="export">
-                     {/* <input type="radio" value="ass" name="exportSubs" />Export ASS */}
-                        {/* <div className="btn" onClick={() => downloadSub('ass')}>
-                            <Translate value="EXPORT_ASS" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSub('srt')}>
-                            <Translate value="EXPORT_SRT" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSub('vtt')}>
-                            <Translate value="EXPORT_VTT" />
-                        </div> */}
-                        <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
-                                <TabList>
-                                <Tab>Export Transcription Subtitles</Tab>
-                                <Tab>Export Translation Subtitles</Tab>
-                                </TabList>
-
-                                <TabPanel>
-                                <div>
-                                    <h4>Select Format</h4>
-                                <div onChange={this.setSubtitleFormat.bind(this)}>
-                                <input type="radio" value="ass" name="exportSubs"/><label style={{padding: '5px', color:"black", marginRight: '10px'}}>ASS</label>
-                                <input type="radio" value="srt" name="exportSubs"/><label style={{padding: '5px', color:"black", marginRight: '10px'}}>SRT</label>
-                                <input type="radio" value="vtt" name="exportSubs"/><label style={{padding: '5px', color:"black", marginRight: '10px'}}>VTT</label>
-                                </div>
-                                    </div>
-                                    {/* <button>Export</button> */}
-                                    {/*onClick={downloadSubReference('ass')} */}
-                                </TabPanel>
-
-                                <TabPanel>
-                                   
-                                </TabPanel>
-                            </Tabs>
-                    </div>
-                    {/* <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Reference Subtitles</b>
-                    </p>
-                    <div className="export">
-                        <div className="btn" onClick={() => downloadSubReference('ass')}>
-                            <Translate value="EXPORT_ASS" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSubReference('srt')}>
-                            <Translate value="EXPORT_SRT" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSubReference('vtt')}>
-                            <Translate value="EXPORT_VTT" />
-                        </div>
-                    </div> */}
-                                    </div>
-
-                                   
-                        </div>    
-                        <div>
-                        <button>Export</button>
-                            <button onClick={this.handleCloseExportModal}>Cancel</button>
-                        </div>
-                        
-                    </div>
-
-                 
-                     
-              </ReactModal>
-       
-            </div>
-                
-            </Style>
-          );
         }
-      }
 
+        render() {
+            return (<>
+                <Style>
+                    <div className="export-btn-main">
+                        <div className="export export-btn" onClick={this.handleOpenExportModal}>
+                            <Translate value="Export Subtitles" />
+                        </div>
+                    </div>
+                </Style>
 
-      const handleFullScreenMode=(event)=>{
-        var el = document.getElementById("full-screenVideo");
+                <ExportModal 
+                    show={this.state.showExportModal} 
+                    onHide={this.handleCloseExportModal}
+                />
+            </>);
+        }
+    }
+
+    const handleFullScreenMode = (event) => {
+        var el = document.getElementById('full-screenVideo');
         if (el.requestFullscreen) {
-          el.requestFullscreen();
+            el.requestFullscreen();
         } else if (el.msRequestFullscreen) {
-          el.msRequestFullscreen();
+            el.msRequestFullscreen();
         } else if (el.mozRequestFullScreen) {
-          el.mozRequestFullScreen();
+            el.mozRequestFullScreen();
         } else if (el.webkitRequestFullscreen) {
-          el.webkitRequestFullscreen(); 
+            el.webkitRequestFullscreen();
         }
-    console.log("fullscreenmode")
-    
-      }
+        console.log('fullscreenmode');
+    };
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
-         <OpenModal />
-         <ExportModal />
-         {/* <TranscriptionModal /> */}
+            <Links />
+            <OpenModal />
+            <ExportSubtitleModal />
+            {/* <TranscriptionModal /> */}
             {/* <div className={`tool-button`}>
                 <div
                     className="icon"
@@ -1556,15 +1411,8 @@ export default function Header({
                     />
                 </div>
             </div> */}
-<Links />
-            <div className="top">
-            
 
-
-
-                
-
-
+            <Style>
                 {/* <div className="import ">
                     <div className="btn">
                         <Translate value="OPEN_VIDEO" />
@@ -1574,21 +1422,22 @@ export default function Header({
                         <Translate value="OPEN_SUB" />
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
                     </div>
-                </div> */}
+                    </div> */}
                 {/* <div className="youtube-link ">
-                    <textarea
-                        className="youtube-textarea"
-                        placeholder="Enter YouTube Link Here"
-                        value={youtubeURL}
-                        onChange={handleChange}
-                        // onKeyPress={(e) => }
-                    />
-                    <div className="btn" onClick={onYouTubeChange}>
-                        <Translate value="Fetch Video" />
-                    </div>
-                </div> */}
-                <div className="operate">
-                    {/* <div
+                        <textarea
+                            className="youtube-textarea"
+                            placeholder="Enter YouTube Link Here"
+                            value={youtubeURL}
+                            onChange={handleChange}
+                            // onKeyPress={(e) => }
+                        />
+                        <div className="btn" onClick={onYouTubeChange}>
+                            <Translate value="Fetch Video" />
+                        </div>
+                    </div> */}
+
+                {/* <div className="operate"> */}
+                {/* <div
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
@@ -1603,36 +1452,34 @@ export default function Header({
                                 window.location.reload();
                             }
                         }}
-                    >
-                        <Translate value="CLEAR" />
-                    </div>
-                    <div className="btn" onClick={undoSubs}>
-                        <Translate value="UNDO" />
-                    </div>
-                </div>
-                <div className="operate">
-                    <div className="btn" onClick={clearSubsHandler}>
-                        <Translate value="Clear Subtitles" />
-                    </div> */}
-                </div>
+                            >
+                                <Translate value="CLEAR" />
+                            </div>
+                            <div className="btn" onClick={undoSubs}>
+                                <Translate value="UNDO" />
+                            </div>
+                        </div>
+                         <div className="operate">
+                        <div className="btn" onClick={clearSubsHandler}>
+                            <Translate value="Clear Subtitles" />
+                        </div> */}
+                {/* </div> */}
 
                 <div
                     className={`
-                        ${isSetVideo ? 'configuration' : 'hide-config'}
-                `}
+                            ${isSetVideo ? 'configuration' : 'hide-config'}
+                        `}
                 >
-                    <p className="configuration-heading">
-                        {/* <b>Configuration Options</b> */}
-                    </p>
+                    {/* <p className="configuration-heading"><b>Configuration Options</b></p> */}
                     <div className="configuration-options">
                         <div
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - same');
                                 const langTranscribe = localStorage.getItem('lang');
-                              //  console.log("lang " + langTranscribe);
-                                 setConfiguration('Same Language Subtitling');
-                                 setIsSetConfiguration(true);
+                                //  console.log("lang " + langTranscribe);
+                                setConfiguration('Same Language Subtitling');
+                                setIsSetConfiguration(true);
                             }}
                         >
                             <Translate value="SAME_LANGUAGE" />
@@ -1641,7 +1488,7 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - basic');
-                               // this.handleOpenTranscriptionModal();
+                                // this.handleOpenTranscriptionModal();
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                             }}
@@ -1659,13 +1506,15 @@ export default function Header({
                         >
                             <Translate value="SIGN_LANGUAGE" />
                         </div> */}
-                        
                     </div>
                 </div>
-                
+
                 <div className="save-transcript">
-                            <h4>{ <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>Save 💾</span>}</h4>
-                        </div>
+                    <button className="button-layout" onClick={saveTranscript}>
+                        Save 💾
+                    </button>
+                </div>
+
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
                     {/* {configuration === 'Subtitling' && (
                         <>
@@ -1685,7 +1534,7 @@ export default function Header({
                                 </select>
                             </div>
                         </>
-                    )} */}
+                        )} */}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">
@@ -1723,62 +1572,72 @@ export default function Header({
                     </div> */}
                 </div>
 
-                <div className="">
-                    {/* <BottomLinks /> */}
-                </div>
+                <div className="">{/* <BottomLinks /> */}</div>
 
                 {/* <div className="translate">
-                    <select
-                        value={translate}
-                        onChange={(event) => {
-                            setTranslate(event.target.value);
-                            localStorage.setItem('lang', event.target.value);
-                        }}
-                    >
-                        {(languages[language] || languages.en).map((item) => (
-                            <option key={item.key} value={item.key}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                    <div className="btn" onClick={onTranslate}>
-                        <Translate value="TRANSLATE" />
-                    </div>
-                </div> */}
-            
+                        <select
+                            value={translate}
+                            onChange={(event) => {
+                                setTranslate(event.target.value);
+                                localStorage.setItem('lang', event.target.value);
+                            }}
+                        >
+                            {(languages[language] || languages.en).map((item) => (
+                                <option key={item.key} value={item.key}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="btn" onClick={onTranslate}>
+                            <Translate value="TRANSLATE" />
+                        </div>
+                    </div> */}
+
                 <div className="hotkey">
-                    
-                    <span>
+                    <span className="button-layout">
                         <Translate value="HOTKEY_01" />
                     </span>
-                    <span>
+                    <span className="button-layout">
                         <Translate value="HOTKEY_02" />
                     </span>
                 </div>
-            </div>
+            </Style>
+
             <div className="operate">
-                <div className="btn"  onClick={handleFullScreenMode} >
+                <div className="btn" onClick={handleFullScreenMode}>
                     <Translate value="Full screen mode" />
                 </div>
             </div>
-            <LoginForm showLogin={showLogin} setShowLogin={setShowLogin}/>
-                <div style={{zIndex: 200}}>
-                {localStorage.getItem("user_id") ? 
-                        <div>
-                            <div className="user-details">
-                                <div className='user-initials'>{localStorage.getItem("first_name")?.charAt(0).toUpperCase()}{localStorage.getItem("last_name")?.charAt(0).toUpperCase()}</div>
-                                <span className='user-name'>{localStorage.getItem("username")}</span>
+
+            <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
+            <div className="signin-btn" style={{ zIndex: 200 }}>
+                {localStorage.getItem('user_id') ? (
+                    <div class="dropdown">
+                        <div className="user-details">
+                            <div className="user-initials">
+                                {localStorage.getItem('first_name')?.charAt(0).toUpperCase()}
+                                {localStorage.getItem('last_name')?.charAt(0).toUpperCase()}
                             </div>
-                            <ul className='user-menu'>
-                                <li onClick={() => {localStorage.clear(); window.location.reload()}}>Logout</li>
-                            </ul>
-                        </div> 
-                        : 
-                        <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
-                            Sign In
-                        </span>}
-                </div>
-               
+                            <span className="user-name">{localStorage.getItem('username')}</span>
+                        </div>
+                        <div class="user-menu">
+                            <a
+                                href="#"
+                                onClick={() => {
+                                    localStorage.clear();
+                                    window.location.reload();
+                                }}
+                            >
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                ) : (
+                    <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                        Sign In
+                    </span>
+                )}
+            </div>
         </Style>
     );
 }

@@ -83,7 +83,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
     }
 
   return (
-    <div className={`${showLogin ? "" : "active"} show`}>
+    <div className={`${showLogin ? "" : "login-active"} login-show`}>
       <div className="login-form">
         <div className="form-box solid">
           <button type="button" className="close-btn" onClick={handleClose}>x</button>

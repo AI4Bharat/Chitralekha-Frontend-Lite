@@ -27,7 +27,7 @@ const FindAndReplace = ({
     }
 
   return (
-    <div className={`${showFindAndReplace ? "" : "active"} show`}>
+    <div className={`${showFindAndReplace ? "" : "login-active"} login-show`}>
       <div className="login-form">
         <div className="form-box solid">
           <button type="button" className="close-btn" onClick={handleClose}>x</button>

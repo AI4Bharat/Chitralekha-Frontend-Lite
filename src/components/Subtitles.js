@@ -22,6 +22,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 // import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 const Style = styled.div`
+    position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
     z-index: 200;
@@ -100,7 +101,7 @@ const Style = styled.div`
         }
 
         .ReactVirtualized__Table__row {
-            overflow: hidden !important;
+            overflow: visible !important;
             
             .item {
                 height: 100%;
@@ -149,7 +150,7 @@ const Style = styled.div`
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
                     }
-
+                    
                     &.found {
                         background-color: #FFFFCC;
                         color: #000;

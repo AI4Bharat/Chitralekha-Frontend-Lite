@@ -643,7 +643,7 @@ export default function SameLanguageSubtitles({
                                 <p className="select-heading">
                                     <b>Transcript Source</b>
                                 </p>
-                                <select
+                                {/* <select
                                     value={transcriptSource}
                                     onChange={(e) => {
                                         console.log(e.target.value);
@@ -653,8 +653,8 @@ export default function SameLanguageSubtitles({
                                     }}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
-                                    {/* <option value="Youtube">Youtube</option> */}
-                                </select>
+                                     <option value="Youtube">Youtube</option> 
+                                </select> */}
                             </div>
                         </>)}
 

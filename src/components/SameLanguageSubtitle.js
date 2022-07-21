@@ -210,8 +210,7 @@ export default function SameLanguageSubtitles({
     const APIStatus = useSelector(state => state.apiStatus);
     const waiting = useRef(false);
 
-    const saveTranscript = useCallback(() => {
-        const saveHelper = async () => {
+    const saveTranscript = useCallback(async () => {
             if (subtitle?.length > 0) {
                 // setLoading(t('SAVING'));
                 const payload = {
@@ -239,9 +238,7 @@ export default function SameLanguageSubtitles({
                 }
                 setLoading('');
             }
-        }
-        saveHelper();
-    }, [subtitle]);
+    }, [subtitle, setLoading]);
 
 
     const fetchTranscriptionLanguages = () => {
@@ -424,7 +421,7 @@ export default function SameLanguageSubtitles({
     }, [APIStatus]);
 
     useEffect(() => {
-        if (transcribeReq && GeneratedTranscript.data?.output) {
+        if (transcribeReq.current && GeneratedTranscript.data?.output) {
             transcribeReq.current = false;
             localStorage.setItem("transcript_id", GeneratedTranscript.id);
             parseSubtitles(GeneratedTranscript.data.output);

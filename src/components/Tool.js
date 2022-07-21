@@ -609,6 +609,92 @@ export default function Header({
     //     const transcriptObj = new FetchTranscriptAPI();
     // }
 
+    // useEffect(() => {
+    //     if (VideoDetails.direct_video_url) {
+    //         localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
+    //         localStorage.setItem('videoId', VideoDetails.video.id);
+    //         localStorage.setItem('audioSrc', VideoDetails.direct_audio_url);
+    //         localStorage.setItem('youtubeURL', VideoDetails.video.url);
+    //         localStorage.setItem('isVideoPresent', true);
+    //         setIsSetVideo(true);
+    //         setLoading('');
+    //         player.src = VideoDetails.direct_video_url;
+    //         player.currentTime = 0;
+    //         clearSubs();
+    //         if (VideoDetails.subtitles) {
+    //             fetch(VideoDetails.subtitles)
+    //             .then((subtext) => {
+    //                 return subtext.text();
+    //             })
+    //             .then((subtext) => {
+    //                 const suburl = vtt2url(subtext);
+    //                 url2sub(suburl).then((urlsub) => {
+    //                     setSubtitle(urlsub);
+    //                     setSubtitleEnglish(urlsub);
+    //                     localStorage.setItem('subtitle', JSON.stringify(urlsub));
+    //                     localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+    //                 });
+    //             })
+    //             .catch((err) => {
+    //                 console.log(err);
+    //             });
+    //         }
+    //     }
+    //     // if (resp.subtitles) {
+    //     //     const sub = resp.subtitles;
+
+    //     //     fetch(sub)
+    //     //         .then((subtext) => {
+    //     //             return subtext.text();
+    //     //         })
+    //     //         .then((subtext) => {
+    //     //            // console.log(subtext);
+    //     //             player.currentTime = 0;
+    //     //             clearSubs();
+    //     //             const suburl = vtt2url(subtext);
+    //     //             url2sub(suburl).then((urlsub) => {
+    //     //                 setSubtitle(urlsub);
+    //     //                 localStorage.setItem('subtitle', JSON.stringify(urlsub));
+    //     //             });
+    //     //         })
+    //     //         .catch((err) => {
+    //     //             console.log(err);
+    //     //         });
+    //     //     }
+    // // } else {
+    //     //             // // Auto-transcribe
+    //     //             // const data = {
+    //     //             //     url: youtubeURL,
+    //     //             //     vad_level: 2,
+    //     //             //     chunk_size: 10,
+    //     //             //     language: 'en',
+    //     //             // };
+
+    //     //             // fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
+    //     //             //     method: 'POST',
+    //     //             //     headers: { 'Content-Type': 'application/json' },
+    //     //             //     body: JSON.stringify(data),
+    //     //             // })
+    //     //             //     .then((resp) => {
+    //     //             //         return resp.json();
+    //     //             //     })
+    //     //             //     .then((resp) => {
+    //     //             //         console.log(resp.output);
+    //     //             //         player.currentTime = 0;
+    //     //             //         clearSubs();
+    //     //             //         const suburl = vtt2url(resp.output);
+    //     //             //         url2sub(suburl).then((urlsub) => {
+    //     //             //             setSubtitle(urlsub);
+    //     //             //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
+    //     //             //         });
+    //     //             //     })
+    //     //             //     .catch((err) => {
+    //     //             //         console.log(err);
+    //     //             //     });
+    //     //         }
+    //     //     });
+    // }, [VideoDetails]);
+
     useEffect(() => {
         if (VideoDetails.direct_video_url) {
             localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
@@ -621,23 +707,29 @@ export default function Header({
             player.src = VideoDetails.direct_video_url;
             player.currentTime = 0;
             clearSubs();
-            if (VideoDetails.subtitles) {
-                fetch(VideoDetails.subtitles)
-                .then((subtext) => {
-                    return subtext.text();
-                })
-                .then((subtext) => {
-                    const suburl = vtt2url(subtext);
-                    url2sub(suburl).then((urlsub) => {
-                        setSubtitle(urlsub);
-                        setSubtitleEnglish(urlsub);
-                        localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                        localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                    });
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            if (VideoDetails.transcript_id) {
+                localStorage.setItem('transcript_id', VideoDetails.transcript_id);
+            
+                // setSubtitleEnglish(formatSub(VideoDetails.subtitles));
+                // localStorage.setItem('subtitleEnglish', JSON.stringify(VideoDetails.subtitles));
+                //setTranscriptSource('AI4Bharat');
+
+                // fetch(VideoDetails.subtitles)
+                // .then((subtext) => {
+                //     return subtext.text();
+                // })
+                // .then((subtext) => {
+                //     const suburl = vtt2url(subtext);
+                //     url2sub(suburl).then((urlsub) => {
+                //         setSubtitle(urlsub);
+                //         setSubtitleEnglish(urlsub);
+                //         localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                //         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+                //     });
+                // })
+                // .catch((err) => {
+                //     console.log(err);
+                // });
             }
         }
         // if (resp.subtitles) {

@@ -195,8 +195,9 @@ export default function SameLanguageSubtitles({
     const dispatch = useDispatch();
     // const [translate, setTranslate] = useState(null);
     const TRANSCRIPT_TYPES = {
-        'Youtube': 'original_source',
-        'AI4Bharat': 'human_edited'
+        'Youtube': 'uos',
+        'AI4Bharat': 'umg',
+        'Custom': 'mc'
     }
     
     //change
@@ -402,6 +403,7 @@ export default function SameLanguageSubtitles({
             localStorage.setItem("transcript_id", Transcript.id);
             parseSubtitles(Transcript.data.output);
         } else if (transcribeReq && APIStatus?.error) {
+            console.log(APIStatus.error, "errror");
             if (transcriptSource === 'AI4Bharat') {
                 generateTranscription();
             } else {

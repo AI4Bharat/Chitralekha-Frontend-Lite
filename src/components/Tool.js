@@ -873,6 +873,7 @@ export default function Header({
                     file2sub(file)
                         .then((res) => {
                             clearSubs();
+                            localStorage.removeItem('transcript_id');
                             setSubtitle(res);
                             setSubtitleEnglish(res); //added setSubtitleEnglish
                         })
@@ -894,6 +895,7 @@ export default function Header({
     );
 
     const onInputClick = useCallback((event) => {
+        setTranscriptSource('Custom');
         event.target.value = '';
     }, []);
 
@@ -1129,6 +1131,7 @@ export default function Header({
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
                                     <option value="Youtube">Youtube</option>
+                                    <option value="Custom">Custom</option>
                                 </select>
                             </div>
                         </>)}

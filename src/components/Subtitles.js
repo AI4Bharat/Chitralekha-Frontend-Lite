@@ -287,12 +287,12 @@ export default function Subtitles({
     useEffect(() => {
         if (localStorage.getItem('langTranslate')) {
             setTranslate(localStorage.getItem('langTranslate')); //changes in both
-            setModeTranslate(localStorage.getItem('langTranslate'));
+            //setModeTranslate(localStorage.getItem('langTranslate'));
         } else {
             localStorage.setItem('langTranslate', 'en') //added 
             //setTranslate('en');
             setTranslate(localStorage.getItem('langTranslate'));
-            setModeTranslate(localStorage.getItem('langTranslate'));
+           // setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
 
@@ -339,7 +339,7 @@ export default function Subtitles({
                 setLanguageAvailable(langArray);
                 localStorage.setItem('langTranslate', langArray[0].key);
                 setTranslate(langArray[0].key);
-                setModeTranslate(langArray[0].key);
+                //setModeTranslate(langArray[0].key);
             }
         // } else {
         //     setLanguageAvailable(languages);

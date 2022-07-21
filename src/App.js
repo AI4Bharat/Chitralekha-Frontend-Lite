@@ -82,7 +82,7 @@ export default function App({ defaultLang }) {
     // const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
-    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
+   // const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
     const [showFindAndReplace, setShowFindAndReplace] = useState(false);
     const [find, setFind] = useState('');
     const [replace, setReplace] = useState('');
@@ -587,8 +587,8 @@ export default function App({ defaultLang }) {
         // setTranslationApi,
         isTranslateClicked,
         setIsTranslateClicked,
-        transcriptSource,
-        setTranscriptSource,
+      //  transcriptSource,
+     //  setTranscriptSource,
         showFindAndReplace,
         setShowFindAndReplace,
         find,
@@ -855,8 +855,8 @@ export default function App({ defaultLang }) {
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             updateSubOriginal={props.updateSubTranslate}
                             // translationApi={props.translationApi}
-                            transcriptSource={props.transcriptSource}
-                            setTranscriptSource={props.setTranscriptSource}
+                          //  transcriptSource={props.transcriptSource}
+                           // setTranscriptSource={props.setTranscriptSource}
                             found={props.found}
                             currentFound={props.currentFound}
                         />

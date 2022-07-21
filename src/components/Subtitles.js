@@ -337,7 +337,7 @@ export default function Subtitles({
                     langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
                 }
                 setLanguageAvailable(langArray);
-                localStorage.setItem('langTranslate', langArray[0].key);
+              //  localStorage.setItem('langTranslate', langArray[0].key); //commented out here
                 setTranslate(langArray[0].key);
                 //setModeTranslate(langArray[0].key);
             }
@@ -433,6 +433,7 @@ export default function Subtitles({
     }
 
     const getTranslations = () => {
+        console.log('localstorage get '+localStorage.getItem("langTranslate"));
         const translationObj = new FetchTranslationAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranslate"), true);
         dispatch(APITransport(translationObj));
     }
@@ -689,6 +690,7 @@ export default function Subtitles({
                                 onChange={(event) => {
                                     setTranslate(event.target.value);
                                     setModeTranslate(event.target.value); //new
+                                    
                                    // localStorage.setItem('lang', event.target.value); //maybe remove later
                                     localStorage.setItem('langTranslate', event.target.value); 
                                     // console.log('in select');

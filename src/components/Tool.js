@@ -437,8 +437,8 @@ export default function Header({
     setIsSetConfiguration,
     isSetVideo,
     setIsSetVideo,
-    transcriptSource,
-    setTranscriptSource,
+   // transcriptSource,
+  //  setTranscriptSource,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -448,6 +448,7 @@ export default function Header({
     const dispatch = useDispatch();
     const VideoDetails = useSelector(state => state.getVideoDetails.data);
     // const [isSetVideo, setIsSetVideo] = useState(false);
+    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -1209,8 +1210,9 @@ export default function Header({
                                 <select
                                     value={transcriptSource}
                                     onChange={(e) => {
-                                        console.log(e.target.value);
                                         setTranscriptSource(e.target.value);
+                                        console.log('target value '+e.target.value);
+                                        console.log(transcriptSource);
                                         clearSubsEnglish();
                                         player?.pause();
                                     }}

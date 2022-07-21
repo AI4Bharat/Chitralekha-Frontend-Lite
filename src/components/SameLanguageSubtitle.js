@@ -188,6 +188,7 @@ export default function SameLanguageSubtitles({
     configuration,
     setSubtitleEnglish,
     translationApi,
+    transcriptSource,
     found,
     currentFound,
 }) {
@@ -426,6 +427,8 @@ export default function SameLanguageSubtitles({
     const onTranscribe = useCallback(() => {
         // console.log(localStorage.getItem('youtubeURL'));
         // const lang = localStorage.getItem('langTranscribe');
+       // console.log('transcript source '+transcriptSource);
+
         setLoading(t('TRANSCRIBING'));
         setTranscribeReq(true);
         fetchTranscription();

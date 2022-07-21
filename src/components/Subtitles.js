@@ -99,7 +99,7 @@ const Style = styled.div`
         }
 
         .ReactVirtualized__Table__row {
-            overflow: hidden !important;
+            overflow: visible !important;
             
             .item {
                 height: 100%;

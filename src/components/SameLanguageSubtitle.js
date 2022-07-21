@@ -202,7 +202,7 @@ export default function SameLanguageSubtitles({
     
     //change
     const [transcribe, setTranscribe] = useState(null);
-    const [transcribeReq, setTranscribeReq] = useState(false);
+    const transcribeReq = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranscriptLanguages.data);
     const Transcript = useSelector(state => state.fetchTranscript.data);
@@ -404,24 +404,28 @@ export default function SameLanguageSubtitles({
 
     useEffect(() => {
         console.log(Transcript, "transcript");
-        if (transcribeReq && Transcript.data?.output) {
-            setTranscribeReq(false);
+        if (transcribeReq.current && Transcript.data?.output) {
+            transcribeReq.current = false;
             localStorage.setItem("transcript_id", Transcript.id);
             parseSubtitles(Transcript.data.output);
-        } else if (transcribeReq && APIStatus?.error) {
+        }
+    }, [Transcript]);
+
+    useEffect(() => {
+        if (transcribeReq.current && APIStatus?.error) {
             console.log(APIStatus.error, "errror");
             if (transcriptSource === 'AI4Bharat') {
                 generateTranscription();
             } else {
-                setTranscribeReq(false);
+                transcribeReq.current = false;
                 setLoading('');
             }
         }
-    }, [Transcript, transcribeReq, APIStatus]);
+    }, [APIStatus]);
 
     useEffect(() => {
         if (transcribeReq && GeneratedTranscript.data?.output) {
-            setTranscribeReq(false);
+            transcribeReq.current = false;
             localStorage.setItem("transcript_id", GeneratedTranscript.id);
             parseSubtitles(GeneratedTranscript.data.output);
         }
@@ -435,7 +439,7 @@ export default function SameLanguageSubtitles({
         // console.log(localStorage.getItem('youtubeURL'));
         // const lang = localStorage.getItem('langTranscribe');
         setLoading(t('TRANSCRIBING'));
-        setTranscribeReq(true);
+        transcribeReq.current = true;
         fetchTranscription();
         // const youtubeURL = localStorage.getItem('youtubeURL');
         //console.log("localstorage transcribe get item " + localStorage.getItem('lang'));

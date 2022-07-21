@@ -249,10 +249,11 @@ export default function SameLanguageSubtitles({
     };
 
     const fetchTranscription = () => {
+        const transcriptionType = localStorage.getItem('transcriptionSource') === 'Youtube'?'original_source':'machine_generated'
         const transcriptObj = new FetchTranscriptAPI(
             localStorage.getItem('videoId'),
             localStorage.getItem('langTranscribe'),
-            true,
+            transcriptionType,
         );
         dispatch(APITransport(transcriptObj));
     };
@@ -411,7 +412,7 @@ export default function SameLanguageSubtitles({
         } else if (transcribeReq && APIStatus?.error) {
             generateTranscription();
         }
-    }, [Transcript, transcribeReq, APIStatus]);
+    }, [Transcript]);
 
     useEffect(() => {
         if (transcribeReq && GeneratedTranscript.data?.output) {
@@ -424,7 +425,7 @@ export default function SameLanguageSubtitles({
     console.log(GeneratedTranscript, 'generate');
 
     //
-    const onTranscribe = useCallback(() => {
+    const onTranscribe = () => {
         // console.log(localStorage.getItem('youtubeURL'));
         // const lang = localStorage.getItem('langTranscribe');
        // console.log('transcript source '+transcriptSource);
@@ -468,7 +469,7 @@ export default function SameLanguageSubtitles({
         //             level: 'error',
         //         });
         //     });
-    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish]);
+    };
 
     // useEffect(() => {
     //     if (localStorage.getItem('lang')) {

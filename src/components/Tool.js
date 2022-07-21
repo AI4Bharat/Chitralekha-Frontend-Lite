@@ -448,7 +448,7 @@ export default function Header({
     const dispatch = useDispatch();
     const VideoDetails = useSelector(state => state.getVideoDetails.data);
     // const [isSetVideo, setIsSetVideo] = useState(false);
-    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
+    const transcriptSource = localStorage.getItem('transcriptionSource');
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -1055,6 +1055,10 @@ export default function Header({
         }
     }, [setIsSetVideo, isSetVideo]);
 
+    useEffect(()=>{
+        localStorage.setItem('transcriptionSource','AI4Bharat')
+    },[])
+
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
             <div className={`tool-button`}>
@@ -1210,9 +1214,9 @@ export default function Header({
                                 <select
                                     value={transcriptSource}
                                     onChange={(e) => {
-                                        setTranscriptSource(e.target.value);
-                                        console.log('target value '+e.target.value);
-                                        console.log(transcriptSource);
+                                        localStorage.setItem('transcriptionSource',e.target.value)
+                                       localStorage.setItem('subtitleEnglish',null);
+                                       localStorage.setItem('subtitle',null);
                                         clearSubsEnglish();
                                         player?.pause();
                                     }}

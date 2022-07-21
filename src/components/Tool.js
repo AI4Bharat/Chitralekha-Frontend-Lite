@@ -1108,7 +1108,7 @@ export default function Header({
                             </div>
                         </>
                     )} */}
-                    {/* {configuration === 'Same Language Subtitling' && (
+                    {configuration === 'Same Language Subtitling' && (
                         <>
                             <div className="select-translation-api-container">
                                 <p className="select-heading">
@@ -1127,7 +1127,7 @@ export default function Header({
                                     <option value="Youtube">Youtube</option>
                                 </select>
                             </div>
-                        </>)} */}
+                        </>)}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">

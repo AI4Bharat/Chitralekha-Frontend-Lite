@@ -413,6 +413,9 @@ export default function SameLanguageSubtitles({
             console.log(APIStatus.error, "errror");
             if (transcriptSource === 'AI4Bharat') {
                 generateTranscription();
+            } else if (transcriptSource === 'Youtube') {
+                const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), 'os', true);
+                dispatch(APITransport(transcriptObj));
             } else {
                 transcribeReq.current = false;
                 setLoading('');

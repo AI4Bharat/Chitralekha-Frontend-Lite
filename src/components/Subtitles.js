@@ -99,7 +99,7 @@ const Style = styled.div`
         }
 
         .ReactVirtualized__Table__row {
-            overflow: hidden !important;
+            overflow: visible !important;
             
             .item {
                 height: 100%;
@@ -240,7 +240,7 @@ export default function Subtitles({
     const Translations = useSelector(state => state.fetchTranslation.data);
     const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
     const APIStatus = useSelector(state => state.apiStatus);
-    const waiting = useRef(false);
+    const [waiting, setWaiting] = useState(false);
 
     const fetchTranslationLanguages = () => {
         const langObj = new GetTranslationLanguagesAPI();
@@ -320,14 +320,19 @@ export default function Subtitles({
     }, []);
 
     useEffect(() => {
-        if (subtitle?.length > 0 && !waiting.current) {
-            waiting.current = true;
+        if (subtitle?.length > 0 && !waiting) {
+            setWaiting(true);
             setTimeout(() => {
-                waiting.current = false;
-                saveTranslation();
+                setWaiting(false);
             }, 10000);
         }
     }, [subtitle]);
+
+    useEffect(() => {
+        if (!waiting) {
+            saveTranslation();
+        }
+    }, [waiting]);
 
     useEffect(() => {
         // if (translationApi === "AI4Bharat") {

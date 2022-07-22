@@ -190,6 +190,7 @@ export default function SameLanguageSubtitles({
     setSubtitleEnglish,
     translationApi,
     transcriptSource,
+    setTranscriptSource,
     found,
     currentFound,
 }) {
@@ -668,14 +669,14 @@ export default function SameLanguageSubtitles({
                                     value={transcriptSource}
                                     onChange={(e) => {
                                         console.log(e.target.value);
-                                       // setTranscriptSource(e.target.value);
-                                        clearSubsEnglish();
+                                        setTranscriptSource(e.target.value);
+                                        //clearSubsEnglish();
                                         player?.pause();
                                     }}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
                                      <option value="Youtube">Youtube</option> 
-                                     <option value="Youtube">Custom</option> 
+                                     <option value="Custom">Custom</option> 
                                 </select>
                             </div>
                         </>)}

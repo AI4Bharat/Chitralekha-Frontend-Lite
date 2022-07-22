@@ -197,7 +197,7 @@ export default function SameLanguageSubtitles({
     const TRANSCRIPT_TYPES = {
         'Youtube': 'uos',
         'AI4Bharat': 'umg',
-        'Custom': 'mc'
+        'Manual Upload': 'mc'
     }
     
     //change

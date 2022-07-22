@@ -16,7 +16,7 @@ const ExportModal = (props) => {
 
             <Modal.Body>
                 <Tabs defaultActiveKey="Transcription" id="fill-tab-example" className="mb-3" fill>
-                    <Tab eventKey="Transcription" title="Export Transcription Subtitles">
+                    <Tab eventKey="Transcription" title="Transcription">
                         <Form>
                             {['ass', 'srt', 'vtt'].map((value) => ( 
                                 <div key={`inline-${value}`} className="mb-3">
@@ -37,7 +37,7 @@ const ExportModal = (props) => {
                         </Form>
                         <Button onClick={() => props.downloadSubReference(radioTranscribeSelected)}>Export</Button>
                     </Tab>
-                    <Tab eventKey="Translation" title="Export Translation Subtitles">
+                    <Tab eventKey="Translation" title="Translation">
                     <Form>
                             {['ass', 'srt', 'vtt'].map((value) => ( 
                                 <div key={`inline-${value}`} className="mb-3">

@@ -1231,7 +1231,7 @@ export default function Header({
                     <Style>
                         <div className="export-btn-main">
                             <div className="export export-btn" onClick={this.handleOpenExportModal}>
-                                <Translate value="Export Subtitles" />
+                                <Translate value="Export" />
                             </div>
                         </div>
                     </Style>
@@ -1493,14 +1493,14 @@ export default function Header({
                         </div>
                     </div> */}
 
-                <div className="hotkey">
+                {/* <div className="hotkey">
                     <span className="button-layout">
                         <Translate value="HOTKEY_01" />
                     </span>
                     <span className="button-layout">
                         <Translate value="HOTKEY_02" />
                     </span>
-                </div>
+                </div> */}
             </Style>
 
             <div className="operate">

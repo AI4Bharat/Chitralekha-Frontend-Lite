@@ -203,6 +203,7 @@ export default function SameLanguageSubtitles({
     //change
     const [transcribe, setTranscribe] = useState(null);
     const transcribeReq = useRef(false);
+    const fetchError = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranscriptLanguages.data);
     const Transcript = useSelector(state => state.fetchTranscript.data);
@@ -251,6 +252,7 @@ export default function SameLanguageSubtitles({
         console.log(TRANSCRIPT_TYPES[transcriptSource], "transcriptSource");
         const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), TRANSCRIPT_TYPES[transcriptSource], true);
         dispatch(APITransport(transcriptObj));
+        fetchError.current = true;
     }
 
     const generateTranscription = () => {
@@ -409,14 +411,17 @@ export default function SameLanguageSubtitles({
     }, [Transcript]);
 
     useEffect(() => {
-        if (transcribeReq.current && APIStatus?.error) {
+        if (fetchError.current && APIStatus?.error) {
             console.log(APIStatus.error, "errror");
             if (transcriptSource === 'AI4Bharat') {
                 generateTranscription();
+                fetchError.current = false;
             } else if (transcriptSource === 'Youtube') {
                 const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), 'os', true);
                 dispatch(APITransport(transcriptObj));
+                fetchError.current = false;
             } else {
+                fetchError.current = false;
                 transcribeReq.current = false;
                 setLoading('');
             }

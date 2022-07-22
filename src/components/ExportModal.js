@@ -18,19 +18,19 @@ const ExportModal = (props) => {
                 <Tabs defaultActiveKey="Transcription" id="fill-tab-example" className="mb-3" fill>
                     <Tab eventKey="Transcription" title="Transcription">
                         <Form>
-                            {['ass', 'srt', 'vtt'].map((value) => ( 
-                                <div key={`inline-${value}`} className="mb-3">
+                            {['ass', 'srt', 'vtt'].map((value,index) => ( 
+                                <div key={`inline-${value}`} className="mb-3" style={{display: 'inline-block', padding: '10px 20px'}}>
                                     
                                     <Form.Check
                                         inline
                                         label={value}
                                         type='radio'
-                                        name="subTranscribeRadioGroup"
-                                        id={`inline-${value}`}
+                                        name='subTranscribeRadioGroup'
+                                        id={`inline-${value}-${index+1}`}
                                         checked={radioTranscribeSelected === value}
-                                        onChange={e=>setRadioTranscribeSelected(value)}
+                                        onChange={()=>setRadioTranscribeSelected(value)}
                                     />
-
+                                    {console.log(index)}
                                     {console.log('transcribe radio selected value '+ radioTranscribeSelected)}
                                 </div>
                             ))}
@@ -40,7 +40,7 @@ const ExportModal = (props) => {
                     <Tab eventKey="Translation" title="Translation">
                     <Form>
                             {['ass', 'srt', 'vtt'].map((value) => ( 
-                                <div key={`inline-${value}`} className="mb-3">
+                                <div key={`inline-${value}`} className="mb-3" style={{display: 'inline-block', padding: '10px 20px'}}>
                                     
                                     <Form.Check
                                         inline

@@ -24,6 +24,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
+import FindAndReplace from './FindAndReplace';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -268,6 +269,7 @@ const Style = styled.div`
             border: none;
             padding: 0 15px;
             line-height: 2.4;
+            margin-right: 20px;
         }
 
         .btn:hover {
@@ -524,8 +526,6 @@ const Style = styled.div`
 FFmpeg.createFFmpeg({ log: true }).load();
 const fs = new SimpleFS.FileSystem();
 
-
-
 export default function Header({
     player,
     waveform,
@@ -559,6 +559,17 @@ export default function Header({
     setIsSetVideo,
     transcriptSource,
     setTranscriptSource,
+    find,
+    replace,
+    found,
+    setFind,
+    setReplace,
+    setFound,
+    handleReplace,
+    handleReplaceAll,
+    handleFind,
+    currentFound,
+    setCurrentFound,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -569,6 +580,8 @@ export default function Header({
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
     const [showLogin, setShowLogin] = useState(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
+    const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
+
     class OpenModal extends React.Component {
         constructor() {
             super();
@@ -593,24 +606,24 @@ export default function Header({
             return (
                 <>
                     <Style>
-                            <select
-                                onChange={(event) => {
-                                    localStorage.setItem('selectValue', event.target.value);
-                                    this.handleOpenModal();
-                                }}
-                                className="top-panel-select"
-                            >
-                                <option value="" disabled selected>
-                                    Open
-                                </option>
-                                <option value="video">Import Video</option>
-                                <option value="subtitles">Import Subtitle</option>
-                            </select>
+                        <select
+                            onChange={(event) => {
+                                localStorage.setItem('selectValue', event.target.value);
+                                this.handleOpenModal();
+                            }}
+                            className="top-panel-select"
+                        >
+                            <option value="" disabled selected>
+                                Open
+                            </option>
+                            <option value="video">Import Video</option>
+                            <option value="subtitles">Import Subtitle</option>
+                        </select>
                     </Style>
 
-                    <UploadModal 
-                        show={this.state.showModal} 
-                        onHide={this.handleCloseModal} 
+                    <UploadModal
+                        show={this.state.showModal}
+                        onHide={this.handleCloseModal}
                         textAreaValue={youtubeURL}
                         textAreaValueChange={handleChange}
                         onYouTubeChange={onYouTubeChange}
@@ -621,22 +634,18 @@ export default function Header({
                 </>
             );
         }
-      }
-      
-    
+    }
+
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
-          const stickyValue = window.localStorage.getItem(key);
-          return stickyValue !== null
-            ? JSON.parse(stickyValue)
-            : defaultValue;
+            const stickyValue = window.localStorage.getItem(key);
+            return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
         });
         React.useEffect(() => {
-          window.localStorage.setItem(key, JSON.stringify(value));
+            window.localStorage.setItem(key, JSON.stringify(value));
         }, [key, value]);
         return [value, setValue];
-      }
-    
+    }
 
     const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
@@ -644,30 +653,36 @@ export default function Header({
         if (localStorage.getItem('subtitle')) {
             setLoading(t('SAVING'));
             const payload = {
-                output: sub2vtt(subtitle)
-            }
-            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), payload);
+                output: sub2vtt(subtitle),
+            };
+            const saveObj = new SaveTranscriptAPI(
+                localStorage.getItem('transcript_id'),
+                localStorage.getItem('langTranscribe'),
+                payload,
+            );
             const res = await fetch(saveObj.apiEndPoint(), {
-                method: "POST",
+                method: 'POST',
                 body: JSON.stringify(saveObj.getBody()),
                 headers: saveObj.getHeaders().headers,
-              });
+            });
             const resp = await res.json();
             console.log(resp);
             if (res.ok) {
                 localStorage.setItem('subtitle', JSON.stringify(subtitle));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
                 notify({
-                    message: 'Subtitle saved successfully', 
-                    level: 'success'});
+                    message: 'Subtitle saved successfully',
+                    level: 'success',
+                });
             } else {
                 notify({
-                    message: 'Subtitle could not be saved', 
-                    level: 'error'});
+                    message: 'Subtitle could not be saved',
+                    level: 'error',
+                });
             }
             setLoading('');
         }
-    }
+    };
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -788,12 +803,7 @@ export default function Header({
         }
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
-
-   
-
-      
-
-      const props = {};
+    const props = {};
 
     const onVideoChange = useCallback(
         (event) => {
@@ -1366,20 +1376,19 @@ export default function Header({
         }
 
         render() {
-            return (<>
-                <Style>
-                    <div className="export-btn-main">
-                        <div className="export export-btn" onClick={this.handleOpenExportModal}>
-                            <Translate value="Export Subtitles" />
+            return (
+                <>
+                    <Style>
+                        <div className="export-btn-main">
+                            <div className="export export-btn" onClick={this.handleOpenExportModal}>
+                                <Translate value="Export Subtitles" />
+                            </div>
                         </div>
-                    </div>
-                </Style>
+                    </Style>
 
-                <ExportModal 
-                    show={this.state.showExportModal} 
-                    onHide={this.handleCloseExportModal}
-                />
-            </>);
+                    <ExportModal show={this.state.showExportModal} onHide={this.handleCloseExportModal} />
+                </>
+            );
         }
     }
 
@@ -1489,7 +1498,7 @@ export default function Header({
                             onClick={() => {
                                 console.log('Configuration - same');
                                 const langTranscribe = localStorage.getItem('lang');
-                              //  console.log("lang " + langTranscribe);
+                                //  console.log("lang " + langTranscribe);
                                 setConfiguration('Same Language Subtitling');
                                 setIsSetConfiguration(true);
                                 player?.pause();
@@ -1644,6 +1653,31 @@ export default function Header({
                     <Translate value="Full screen mode" />
                 </div>
             </div>
+
+            <div className="save-transcript">
+                <button className="button-layout" onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>
+                    Find / Replace
+                </button>
+            </div>
+
+            {showFindReplaceModal ? (
+                <FindAndReplace
+                    find={find}
+                    replace={replace}
+                    found={found}
+                    setFind={setFind}
+                    setReplace={setReplace}
+                    setFound={setFound}
+                    showFindAndReplace={showFindReplaceModal}
+                    setShowFindAndReplace={setShowFindReplaceModal}
+                    handleReplace={handleReplace}
+                    handleReplaceAll={handleReplaceAll}
+                    handleFind={handleFind}
+                    currentFound={currentFound}
+                    setCurrentFound={setCurrentFound}
+                    configuration={configuration}
+                />
+            ) : null}
 
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
             <div className="signin-btn" style={{ zIndex: 200 }}>

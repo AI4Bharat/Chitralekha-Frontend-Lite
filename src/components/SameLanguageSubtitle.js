@@ -197,10 +197,16 @@ export default function SameLanguageSubtitles({
     const [height, setHeight] = useState(100);
     const dispatch = useDispatch();
     // const [translate, setTranslate] = useState(null);
-
+    const TRANSCRIPT_TYPES = {
+        'Youtube': 'uos',
+        'AI4Bharat': 'umg',
+        'Custom': 'mc'
+    }
+    
     //change
     const [transcribe, setTranscribe] = useState(null);
-    const [transcribeReq, setTranscribeReq] = useState(false);
+    const transcribeReq = useRef(false);
+    const fetchError = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector((state) => state.getTranscriptLanguages.data);
     const Transcript = useSelector((state) => state.fetchTranscript.data);
@@ -208,40 +214,36 @@ export default function SameLanguageSubtitles({
     const APIStatus = useSelector((state) => state.apiStatus);
     const waiting = useRef(false);
 
-    const saveTranscript = async () => {
-        if (subtitle?.length > 0) {
-            // setLoading(t('SAVING'));
-            const payload = {
-                output: sub2vtt(subtitle),
-            };
-            const saveObj = new SaveTranscriptAPI(
-                localStorage.getItem('transcript_id'),
-                localStorage.getItem('langTranscribe'),
-                localStorage.getItem('videoId'),
-                payload,
-            );
-            const res = await fetch(saveObj.apiEndPoint(), {
-                method: 'POST',
-                body: JSON.stringify(saveObj.getBody()),
-                headers: saveObj.getHeaders().headers,
-            });
-            const resp = await res.json();
-            console.log(resp);
-            if (res.ok) {
-                // localStorage.setItem('subtitle', JSON.stringify(subtitle));
-                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
-                localStorage.setItem('transcript_id', resp.id);
-                // notify({
-                //     message: 'Subtitle saved successfully',
-                //     level: 'success'});
-            } else {
-                // notify({
-                //     message: 'Subtitle could not be saved',
-                //     level: 'error'});
+    const saveTranscript = useCallback(async () => {
+            if (subtitle?.length > 0) {
+                // setLoading(t('SAVING'));
+                const payload = {
+                    output: sub2vtt(subtitle)
+                }
+                console.log(payload)
+                const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), localStorage.getItem("videoId"), payload);
+                const res = await fetch(saveObj.apiEndPoint(), {
+                    method: "POST",
+                    body: JSON.stringify(saveObj.getBody()),
+                    headers: saveObj.getHeaders().headers,
+                  });
+                const resp = await res.json();
+                console.log(resp, "resp");
+                if (res.ok) {
+                    localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
+                    localStorage.setItem('transcript_id', resp.id);
+                    // notify({
+                    //     message: 'Subtitle saved successfully', 
+                    //     level: 'success'});
+                } else {
+                    // notify({
+                    //     message: 'Subtitle could not be saved', 
+                    //     level: 'error'});
+                }
+                setLoading('');
             }
-            setLoading('');
-        }
-    };
+    }, [subtitle, setLoading]);
+
 
     const fetchTranscriptionLanguages = () => {
         const langObj = new GetTranscriptLanguagesAPI();
@@ -255,7 +257,8 @@ export default function SameLanguageSubtitles({
             true,
         );
         dispatch(APITransport(transcriptObj));
-    };
+        fetchError.current = true;
+    }
 
     const generateTranscription = () => {
         const generateObj = new GenerateTranscriptAPI(
@@ -391,7 +394,8 @@ export default function SameLanguageSubtitles({
         }
     }, [resize]);
 
-    const parseSubtitles = (subtitles) => {
+    const parseSubtitles = useCallback((subtitles) => {
+        console.log(subtitles);
         const suburl = vtt2url(subtitles);
         url2sub(suburl).then((urlsub) => {
             // setSubtitle(formatSub(urlsub));
@@ -400,23 +404,39 @@ export default function SameLanguageSubtitles({
             localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
             setLoading('');
         });
-    };
+    }, [setSubtitleEnglish, setLoading, formatSub]);
 
     useEffect(() => {
-        console.log(Transcript, 'transcript');
-        if (transcribeReq && Transcript.data?.output) {
-            setTranscribeReq(false);
-            localStorage.setItem('transcript_id', Transcript.id);
+        console.log(Transcript, "transcript");
+        if (transcribeReq.current && Transcript.data?.output) {
+            transcribeReq.current = false;
+            localStorage.setItem("transcript_id", Transcript.id);
             parseSubtitles(Transcript.data.output);
-        } else if (transcribeReq && APIStatus?.error) {
-            generateTranscription();
         }
-    }, [Transcript, transcribeReq, APIStatus]);
+    }, [Transcript]);
 
     useEffect(() => {
-        if (transcribeReq && GeneratedTranscript.data?.output) {
-            setTranscribeReq(false);
-            localStorage.setItem('transcript_id', GeneratedTranscript.id);
+        if (fetchError.current && APIStatus?.error) {
+            console.log(APIStatus.error, "errror");
+            if (transcriptSource === 'AI4Bharat') {
+                generateTranscription();
+                fetchError.current = false;
+            } else if (transcriptSource === 'Youtube') {
+                const transcriptObj = new FetchTranscriptAPI(localStorage.getItem("videoId"), localStorage.getItem("langTranscribe"), 'os', true);
+                dispatch(APITransport(transcriptObj));
+                fetchError.current = false;
+            } else {
+                fetchError.current = false;
+                transcribeReq.current = false;
+                setLoading('');
+            }
+        }
+    }, [APIStatus]);
+
+    useEffect(() => {
+        if (transcribeReq.current && GeneratedTranscript.data?.output) {
+            transcribeReq.current = false;
+            localStorage.setItem("transcript_id", GeneratedTranscript.id);
             parseSubtitles(GeneratedTranscript.data.output);
         }
     }, [GeneratedTranscript]);
@@ -428,7 +448,7 @@ export default function SameLanguageSubtitles({
         // console.log(localStorage.getItem('youtubeURL'));
         // const lang = localStorage.getItem('langTranscribe');
         setLoading(t('TRANSCRIBING'));
-        setTranscribeReq(true);
+        transcribeReq.current = true;
         fetchTranscription();
         // const youtubeURL = localStorage.getItem('youtubeURL');
         //console.log("localstorage transcribe get item " + localStorage.getItem('lang'));

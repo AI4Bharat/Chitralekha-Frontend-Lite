@@ -237,8 +237,9 @@ export default function Subtitles({
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
-    const [translateReq, setTranslateReq] = useState(false);
-    const [modeTranslate, setModeTranslate] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
+  //  const [translateReq, setTranslateReq] = useState(false);
+ //   const [modeTranslate, setModeTranslate] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
+    const translateReq = useRef(false);
 
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranslationLanguages.data);
@@ -417,8 +418,9 @@ export default function Subtitles({
         }
     }, [resize]);
 
-  
-    const parseTranslations = (translations) => {
+    const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
+
+    const parseTranslations = useCallback((translations) => {
         console.log("hi")
         let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
         for (let i = 0; i < transcript.length; i++) {
@@ -434,7 +436,7 @@ export default function Subtitles({
             message: t('TRANSLAT_SUCCESS'),
             level: 'success',
         });
-    }
+    }, [setSubtitle, notify, formatSub, setLoading]);
 
     const getTranslations = () => {
         const translationObj = new FetchTranslationAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranslate"), true);
@@ -447,26 +449,30 @@ export default function Subtitles({
     }
 
     useEffect(() => {
-        if (translateReq && Translations.payload?.translations?.length > 0 && (languageChoices[Translations.target_lang] === localStorage.getItem("langTranslate") || Translations.target_lang === localStorage.getItem("langTranslate"))) {
-            setTranslateReq(false);
+        if (translateReq.current && Translations.payload?.translations?.length > 0 && (languageChoices[Translations.target_lang] === localStorage.getItem("langTranslate") || Translations.target_lang === localStorage.getItem("langTranslate"))) {
+            translateReq.current = false;
             localStorage.setItem("translation_id", Translations.id);
             parseTranslations(Translations.payload.translations);
-        } else if (translateReq && APIStatus?.error) {
-            generateTranslations();
         }
-    }, [Translations, APIStatus, translateReq]);
+    }, [Translations]);
 
     useEffect(() => {
-        if (translateReq && GeneratedTranslations.payload?.translations?.length > 0 && (languageChoices[GeneratedTranslations.target_lang] === localStorage.getItem("langTranslate") || GeneratedTranslations.target_lang === localStorage.getItem("langTranslate"))) {
+        if (translateReq.current && APIStatus?.error) {
+            generateTranslations();
+        }
+    }, [APIStatus]);
+
+    useEffect(() => {
+        if (translateReq.current && GeneratedTranslations.payload?.translations?.length > 0 && (languageChoices[GeneratedTranslations.target_lang] === localStorage.getItem("langTranslate") || GeneratedTranslations.target_lang === localStorage.getItem("langTranslate"))) {
             parseTranslations(GeneratedTranslations.payload.translations);
             localStorage.setItem("translation_id", GeneratedTranslations.id);
-            setTranslateReq(false);
+            translateReq.current = false;
         }
     }, [GeneratedTranslations]);
 
     const onTranslate = useCallback(() => {
-    //    setIsTranslateClicked(true);
-        setTranslateReq(true);
+        setIsTranslateClicked(true);
+        translateReq.current = true;
         
         console.log('when translate button clicked '+isTranslateClicked);
         // console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate

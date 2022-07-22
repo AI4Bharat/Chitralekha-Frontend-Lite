@@ -848,24 +848,28 @@ export default function Header({
             player.src = VideoDetails.direct_video_url;
             player.currentTime = 0;
             clearSubs();
-            if (VideoDetails.subtitles) {
-                fetch(VideoDetails.subtitles)
-                    .then((subtext) => {
-                        return subtext.text();
-                    })
-                    .then((subtext) => {
-                        const suburl = vtt2url(subtext);
-                        url2sub(suburl).then((urlsub) => {
-                            setSubtitle(urlsub);
-                            setSubtitleEnglish(urlsub);
-                            localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                            localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                        });
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            }
+            // if (VideoDetails.transcript_id) {
+            //     localStorage.setItem('transcript_id', VideoDetails.transcript_id);
+            //     setSubtitleEnglish(formatSub(VideoDetails.subtitles));
+            //     localStorage.setItem('subtitleEnglish', JSON.stringify(VideoDetails.subtitles));
+            //     setTranscriptSource('Youtube');
+            //     // fetch(VideoDetails.subtitles)
+            //     // .then((subtext) => {
+            //     //     return subtext.text();
+            //     // })
+            //     // .then((subtext) => {
+            //     //     const suburl = vtt2url(subtext);
+            //     //     url2sub(suburl).then((urlsub) => {
+            //     //         setSubtitle(urlsub);
+            //     //         setSubtitleEnglish(urlsub);
+            //     //         localStorage.setItem('subtitle', JSON.stringify(urlsub));
+            //     //         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
+            //     //     });
+            //     // })
+            //     // .catch((err) => {
+            //     //     console.log(err);
+            //     // });
+            // }
         }
         // if (resp.subtitles) {
         //     const sub = resp.subtitles;
@@ -1090,6 +1094,7 @@ export default function Header({
                     file2sub(file)
                         .then((res) => {
                             clearSubs();
+                            localStorage.removeItem('transcript_id');
                             setSubtitle(res);
                             setSubtitleEnglish(res); //added setSubtitleEnglish
                         })
@@ -1111,6 +1116,7 @@ export default function Header({
     );
 
     const onInputClick = useCallback((event) => {
+        setTranscriptSource('Custom');
         event.target.value = '';
     }, []);
 
@@ -1414,7 +1420,8 @@ export default function Header({
                                     }}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
-                                     <option value="Youtube">Youtube</option> 
+                                    <option value="Youtube">Youtube</option>
+                                    <option value="Custom">Custom</option>
                                 </select>
                             </div>
                         </>)} */}

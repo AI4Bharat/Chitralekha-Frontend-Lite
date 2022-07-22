@@ -761,6 +761,7 @@ export default function App({ defaultLang }) {
                                             found={props.found}
                                             currentFound={props.currentFound}
                                             />
+                                            {console.log(props.subtitle)}
                                             <Subtitles
                                             currentIndex={props.currentIndex}
                                             subtitle={props.subtitle} //subtitle to subtitleEnglish?
@@ -781,8 +782,8 @@ export default function App({ defaultLang }) {
                                             configuration={props.configuration}
                                             setConfiguration={props.setConfiguration}
                                             // translationApi={props.translationApi}
-                                            isTranslateClicked={props.isTranslateClicked} //added
-                                            setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                         //   isTranslateClicked={props.isTranslateClicked} //added
+                                          //  setIsTranslateClicked={props.setIsTranslateClicked} //added
                                             found={props.found}
                                             currentFound={props.currentFound}
                                         />

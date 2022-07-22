@@ -22,6 +22,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 // import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 const Style = styled.div`
+    position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
     z-index: 200;
@@ -100,7 +101,7 @@ const Style = styled.div`
         }
 
         .ReactVirtualized__Table__row {
-            overflow: hidden !important;
+            overflow: visible !important;
             
             .item {
                 height: 100%;
@@ -149,7 +150,7 @@ const Style = styled.div`
                         background-color: rgb(123 29 0);
                         border: 1px solid rgba(255, 255, 255, 0.3);
                     }
-
+                    
                     &.found {
                         background-color: #FFFFCC;
                         color: #000;
@@ -237,6 +238,7 @@ export default function Subtitles({
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
     const [translateReq, setTranslateReq] = useState(false);
+    const [modeTranslate, setModeTranslate] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
 
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const languageChoices = useSelector(state => state.getTranslationLanguages.data);
@@ -290,12 +292,12 @@ export default function Subtitles({
     useEffect(() => {
         if (localStorage.getItem('langTranslate')) {
             setTranslate(localStorage.getItem('langTranslate')); //changes in both
-            setModeTranslate(localStorage.getItem('langTranslate'));
+          //  setModeTranslate(localStorage.getItem('langTranslate'));
         } else {
             localStorage.setItem('langTranslate', 'en') //added 
             //setTranslate('en');
             setTranslate(localStorage.getItem('langTranslate'));
-            setModeTranslate(localStorage.getItem('langTranslate'));
+          //  setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
 
@@ -342,7 +344,7 @@ export default function Subtitles({
                 setLanguageAvailable(langArray);
                 localStorage.setItem('langTranslate', langArray[0].key);
                 setTranslate(langArray[0].key);
-                setModeTranslate(langArray[0].key);
+              //  setModeTranslate(langArray[0].key);
             }
         // } else {
         //     setLanguageAvailable(languages);
@@ -415,8 +417,7 @@ export default function Subtitles({
         }
     }, [resize]);
 
-    const [modeTranslate, setModeTranslate] = useStickyState('en', 'translated-view'); //for sticky option in dropdown
-
+  
     const parseTranslations = (translations) => {
         console.log("hi")
         let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
@@ -863,7 +864,7 @@ export default function Subtitles({
       
                         <div className="options">
 
-                            <select
+                            {/* <select
                             
                                // value="kn"
                                 value={modeTranslate} //new - comment out if don't want sticky options
@@ -890,7 +891,7 @@ export default function Subtitles({
                             </select>
                             <div className="btn" onClick={onTranslate}>
                                 <Translate value="TRANSLATE" />
-                            </div>
+                            </div> */}
                             {/* {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} */}
                             {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>}
                         </div>

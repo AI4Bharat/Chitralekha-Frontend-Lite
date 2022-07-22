@@ -346,7 +346,7 @@ export default function SameLanguageSubtitles({
         return [value, setValue];
     }
 
-    const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
+    const [modeTranscribe, setModeTranscribe] = useStickyState('en', 'transcribed-view');
 
     const handleBlur = (data, index) => {
         //console.log(e.target.value);

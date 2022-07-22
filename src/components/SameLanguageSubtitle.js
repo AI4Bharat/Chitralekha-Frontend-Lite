@@ -189,6 +189,7 @@ export default function SameLanguageSubtitles({
     configuration,
     setSubtitleEnglish,
     translationApi,
+    transcriptSource,
     found,
     currentFound,
 }) {
@@ -644,7 +645,7 @@ export default function SameLanguageSubtitles({
                             </select>
                             </span>
 
-                            <div style={{color: "black", padding: "5px"}}>
+                            {/* <div style={{color: "black", padding: "5px"}}>
                            
                     <h4 style={{display:"inline-block", marginRight:"10px"}}>Select Mode</h4>
                             <span style={{color: "black", padding: "5px"}}>
@@ -655,7 +656,7 @@ export default function SameLanguageSubtitles({
                             <input type="radio" id="original" name="original" value="OriginalSource" />
                             <label for="original" style={{color: "black", padding: "5px"}}>Original Source</label>
                             </span>
-                            </div>
+                            </div> */}
 
                             {configuration === 'Same Language Subtitling' && (
                         <>
@@ -663,7 +664,7 @@ export default function SameLanguageSubtitles({
                                 <p className="select-heading">
                                     <b>Transcript Source</b>
                                 </p>
-                                {/* <select
+                                <select
                                     value={transcriptSource}
                                     onChange={(e) => {
                                         console.log(e.target.value);
@@ -674,7 +675,8 @@ export default function SameLanguageSubtitles({
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
                                      <option value="Youtube">Youtube</option> 
-                                </select> */}
+                                     <option value="Youtube">Custom</option> 
+                                </select>
                             </div>
                         </>)}
 

@@ -471,7 +471,7 @@ export default function Subtitles({
     }, [GeneratedTranslations]);
 
     const onTranslate = useCallback(() => {
-        setIsTranslateClicked(true);
+      //  setIsTranslateClicked(true);
         translateReq.current = true;
         
         console.log('when translate button clicked '+isTranslateClicked);

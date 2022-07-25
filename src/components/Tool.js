@@ -1287,7 +1287,7 @@ export default function Header({
                                 handleImportShow();
                             }}
                             className="top-panel-select"
-                      
+                            value=""
                         >
                             <option value="" disabled selected>
                                 Open

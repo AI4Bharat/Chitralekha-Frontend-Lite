@@ -24,6 +24,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
+import TranscriptionModal from './TranscriptionModal';
 import FindAndReplace from './FindAndReplace';
 
 const Style = styled.div`
@@ -570,6 +571,8 @@ export default function Header({
     handleFind,
     currentFound,
     setCurrentFound,
+    languageAvailable,
+    setLanguageAvailable,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -579,8 +582,18 @@ export default function Header({
     const dispatch = useDispatch();
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
     const [showLogin, setShowLogin] = useState(false);
-    const [languageAvailable, setLanguageAvailable] = useState([]);
+    //const [languageAvailable, setLanguageAvailable] = useState([]);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
+
+    /* For Transcription Modal */
+    const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
+    const handleTranscriptionClose = () => setTranscriptionModalOpen(false);
+    const handleTranscriptionShow = () => setTranscriptionModalOpen(true);
+
+     /* For Import Modal */
+     const [importModalOpen, setImportModalOpen] = useState(false);
+     const handleImportClose = () => setImportModalOpen(false);
+     const handleImportShow = () => setImportModalOpen(true);
 
     class OpenModal extends React.Component {
         constructor() {
@@ -1246,6 +1259,9 @@ export default function Header({
         }
     }
 
+
+    
+
     const handleFullScreenMode = (event) => {
         var el = document.getElementById('full-screenVideo');
         if (el.requestFullscreen) {
@@ -1263,8 +1279,38 @@ export default function Header({
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
             <Links />
-            <OpenModal />
+            {/* <OpenModal /> */}
             <ExportSubtitleModal />
+            <select
+                            onChange={(event) => {
+                                localStorage.setItem('selectValue', event.target.value);
+                                handleImportShow();
+                            }}
+                            className="top-panel-select"
+                      
+                        >
+                            <option value="" disabled selected>
+                                Open
+                            </option>
+                            <option value="video">Import Video</option>
+                            <option value="subtitles">Import Subtitle</option>
+                        </select>
+            <UploadModal
+                        show={importModalOpen}
+                        onHide={handleImportClose}
+                        textAreaValue={youtubeURL}
+                        textAreaValueChange={handleChange}
+                        onYouTubeChange={onYouTubeChange}
+                        onVideoChange={onVideoChange}
+                        onSubtitleChange={onSubtitleChange}
+                        onInputClick={onInputClick}
+                    />
+            <TranscriptionModal
+             transcriptionModalOpen={transcriptionModalOpen}
+             handleTranscriptionClose={handleTranscriptionClose}
+            />
+              
+            {console.log('languageAvailable '+languageAvailable)}
             {/* <TranscriptionModal /> */}
             {/* <div className={`tool-button`}>
                 <div
@@ -1351,6 +1397,7 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - same');
+                                handleTranscriptionShow();
                                 const langTranscribe = localStorage.getItem('lang');
                                 //  console.log("lang " + langTranscribe);
                                 setConfiguration('Same Language Subtitling');
@@ -1364,7 +1411,6 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - basic');
-                                // this.handleOpenTranscriptionModal();
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                                 clearSubs();

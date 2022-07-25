@@ -20,6 +20,7 @@ import SaveTranscriptAPI from "../redux/actions/api/Transcript/SaveTranscript"
 import ReactModal from 'react-modal';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import TranscriptionModal from './TranscriptionModal';
 
 const Style = styled.div`
     position: relative;
@@ -215,6 +216,7 @@ export default function SameLanguageSubtitles({
     const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
     const APIStatus = useSelector((state) => state.apiStatus);
     const waiting = useRef(false);
+
 
     const saveTranscript = useCallback(async () => {
             if (subtitle?.length > 0) {

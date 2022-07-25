@@ -238,7 +238,6 @@ export default function Subtitles({
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
   //  const [translateReq, setTranslateReq] = useState(false);
- //   const [modeTranslate, setModeTranslate] = useStickyState('as', 'translated-view'); //for sticky option in dropdown
     const translateReq = useRef(false);
 
     const [languageAvailable, setLanguageAvailable] = useState([]);
@@ -818,7 +817,7 @@ export default function Subtitles({
                                      ),
                              )}
                          </select>
-                         {configuration === 'Subtitling' && (
+                         {/* {configuration === 'Subtitling' && (
                         <>
                             <div className="select-translation-api-container">
                                 <p className="select-heading">
@@ -836,7 +835,7 @@ export default function Subtitles({
                                 </select>
                             </div>
                         </>
-                    )}
+                    )} */}
 
                     <div>
                          <div className="btn" onClick={onTranslate} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>

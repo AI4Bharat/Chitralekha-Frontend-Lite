@@ -8,12 +8,12 @@ const UploadModal = (props) => {
     return (
         <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
-                {localStorage.getItem('selectValue') === 'video' ? 'Upload Video' : 'Upload Subtitle'}
+            <Modal.Title style={{textAlign: "center", width: "100%"}}>{localStorage.getItem('selectValue') === 'video' ? 'Upload Video' : 'Upload Subtitle'}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 {localStorage.getItem('selectValue') == 'video' ? (
-                    <Tabs defaultActiveKey="URL" id="fill-tab-example" className="mb-3" fill>
+                    <Tabs defaultActiveKey="URL" id="fill-tab-example" className="mb-3" fill variant="pills">
                         <Tab eventKey="URL" title="Youtube URL">
                             <FloatingLabel
                                 controlId="floatingTextarea2"
@@ -46,7 +46,7 @@ const UploadModal = (props) => {
                 {localStorage.getItem('selectValue') === 'video' ? (
                     <Button onClick={props.onYouTubeChange}>Fetch</Button>
                 ) : null}
-                <Button onClick={props.onHide}>Close</Button>
+                <Button onClick={props.onHide} variant="dark">Close</Button>
             </Modal.Footer>
         </Modal>
     );

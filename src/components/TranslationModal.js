@@ -58,7 +58,7 @@ const TranslationModal = (props) => {
         <div className="btn" onClick={props.onTranslate} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
             <Translate value="TRANSLATE" />
           </div>
-          <Button variant="secondary" onClick={props.handleTranslationClose}>
+          <Button variant="dark" onClick={props.handleTranslationClose}>
             Close
           </Button>
         </Modal.Footer>

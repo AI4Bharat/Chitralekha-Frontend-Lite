@@ -12,12 +12,14 @@ const ExportModal = (props) => {
    // console.log(downloadSub);
     return (
         <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header closeButton>Export Subtitle </Modal.Header>
+            <Modal.Header closeButton>
+                <Modal.Title style={{textAlign: "center", width: "100%"}}>Export Subtitle</Modal.Title>
+            </Modal.Header>
 
             <Modal.Body>
-                <Tabs defaultActiveKey="Transcription" id="fill-tab-example" className="mb-3" fill>
+                <Tabs defaultActiveKey="Transcription" id="fill-tab-example" className="mb-3" fill variant="pills">
                     <Tab eventKey="Transcription" title="Transcription">
-                        <Form>
+                        <Form fill>
                             {['ass', 'srt', 'vtt'].map((value,index) => ( 
                                 <div key={`inline-${value}`} className="mb-3" style={{display: 'inline-block', padding: '10px 20px'}}>
                                     
@@ -63,7 +65,7 @@ const ExportModal = (props) => {
 
             <Modal.Footer>
                 
-                <Button onClick={props.onHide}>Close</Button>
+                <Button onClick={props.onHide} variant="dark">Close</Button>
             </Modal.Footer>
         </Modal>
     );

@@ -19,13 +19,21 @@ import SignLanguageSubtitles from './components/SignLanguageSubtitle';
 import FindAndReplace from './components/FindAndReplace';
 // import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 import debounce from 'lodash/debounce';
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 import Header from './components/Tool';
-
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const Style = styled.div`
     height: 100%;
     width: 100%;
+
+    .fullscreen-style {
+        position: relative;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+    }
 
     .main {
         display: flex;
@@ -41,7 +49,7 @@ const Style = styled.div`
                 flex-direction: row;
                 justify-content: space-between;
             }
-            
+
             .player {
                 flex: 1;
             }
@@ -60,9 +68,14 @@ const Style = styled.div`
     .footer {
         height: 200px;
     }
+
+    .full-screen-btn {
+        position: absolute;
+        bottom: 25px;
+        right: 25px;
+        z-index: 999;
+    }
 `;
-
-
 
 export default function App({ defaultLang }) {
     const subtitleHistory = useRef([]);
@@ -83,40 +96,32 @@ export default function App({ defaultLang }) {
     const [enableConfiguration, setEnableConfiguration] = useState(false);
     const [isSetVideo, setIsSetVideo] = useState(false);
     const [isSetConfiguration, setIsSetConfiguration] = useState(false);
-   // const [showLogin, setShowLogin] = useState(false);
+    // const [showLogin, setShowLogin] = useState(false);
     // const [translationApi, setTranslationApi] = useState('AI4Bharat');
     const [isTranslateClicked, setIsTranslateClicked] = useState(false);
     const [height, setHeight] = useState(100);
-  //  const [visited, setVisited] = useState(false);
+    //  const [visited, setVisited] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
-    const DisplayPopup = () =>{
+    const DisplayPopup = () => {
         let visited = localStorage.getItem('hasVisited');
-        console.log('visited initial '+visited);
-        if(visited){
+        console.log('visited initial ' + visited);
+        if (visited) {
             setShowPopup(false);
-        }
-        else{
+        } else {
             localStorage.setItem('hasVisited', true);
-          //  console.log(localStorage.getItem('hasVisited'));
+            //  console.log(localStorage.getItem('hasVisited'));
             setShowPopup(true);
         }
-        console.log('showPopup '+showPopup);
-            return (
-                <>
-                {showPopup
-                    ?(<div>Test </div>)
-                    : console.log('in else')
-                }
-                </>
-            );
-        
-    }
+        console.log('showPopup ' + showPopup);
+        return <>{showPopup ? <div>Test </div> : console.log('in else')}</>;
+    };
     const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
     const [showFindAndReplace, setShowFindAndReplace] = useState(false);
     const [find, setFind] = useState('');
     const [replace, setReplace] = useState('');
     const [found, setFound] = useState([]);
     const [currentFound, setCurrentFound] = useState();
+    const [fullscreen, setFullscreen] = useState(false);
 
 
       /* For Transcription Modal */
@@ -134,9 +139,9 @@ export default function App({ defaultLang }) {
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
 
     const resize = useCallback(() => {
-            setHeight(document.body.clientHeight - 240);
-        }, [setHeight]);
-    
+        setHeight(document.body.clientHeight - 240);
+    }, [setHeight]);
+
     useEffect(() => {
         resize();
         if (!resize.init) {
@@ -158,7 +163,7 @@ export default function App({ defaultLang }) {
 
     const copySubs = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
     const copySubsEnglish = useCallback(() => formatSub(subtitleEnglish), [subtitleEnglish, formatSub]);
-   //const copySubsEnglish = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
+    //const copySubsEnglish = useCallback(() => formatSub(subtitle), [subtitle, formatSub]);
     // useEffect(() => {
     //     //localStorage.setItem('lang', 'en');
 
@@ -178,8 +183,7 @@ export default function App({ defaultLang }) {
                 }
                 window.localStorage.setItem('subtitle', JSON.stringify(newSubtitle));
                 setSubtitleOriginal(newSubtitle);
-               // setSubtitleEnglish(newSubtitle);
-                
+                // setSubtitleEnglish(newSubtitle);
             }
         },
         [subtitle, setSubtitleOriginal, formatSub],
@@ -206,7 +210,6 @@ export default function App({ defaultLang }) {
         setSubtitleEnglish([]);
         subtitleHistory.current.length = 0;
     }, [setSubtitleEnglish, subtitleHistory]);
-    
 
     const checkSub = useCallback(
         (sub) => {
@@ -238,14 +241,14 @@ export default function App({ defaultLang }) {
         (sub) => {
             const index = hasSub(sub);
             const index2 = hasSubEnglish(sub);
-            console.log(subtitleEnglish)
+            console.log(subtitleEnglish);
             console.log(index, index2);
-            if (index >= 0){
+            if (index >= 0) {
                 const subs = copySubs();
                 subs.splice(index, 1);
                 setSubtitle(subs);
             }
-            if ((index >=0 || index2 >= 0) && subtitleEnglish) {
+            if ((index >= 0 || index2 >= 0) && subtitleEnglish) {
                 console.log('here');
                 const subsEnglish = copySubsEnglish();
                 subsEnglish.splice(index >= 0 ? index : index2, 1);
@@ -332,7 +335,7 @@ export default function App({ defaultLang }) {
                     setSubtitle(subs);
                 }
             }
-            if ((index >=0 || index2 >= 0) && subtitleEnglish) {
+            if ((index >= 0 || index2 >= 0) && subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
                 const nextEnglish = subsEnglish[index >= 0 ? index + 1 : index2 + 1];
                 if (!nextEnglish) return;
@@ -440,7 +443,10 @@ export default function App({ defaultLang }) {
                     break;
                 case 70:
                     event.preventDefault();
-                    if (event.ctrlKey && (configuration === 'Subtitling' || configuration === 'Same Language Subtitling')) {
+                    if (
+                        event.ctrlKey &&
+                        (configuration === 'Subtitling' || configuration === 'Same Language Subtitling')
+                    ) {
                         event.preventDefault();
                         player?.pause();
                         setShowFindAndReplace(true);
@@ -474,7 +480,7 @@ export default function App({ defaultLang }) {
         if (foundIndices.length > 0) {
             setCurrentFound(0);
         }
-    }
+    };
 
     const handleReplace = () => {
         if (currentFound < 0 || currentFound >= found.length) return;
@@ -492,7 +498,7 @@ export default function App({ defaultLang }) {
         }
         setCurrentFound(currentFound + 1);
         setFound(found.filter((i) => i !== index));
-    }
+    };
 
     const handleReplaceAll = () => {
         if (found.length === 0) return;
@@ -513,7 +519,7 @@ export default function App({ defaultLang }) {
         }
         setFound([]);
         setCurrentFound();
-    }
+    };
 
     useEffect(() => {
         window.addEventListener('keydown', onKeyDown);
@@ -521,9 +527,10 @@ export default function App({ defaultLang }) {
     }, [onKeyDown]);
 
     useMemo(() => {
-        const currentIndex = configuration === 'Subtitling' ? 
-        subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime)
-        : subtitleEnglish.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
+        const currentIndex =
+            configuration === 'Subtitling'
+                ? subtitle.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime)
+                : subtitleEnglish.findIndex((item) => item.startTime <= currentTime && item.endTime > currentTime);
         setCurrentIndex(currentIndex);
     }, [currentTime, subtitle]);
 
@@ -531,9 +538,9 @@ export default function App({ defaultLang }) {
         // console.log(subtitle);
         // console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
-     //   console.log(localSubtitleString)
+        //   console.log(localSubtitleString)
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
-      //  console.log(localSubtitleEnglish)
+        //  console.log(localSubtitleEnglish)
         // const fetchSubtitle = () =>
         //     fetch('/sample.json')
         //         .then((res) => res.json())
@@ -542,7 +549,6 @@ export default function App({ defaultLang }) {
         //         });
 
         if (localSubtitleString) {
-     
             try {
                 const localSubtitle = JSON.parse(localSubtitleString);
                 if (localSubtitle.length) {
@@ -557,12 +563,10 @@ export default function App({ defaultLang }) {
             // fetchSubtitle();
         }
         if (localSubtitleEnglish) {
-      
             try {
                 const localSubtitle = JSON.parse(localSubtitleEnglish);
                 if (localSubtitle.length) {
                     setSubtitleEnglish(localSubtitle.map((item) => new Sub(item)));
-                    
                 } else {
                     setSubtitleEnglish([]);
                 }
@@ -650,14 +654,47 @@ export default function App({ defaultLang }) {
         setTranslationModalOpen,
         handleTranslationClose,
         handleTranslationShow,
+        fullscreen,
+    };
+
+    const renderTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            {!fullscreen ? 'Fullscreen' : 'Exit'}
+        </Tooltip>
+    );
+
+    const handleFullscreen = () => {
+        var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen =
+            docEl.requestFullscreen ||
+            docEl.mozRequestFullScreen ||
+            docEl.webkitRequestFullScreen ||
+            docEl.msRequestFullscreen;
+        var cancelFullScreen =
+            doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+        if (
+            !doc.fullscreenElement &&
+            !doc.mozFullScreenElement &&
+            !doc.webkitFullscreenElement &&
+            !doc.msFullscreenElement
+        ) {
+            requestFullScreen.call(docEl);
+            setFullscreen(true);
+        } else {
+            setFullscreen(false);
+            cancelFullScreen.call(doc);
+        }
+        
     };
 
     return (
-        
         <Style>
-      {/* <Header /> */}
-      <Tool {...props} style={{ marginBottom: "20px"}}/>
-            <div className="main">
+            {/* <Header /> */}
+            <Tool {...props} style={{ marginBottom: '20px' }} />
+            <div className={`${fullscreen ? 'fullscreen-style' : ''} main`}>
                 <div className="main-center">
                     <div className="header">
                         {/* <Links /> */}
@@ -681,8 +718,8 @@ export default function App({ defaultLang }) {
                 </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <div className={{overflow: 'visible'}}>
-                       {/* <Subtitles
+                    <div className={{ overflow: 'visible' }}>
+                        {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}
                             checkSub={props.checkSub}
@@ -702,7 +739,7 @@ export default function App({ defaultLang }) {
                             translationApi={props.translationApi}
                 />*/}
                         {/* here */}
-                  
+
                         {/* <ScrollSync>
                             <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
                                 <ScrollSyncPane>
@@ -859,7 +896,7 @@ export default function App({ defaultLang }) {
 
                 {configuration === 'Same Language Subtitling' && (
                     <>
-                   {/* original same lang subtitle config */}
+                        {/* original same lang subtitle config */}
                         {/* <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitle}
@@ -883,7 +920,7 @@ export default function App({ defaultLang }) {
                             setSubtitleEnglish={props.setSubtitleEnglish}
                             
                         /> */}
-    
+
                         {/* final */}
                         <SameLanguageSubtitles
                             currentIndex={props.currentIndex}
@@ -941,6 +978,34 @@ export default function App({ defaultLang }) {
             {processing > 0 && processing < 100 ? <ProgressBar processing={processing} /> : null}
             <NotificationSystem ref={notificationSystem} allowHTML={true} />
             {/* <BottomLinks /> */}
+
+            <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
+                <Button className="full-screen-btn" onClick={() => handleFullscreen(!fullscreen)}>
+                    {fullscreen ? (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-fullscreen-exit"
+                            viewBox="0 0 16 16"
+                        >
+                            <path d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z" />
+                        </svg>
+                    ) : (
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="currentColor"
+                            class="bi bi-fullscreen"
+                            viewBox="0 0 16 16"
+                        >
+                            <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z" />
+                        </svg>
+                    )}
+                </Button>
+            </OverlayTrigger>
         </Style>
     );
 }

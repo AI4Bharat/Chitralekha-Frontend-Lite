@@ -25,6 +25,7 @@ import 'react-tabs/style/react-tabs.css';
 import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
 import FindAndReplace from './FindAndReplace';
+import { Button } from 'react-bootstrap';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -495,6 +496,10 @@ const Style = styled.div`
     .export-btn-main:hover {
         background-color: #5264cc;
     }
+
+    .d-none {
+        display: none;
+    }
 `;
 // function useStickyState(defaultValue, key) {
 //     const [value, setValue] = React.useState(() => {
@@ -574,6 +579,7 @@ export default function Header({
     handleTranscriptionShow,
     handleTranslationClose,
     handleTranslationShow,
+    fullscreen,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -604,7 +610,7 @@ export default function Header({
         return [value, setValue];
     }
 
-   // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
+    // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
     const saveTranscript = async () => {
         if (localStorage.getItem('subtitle')) {
@@ -1048,8 +1054,18 @@ export default function Header({
 
     const handleChange = (e) => {
         e.preventDefault();
-        console.log(e.target.value);
         setYoutubeURL(e.target.value);
+    };
+
+    const clearData = () => {
+        setYoutubeURL('');
+        localStorage.setItem('videoSrc', null);
+        localStorage.setItem('isVideoPresent', false);
+        localStorage.setItem('lang', 'en');
+        localStorage.setItem('subtitleEnglish', null);
+        clearSubs();
+        clearSubsEnglish();
+        window.location.reload();
     };
 
     const onSubtitleChange = useCallback(
@@ -1147,7 +1163,6 @@ export default function Header({
         [subtitleEnglish],
     );
 
-
     useEffect(() => {
         if (isSetVideo === false) {
             if (window.localStorage.getItem('isVideoPresent') === 'true') {
@@ -1157,10 +1172,7 @@ export default function Header({
         }
     }, [setIsSetVideo, isSetVideo]);
 
-   
-
     class ExportSubtitleModal extends React.Component {
-
         constructor() {
             super();
             this.state = {
@@ -1180,8 +1192,6 @@ export default function Header({
             this.setState({ showExportModal: false });
         }
 
-       
-
         render() {
             return (
                 <>
@@ -1193,35 +1203,19 @@ export default function Header({
                         </div>
                     </Style>
 
-                <ExportModal 
-                    show={this.state.showExportModal} 
-                    onHide={this.handleCloseExportModal}
-                    downloadSub={downloadSub}
-                    downloadSubReference={downloadSubReference}
-                />
-            </>);
+                    <ExportModal
+                        show={this.state.showExportModal}
+                        onHide={this.handleCloseExportModal}
+                        downloadSub={downloadSub}
+                        downloadSubReference={downloadSubReference}
+                    />
+                </>
+            );
         }
     }
 
-
-    
-
-    const handleFullScreenMode = (event) => {
-        var el = document.getElementById('full-screenVideo');
-        if (el.requestFullscreen) {
-            el.requestFullscreen();
-        } else if (el.msRequestFullscreen) {
-            el.msRequestFullscreen();
-        } else if (el.mozRequestFullScreen) {
-            el.mozRequestFullScreen();
-        } else if (el.webkitRequestFullscreen) {
-            el.webkitRequestFullscreen();
-        }
-        console.log('fullscreenmode');
-    };
-
     return (
-        <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
+        <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>
             <Links />
             
             <select
@@ -1491,12 +1485,6 @@ export default function Header({
                     </span>
                 </div> */}
             </Style>
-
-            <div className="operate">
-                <div className="btn" onClick={handleFullScreenMode}>
-                    <Translate value="Full screen mode" />
-                </div>
-            </div>
 
             <div className="save-transcript">
                 <button className="button-layout" onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>

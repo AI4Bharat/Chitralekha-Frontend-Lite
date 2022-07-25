@@ -97,7 +97,7 @@ const Style = styled.div`
 
     .ReactVirtualized__Table {
         margin-top: 20px;
-        
+
         .ReactVirtualized__Table__Grid {
             outline: none;
         }
@@ -209,7 +209,7 @@ export default function SameLanguageSubtitles({
     const TRANSCRIPT_TYPES = {
         'Youtube': 'uos',
         'AI4Bharat': 'umg',
-        'Custom': 'mc'
+        'Manual Upload': 'mc'
     }
     
     //change
@@ -217,42 +217,42 @@ export default function SameLanguageSubtitles({
     const transcribeReq = useRef(false);
     const fetchError = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
-    const languageChoices = useSelector((state) => state.getTranscriptLanguages.data);
-    const Transcript = useSelector((state) => state.fetchTranscript.data);
-    const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
-    const APIStatus = useSelector((state) => state.apiStatus);
-    const waiting = useRef(false);
+    const languageChoices = useSelector(state => state.getTranscriptLanguages.data);
+    const Transcript = useSelector(state => state.fetchTranscript.data);
+    const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
+    const APIStatus = useSelector(state => state.apiStatus);
+    const [waiting, setWaiting] = useState(false);
 
-
-    const saveTranscript = useCallback(async () => {
-            if (subtitle?.length > 0) {
-                // setLoading(t('SAVING'));
-                const payload = {
-                    output: sub2vtt(subtitle)
-                }
-                console.log(payload)
-                const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), localStorage.getItem("videoId"), payload);
-                const res = await fetch(saveObj.apiEndPoint(), {
-                    method: "POST",
-                    body: JSON.stringify(saveObj.getBody()),
-                    headers: saveObj.getHeaders().headers,
-                  });
-                const resp = await res.json();
-                console.log(resp, "resp");
-                if (res.ok) {
-                    localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
-                    localStorage.setItem('transcript_id', resp.id);
-                    // notify({
-                    //     message: 'Subtitle saved successfully', 
-                    //     level: 'success'});
-                } else {
-                    // notify({
-                    //     message: 'Subtitle could not be saved', 
-                    //     level: 'error'});
-                }
-                setLoading('');
+    const saveTranscript = async () => {
+        if (subtitle?.length > 0) {
+            // setLoading(t('SAVING'));
+            console.log(subtitle, "test");
+            const payload = {
+                output: sub2vtt(subtitle)
             }
-    }, [subtitle, setLoading]);
+            console.log(payload)
+            const saveObj = new SaveTranscriptAPI(localStorage.getItem("transcript_id"), localStorage.getItem("langTranscribe"), localStorage.getItem("videoId"), payload);
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: "POST",
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+                });
+            const resp = await res.json();
+            console.log(resp, "resp");
+            if (res.ok) {
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
+                localStorage.setItem('transcript_id', resp.id);
+                // notify({
+                //     message: 'Subtitle saved successfully', 
+                //     level: 'success'});
+            } else {
+                // notify({
+                //     message: 'Subtitle could not be saved', 
+                //     level: 'error'});
+            }
+            setLoading('');
+        }
+    }
 
 
     const fetchTranscriptionLanguages = () => {
@@ -291,14 +291,19 @@ export default function SameLanguageSubtitles({
     }, []);
 
     useEffect(() => {
-        if (subtitle?.length > 0 && !waiting.current) {
-            waiting.current = true;
+        if (subtitle?.length > 0 && !waiting) {
+            setWaiting(true);
             setTimeout(() => {
-                waiting.current = false;
-                saveTranscript();
+                setWaiting(false);
             }, 10000);
         }
     }, [subtitle]);
+
+    useEffect(() => {
+        if (!waiting) {
+            saveTranscript();
+        }
+    }, [waiting]);
 
     useEffect(() => {
         if (languageChoices?.data) {

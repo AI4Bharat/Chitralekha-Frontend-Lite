@@ -19,13 +19,13 @@ const TranscriptionModal = (props) => {
       </Button> */}
       {console.log(props)}
 
-      <Modal show={props.transcriptionModalOpen} onHide={props.handleTranscriptionClose}>
+      <Modal show={props.transcriptionModalOpen} onHide={props.handleTranscriptionClose} style={{top: "20%"}}>
         <Modal.Header closeButton>
-          <Modal.Title>Transcribe</Modal.Title>
+          <Modal.Title style={{textAlign: "center", width: "100%"}}>Transcribe</Modal.Title>
         </Modal.Header>
          <Modal.Body>
-         <span>
-          <p style={{display:"inline-block", marginRight:"10px", fontWeight:"bold"}}>Select Language</p> 
+         <div style={{marginBottom: "2px"}}>
+          <p style={{display:"inline-block", marginRight:"10px", fontWeight:"500"}}>Select Language</p> 
         <select
         value={props.modeTranscribe}
         onChange={(event) => {
@@ -35,23 +35,22 @@ const TranscriptionModal = (props) => {
             //console.log(event.target.value);
             //console.log('transcribed view'+localStorage.getItem('transcribed-view'));
             props.setTranscribe(localStorage.getItem('langTranscribe'));
-        }}>
-        {(props.languageAvailable[props.language] || props.languageAvailable.en || props.languageAvailable).map(
+        }}
+        style={{padding: "6px 4px", borderRadius: "5px", minWidth: "200px"}}
+        >
+                {(props.languageAvailable[props.language] || props.languageAvailable.en || props.languageAvailable).map(
                                     (item) => (
                                         <option key={item.key} value={item.key}>
                                             {item.name}
                                         </option>
                                     ),
-                                )}
-                                {/* <option>{props.language}</option> */}
-                            </select>
-                            </span>
+                )}
+        </select>
+                            </div>
                             <br/>
                             <span>
                             <div className="select-translation-api-container">
-                                <p className="select-heading" style={{display: "inline-block", marginRight: "10px"}}>
-                                    <b>Transcript Source</b>
-                                </p>
+                                <p className="select-heading" style={{display: "inline-block", marginRight: "10px", fontWeight:"500"}}>Transcript Source</p>
                                 <select
                                     value={props.transcriptSource}
                                     onChange={(e) => {
@@ -60,7 +59,7 @@ const TranscriptionModal = (props) => {
                                         //clearSubsEnglish();
                                         props.player?.pause();
                                     }}
-                                    style={{display: "inline-block"}}
+                                    style={{display: "inline-block",padding: "6px 4px", borderRadius: "5px", minWidth: "200px"}}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
                                      <option value="Youtube">Youtube</option> 
@@ -68,12 +67,13 @@ const TranscriptionModal = (props) => {
                                 </select>
                             </div>
                             </span>
-                            <div className="btn" onClick={props.onTranscribe} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>
-                                <Translate value="TRANSCRIBE" />
-                            </div>
+                            
         </Modal.Body> 
         <Modal.Footer>
-          <Button variant="secondary" onClick={props.handleTranscriptionClose}>
+          <div className="btn" onClick={props.onTranscribe} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
+            <Translate value="TRANSCRIBE" />
+          </div>
+          <Button variant="dark" onClick={props.handleTranscriptionClose}>
             Close
           </Button>
         </Modal.Footer>

@@ -19,12 +19,12 @@ const TranslationModal = (props) => {
       </Button> */}
       {console.log(props)}
 
-      <Modal show={props.translationModalOpen} onHide={props.handleTranslationClose}>
+      <Modal show={props.translationModalOpen} onHide={props.handleTranslationClose} style={{top: "20%"}}>
         <Modal.Header closeButton>
-          <Modal.Title>Translate</Modal.Title>
+          <Modal.Title style={{textAlign: "center", width: "100%"}}>Translate</Modal.Title>
         </Modal.Header>
          <Modal.Body>
-         <p style={{display:"inline-block", marginRight:"10px", fontWeight:"bold"}}>Select Language</p> 
+         <p style={{display:"inline-block", marginRight:"10px", fontWeight:"500"}}>Select Language</p> 
          <select
                             
                             // value="kn"
@@ -39,6 +39,7 @@ const TranslationModal = (props) => {
                                   console.log('in onChange translate langTranslate ' +localStorage.getItem('langTranslate'));
                                  // console.log(event.target.value);
                              }}
+                             style={{padding: "6px 4px", borderRadius: "5px", minWidth: "200px"}}
                          >
                              {(props.languageAvailable[props.language] || props.languageAvailable.en || props.languageAvailable).map(
                                  (item) =>
@@ -51,11 +52,12 @@ const TranslationModal = (props) => {
                              )}
                          </select>
                          <br />
-                         <div className="btn" onClick={props.onTranslate} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>
-                             <Translate value="TRANSLATE" />
-                         </div>
+                         
         </Modal.Body> 
         <Modal.Footer>
+        <div className="btn" onClick={props.onTranslate} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
+            <Translate value="TRANSLATE" />
+          </div>
           <Button variant="secondary" onClick={props.handleTranslationClose}>
             Close
           </Button>

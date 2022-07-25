@@ -24,6 +24,7 @@ const TranslationModal = (props) => {
           <Modal.Title>Translate</Modal.Title>
         </Modal.Header>
          <Modal.Body>
+         <p style={{display:"inline-block", marginRight:"10px", fontWeight:"bold"}}>Select Language</p> 
          <select
                             
                             // value="kn"
@@ -49,6 +50,7 @@ const TranslationModal = (props) => {
                                      ),
                              )}
                          </select>
+                         <br />
                          <div className="btn" onClick={props.onTranslate} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>
                              <Translate value="TRANSLATE" />
                          </div>

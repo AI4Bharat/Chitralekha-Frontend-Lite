@@ -25,7 +25,7 @@ const TranscriptionModal = (props) => {
         </Modal.Header>
          <Modal.Body>
          <span>
-          <h4 style={{display:"inline-block", marginRight:"10px"}}>Select Language</h4> 
+          <p style={{display:"inline-block", marginRight:"10px", fontWeight:"bold"}}>Select Language</p> 
         <select
         value={props.modeTranscribe}
         onChange={(event) => {
@@ -46,8 +46,10 @@ const TranscriptionModal = (props) => {
                                 {/* <option>{props.language}</option> */}
                             </select>
                             </span>
+                            <br/>
+                            <span>
                             <div className="select-translation-api-container">
-                                <p className="select-heading">
+                                <p className="select-heading" style={{display: "inline-block", marginRight: "10px"}}>
                                     <b>Transcript Source</b>
                                 </p>
                                 <select
@@ -58,12 +60,14 @@ const TranscriptionModal = (props) => {
                                         //clearSubsEnglish();
                                         props.player?.pause();
                                     }}
+                                    style={{display: "inline-block"}}
                                 >
                                     <option value="AI4Bharat">AI4Bharat</option>
                                      <option value="Youtube">Youtube</option> 
                                      <option value="Custom">Custom</option> 
                                 </select>
                             </div>
+                            </span>
                             <div className="btn" onClick={props.onTranscribe} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>
                                 <Translate value="TRANSCRIBE" />
                             </div>

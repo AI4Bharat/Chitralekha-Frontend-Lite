@@ -24,7 +24,6 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
-import TranscriptionModal from './TranscriptionModal';
 import FindAndReplace from './FindAndReplace';
 
 const Style = styled.div`
@@ -571,8 +570,10 @@ export default function Header({
     handleFind,
     currentFound,
     setCurrentFound,
-    languageAvailable,
-    setLanguageAvailable,
+    handleTranscriptionClose,
+    handleTranscriptionShow,
+    handleTranslationClose,
+    handleTranslationShow,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -582,72 +583,15 @@ export default function Header({
     const dispatch = useDispatch();
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
     const [showLogin, setShowLogin] = useState(false);
-    //const [languageAvailable, setLanguageAvailable] = useState([]);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
 
-    /* For Transcription Modal */
-    const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
-    const handleTranscriptionClose = () => setTranscriptionModalOpen(false);
-    const handleTranscriptionShow = () => setTranscriptionModalOpen(true);
 
      /* For Import Modal */
      const [importModalOpen, setImportModalOpen] = useState(false);
      const handleImportClose = () => setImportModalOpen(false);
      const handleImportShow = () => setImportModalOpen(true);
 
-    class OpenModal extends React.Component {
-        constructor() {
-            super();
-            this.state = {
-                showModal: false,
-                value: '',
-            };
-
-            this.handleOpenModal = this.handleOpenModal.bind(this);
-            this.handleCloseModal = this.handleCloseModal.bind(this);
-        }
-
-        handleOpenModal() {
-            this.setState({ showModal: true });
-        }
-
-        handleCloseModal() {
-            this.setState({ showModal: false });
-        }
-
-        render() {
-            return (
-                <>
-                    <Style>
-                        <select
-                            onChange={(event) => {
-                                localStorage.setItem('selectValue', event.target.value);
-                                this.handleOpenModal();
-                            }}
-                            className="top-panel-select"
-                        >
-                            <option value="" disabled selected>
-                                Open
-                            </option>
-                            <option value="video">Import Video</option>
-                            <option value="subtitles">Import Subtitle</option>
-                        </select>
-                    </Style>
-
-                    <UploadModal
-                        show={this.state.showModal}
-                        onHide={this.handleCloseModal}
-                        textAreaValue={youtubeURL}
-                        textAreaValueChange={handleChange}
-                        onYouTubeChange={onYouTubeChange}
-                        onVideoChange={onVideoChange}
-                        onSubtitleChange={onSubtitleChange}
-                        onInputClick={onInputClick}
-                    />
-                </>
-            );
-        }
-    }
+   
 
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
@@ -1279,39 +1223,32 @@ export default function Header({
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
             <Links />
-            {/* <OpenModal /> */}
-            <ExportSubtitleModal />
+            
             <select
-                            onChange={(event) => {
-                                localStorage.setItem('selectValue', event.target.value);
-                                handleImportShow();
-                            }}
-                            className="top-panel-select"
-                            value=""
-                        >
-                            <option value="" disabled selected>
-                                Open
-                            </option>
-                            <option value="video">Import Video</option>
-                            <option value="subtitles">Import Subtitle</option>
-                        </select>
+                onChange={(event) => {
+                    localStorage.setItem('selectValue', event.target.value);
+                    handleImportShow();
+                }}
+                className="top-panel-select"
+                value=""
+                style={{marginRight: "20px"}}
+            >
+                <option value="" disabled selected>Open</option>
+                <option value="video">Import Video</option>
+                <option value="subtitles">Import Subtitle</option>
+            </select>
+
             <UploadModal
-                        show={importModalOpen}
-                        onHide={handleImportClose}
-                        textAreaValue={youtubeURL}
-                        textAreaValueChange={handleChange}
-                        onYouTubeChange={onYouTubeChange}
-                        onVideoChange={onVideoChange}
-                        onSubtitleChange={onSubtitleChange}
-                        onInputClick={onInputClick}
-                    />
-            <TranscriptionModal
-             transcriptionModalOpen={transcriptionModalOpen}
-             handleTranscriptionClose={handleTranscriptionClose}
+                show={importModalOpen}
+                onHide={handleImportClose}
+                textAreaValue={youtubeURL}
+                textAreaValueChange={handleChange}
+                onYouTubeChange={onYouTubeChange}
+                onVideoChange={onVideoChange}
+                onSubtitleChange={onSubtitleChange}
+                onInputClick={onInputClick}
             />
-              
-            {console.log('languageAvailable '+languageAvailable)}
-            {/* <TranscriptionModal /> */}
+
             {/* <div className={`tool-button`}>
                 <div
                     className="icon"
@@ -1411,6 +1348,7 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - basic');
+                                handleTranslationShow();
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                                 clearSubs();
@@ -1430,14 +1368,19 @@ export default function Header({
                         >
                             <Translate value="SIGN_LANGUAGE" />
                         </div> */}
+
+
                     </div>
+                    <ExportSubtitleModal/>
                 </div>
 
-                <div className="save-transcript">
+                {/* <div className="save-transcript">
                     <button className="button-layout" onClick={saveTranscript}>
                         Save 💾
                     </button>
-                </div>
+                </div> */}
+
+                
 
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
                     {/* {configuration === 'Subtitling' && (
@@ -1609,6 +1552,7 @@ export default function Header({
                     </span>
                 )}
             </div>
+        
         </Style>
     );
 }

@@ -96,6 +96,8 @@ const Style = styled.div`
     }
 
     .ReactVirtualized__Table {
+        margin-top: 20px;
+        
         .ReactVirtualized__Table__Grid {
             outline: none;
         }
@@ -194,6 +196,10 @@ export default function SameLanguageSubtitles({
     setTranscriptSource,
     found,
     currentFound,
+    transcriptionModalOpen,
+    setTranscriptionModalOpen,
+    handleTranscriptionClose,
+    handleTranscriptionShow,
 }) {
     // console.log('at start ' + subtitle )
     //console.log('at start ' + subtitleEnglish )
@@ -508,218 +514,38 @@ export default function SameLanguageSubtitles({
         }
     }, []);
     end of change*/
-    class TranscriptionModal extends React.Component {
-        constructor () {
-          super();
-          this.state = {
-            showTranscriptionModal: false,
-            value: ''
-
-          };
-          
-          this.handleOpenTranscriptionModal = this.handleOpenTranscriptionModal.bind(this);
-          this.handleCloseTranscriptionModal = this.handleCloseTranscriptionModal.bind(this);
-        }
-        
-        handleOpenTranscriptionModal () {
-          this.setState({ showTranscriptionModal: true });
-        }
-        
-        handleCloseTranscriptionModal () {
-          this.setState({ showTranscriptionModal: false });
-        }
-        
-        render () {
-            if(configuration=='Same Language Subtitling')
-        //     {
-        // //  this.handleOpenTranscriptionModal();
-        //     }
-          return (
-            <Style>
-            <div>
-                <div
-                            className="btn"
-                            style={{backgroundColor:"#673ab7", color:"white", padding:"10px"}}
-                            onClick={() => {
-                                // console.log('Configuration - same');
-                                // const langTranscribe = localStorage.getItem('lang');
-                              
-                              //  console.log("lang " + langTranscribe);
-                                //   setConfiguration('Same Language Subtitling');
-                                //   setIsSetConfiguration(true);
-                                  this.handleOpenTranscriptionModal();
-                            }}
-                        >
-                            <Translate value="Open Options" />
-                        </div>
-                        
-              {/* <button onClick={this.handleOpenModal}>Trigger Modal</button> */}
-              
-              <ReactModal 
-                 isOpen={this.state.showTranscriptionModal}
-                 style={{
-                    overlay: {
-                        position: 'absolute',
-                        top: '0',
-                        background: 'none'
-                    },
-                    content: {
-                      position: 'absolute',
-                      color: 'black',
-                      top: '150px',
-                      left: '30%',
-                      bottom: '40px',
-                      width: '40%',
-                      height: '40%',
-                      border: '1px solid #ccc',
-                      background: '#fff',
-                      overflow: 'auto',
-                      WebkitOverflowScrolling: 'touch',
-                      borderRadius: '20px',
-                      outline: 'none',
-                      padding: '20px',
-                      zIndex: '1000',
-                    },
-                  }}
-              >
-                    {/* { (localStorage.getItem('selectValue') == "video")
-                    ? <div>
-                        <div>
-                            <Tabs defaultIndex={0} onSelect={(index) => console.log(index)}>
-                                <TabList>
-                                <Tab>Youtube URL</Tab>
-                                <Tab>Upload</Tab>
-                                </TabList>
-
-                                <TabPanel>
-                                <div>
-                                        <textarea
-                                            className="modal-textarea"
-                                            placeholder="Enter YouTube Link Here"
-                                            value={youtubeURL}
-
-                                            onChange={handleChange}
-                                            // onKeyPress={(e) => }
-                                        />
-                                        <div className="btn modal-fetch-btn" onClick={onYouTubeChange}>
-                                            <Translate value="Fetch Video" />
-                                        </div>
-                                    </div>
-                                </TabPanel>
-
-                                <TabPanel>
-                                    <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
-                                </TabPanel>
-                            </Tabs>
-                        </div>    
-                        <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
-                    </div>
-
-                    : <div>
-                        <div className="btn">
-                            <Translate value="OPEN_SUB" />
-                            <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
-                        </div>
-                        <button onClick={this.handleCloseTranscriptionModal}>Cancel</button>
-                    </div>
-                    }  */}
-                    <span>
-                    <h4 style={{display:"inline-block", marginRight:"10px"}}>Select Language</h4>
-                     <select
-                                style={{display:"inline-block"}}
-                               // value={transcribe == null ? '' : transcribe}
-                               value={modeTranscribe}
-                                onChange={(event) => {
-                                    setModeTranscribe(event.target.value);
-                                    localStorage.setItem('langTranscribe', event.target.value);
-
-                                    //console.log(event.target.value);
-                                    //console.log('transcribed view'+localStorage.getItem('transcribed-view'));
-                                    setTranscribe(localStorage.getItem('langTranscribe'));
-                                }}
-                            >
-                                {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
-                                    (item) => (
-                                        <option key={item.key} value={item.key}>
-                                            {item.name}
-                                        </option>
-                                    ),
-                                )}
-                            </select>
-                            </span>
-
-                            {/* <div style={{color: "black", padding: "5px"}}>
-                           
-                    <h4 style={{display:"inline-block", marginRight:"10px"}}>Select Mode</h4>
-                            <span style={{color: "black", padding: "5px"}}>
-                            <input type="radio" id="asr" name="asr" value="ASR" />
-                            <label for="asr" style={{color: "black", padding: "5px"}}>ASR</label>
-                            </span>
-                            <span style={{color: "black", padding: "5px"}}>
-                            <input type="radio" id="original" name="original" value="OriginalSource" />
-                            <label for="original" style={{color: "black", padding: "5px"}}>Original Source</label>
-                            </span>
-                            </div> */}
-
-                            {configuration === 'Same Language Subtitling' && (
-                        <>
-                            <div className="select-translation-api-container">
-                                <p className="select-heading">
-                                    <b>Transcript Source</b>
-                                </p>
-                                <select
-                                    value={transcriptSource}
-                                    onChange={(e) => {
-                                        console.log(e.target.value);
-                                        setTranscriptSource(e.target.value);
-                                        //clearSubsEnglish();
-                                        player?.pause();
-                                    }}
-                                >
-                                    <option value="AI4Bharat">AI4Bharat</option>
-                                     <option value="Youtube">Youtube</option> 
-                                     <option value="Custom">Custom</option> 
-                                </select>
-                            </div>
-                        </>)}
-
-                            <div>
-                             <div className="btn" onClick={onTranscribe} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#673ab7", color:"white", padding:"10px"}}>
-                                <Translate value="TRANSCRIBE" />
-                            </div>
-                            <button onClick={this.handleCloseTranscriptionModal} style={{display:"inline-block"}}>Cancel</button>
-                            </div>
-                            
-              </ReactModal>
-       
-            </div>
-                
-            </Style>
-          );
-        }
-      }
 
     return (
         
         // subtitle && 
         // (
             <>
-            <TranscriptionModal />
-            <Style className="subtitles">
-               {/* {console.log('rendering')}
-                {console.log(subtitle)}
-                {console.log(subtitle.length)}
-                {console.log(subtitleEnglish)}
-                {console.log("subEng" + subtitleEnglish.length)} */}
+            {/* <AltTranscriptionModal /> */}
+            <TranscriptionModal
             
-                {isPrimary && (
+            transcriptionModalOpen={transcriptionModalOpen}
+            handleTranscriptionClose={handleTranscriptionClose}
+            languageAvailable={languageAvailable}
+            modeTranscribe={modeTranscribe}
+            setModeTranscribe={setModeTranscribe}
+            setTranscribe={setTranscribe}
+            transcriptSource={transcriptSource}
+            setTranscriptSource={setTranscriptSource}
+            player={player}
+            onTranscribe={onTranscribe}
+         />
+         
+            {console.log(languageAvailable)}
+            <Style className="subtitles">
+           
+                {/* {isPrimary && (
                     <div className="transcribe">
-                        {/* <div className="heading">
+                        <div className="heading">
                             <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
-                        </div> */}
-                        {/* {console.log('rendering here')} */}
+                        </div>
+                        {console.log('rendering here')}
                          <div className="options">
-                          {/*  <select
+                           <select
                                // value={transcribe == null ? '' : transcribe}
                                value={modeTranscribe}
                                 onChange={(event) => {
@@ -742,15 +568,15 @@ export default function SameLanguageSubtitles({
                                     
                                 )}
                                 
-                            </select> */}
+                            </select>
                             
-                            {/* <div className="btn" onClick={onTranscribe}>
+                            <div className="btn" onClick={onTranscribe}>
                                 <Translate value="TRANSCRIBE" />
-                            </div> */}
-                            {/* <span className="language"> : en</span> */}
+                            </div> 
+                         <span className="language"> : en</span>
                         </div>
                     </div>
-                )}
+                )} */}
 
                 {!isPrimary && (
                     <div className="reference">

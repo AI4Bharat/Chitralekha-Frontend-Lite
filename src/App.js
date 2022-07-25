@@ -118,6 +118,17 @@ export default function App({ defaultLang }) {
     const [found, setFound] = useState([]);
     const [currentFound, setCurrentFound] = useState();
 
+
+      /* For Transcription Modal */
+      const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
+      const handleTranscriptionClose = () => setTranscriptionModalOpen(false);
+      const handleTranscriptionShow = () => setTranscriptionModalOpen(true);
+
+    /* For Translation Modal */
+    const [translationModalOpen, setTranslationModalOpen] = useState(false);
+    const handleTranslationClose = () => setTranslationModalOpen(false);
+    const handleTranslationShow = () => setTranslationModalOpen(true);
+
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
@@ -631,6 +642,14 @@ export default function App({ defaultLang }) {
         handleFind,
         currentFound,
         setCurrentFound,
+        transcriptionModalOpen,
+        setTranscriptionModalOpen,
+        handleTranscriptionClose,
+        handleTranscriptionShow,
+        translationModalOpen,
+        setTranslationModalOpen,
+        handleTranslationClose,
+        handleTranslationShow,
     };
 
     return (
@@ -760,6 +779,9 @@ export default function App({ defaultLang }) {
                                             // translationApi={props.translationApi}
                                             found={props.found}
                                             currentFound={props.currentFound}
+                                            handleTranslationClose={props.handleTranslationClose}
+                                            handleTranslationShow={props.handleTranslationShow}
+                                            translationModalOpen={props.translationModalOpen}
                                             />
                                             {console.log(props.subtitle)}
                                             <Subtitles
@@ -889,10 +911,11 @@ export default function App({ defaultLang }) {
                             transcriptSource={props.transcriptSource}
                             setTranscriptSource={props.setTranscriptSource}
                             found={props.found}
-                            currentFound={props.currentFound}
+                            currentFound={props.currentFound}            
+                            transcriptionModalOpen={props.transcriptionModalOpen}
+                            handleTranscriptionClose={props.handleTranscriptionClose}
                         />
-                       {// this.handleOpenTranscriptionModal();
-                       }
+                      
                     </>
                 )}
                 {/* <Tool {...props} /> */}

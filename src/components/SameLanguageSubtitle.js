@@ -21,6 +21,7 @@ import ReactModal from 'react-modal';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TranscriptionModal from './TranscriptionModal';
+import { Button } from 'react-bootstrap';
 
 const Style = styled.div`
     position: relative;
@@ -168,6 +169,12 @@ const Style = styled.div`
             }
         }
     }
+
+    .save {
+        margin: auto;
+        margin-top: 20px;
+        display: block;
+    }
 `;
 
 export default function SameLanguageSubtitles({
@@ -222,11 +229,10 @@ export default function SameLanguageSubtitles({
     const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
     const APIStatus = useSelector(state => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
-
-    const saveTranscript = async () => {
+    
+    const saveTranscript = useCallback(async () => {
         if (subtitle?.length > 0) {
             // setLoading(t('SAVING'));
-            console.log(subtitle, "test");
             const payload = {
                 output: sub2vtt(subtitle)
             }
@@ -236,7 +242,7 @@ export default function SameLanguageSubtitles({
                 method: "POST",
                 body: JSON.stringify(saveObj.getBody()),
                 headers: saveObj.getHeaders().headers,
-                });
+              });
             const resp = await res.json();
             console.log(resp, "resp");
             if (res.ok) {
@@ -252,7 +258,8 @@ export default function SameLanguageSubtitles({
             }
             setLoading('');
         }
-    }
+}, [subtitle, setLoading]);
+
 
 
     const fetchTranscriptionLanguages = () => {
@@ -542,6 +549,9 @@ export default function SameLanguageSubtitles({
          
             {console.log(languageAvailable)}
             <Style className="subtitles">
+                <Button className="save" onClick={saveTranscript}>
+                    Save 💾
+                </Button>
            
                 {/* {isPrimary && (
                     <div className="transcribe">

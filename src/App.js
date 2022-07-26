@@ -22,6 +22,8 @@ import debounce from 'lodash/debounce';
 import { render } from 'react-dom';
 import Header from './components/Tool';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import SaveTranscriptAPI from "./redux/actions/api/Transcript/SaveTranscript"
+import { sub2vtt } from './libs/readSub';
 
 const Style = styled.div`
     height: 100%;
@@ -75,6 +77,17 @@ const Style = styled.div`
         right: 25px;
         z-index: 999;
     }
+
+    .save {
+        margin: auto;
+        margin-top: 20px;
+        display: block;
+    }
+
+    .btn-parent-div {
+        display: block;
+        background: #000;
+    }
 `;
 
 export default function App({ defaultLang }) {
@@ -123,11 +136,10 @@ export default function App({ defaultLang }) {
     const [currentFound, setCurrentFound] = useState();
     const [fullscreen, setFullscreen] = useState(false);
 
-
-      /* For Transcription Modal */
-      const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
-      const handleTranscriptionClose = () => setTranscriptionModalOpen(false);
-      const handleTranscriptionShow = () => setTranscriptionModalOpen(true);
+    /* For Transcription Modal */
+    const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
+    const handleTranscriptionClose = () => setTranscriptionModalOpen(false);
+    const handleTranscriptionShow = () => setTranscriptionModalOpen(true);
 
     /* For Translation Modal */
     const [translationModalOpen, setTranslationModalOpen] = useState(false);
@@ -687,7 +699,39 @@ export default function App({ defaultLang }) {
             setFullscreen(false);
             cancelFullScreen.call(doc);
         }
-        
+    };
+
+    const saveTranscript = async () => {
+        if (localStorage.getItem('subtitle')) {
+            const payload = {
+                output: sub2vtt(subtitle),
+            };
+            const saveObj = new SaveTranscriptAPI(
+                localStorage.getItem('transcript_id'),
+                localStorage.getItem('langTranscribe'),
+                payload,
+            );
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: 'POST',
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+            });
+            const resp = await res.json();
+            console.log(resp);
+            if (res.ok) {
+                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
+                notify({
+                    message: 'Subtitle saved successfully',
+                    level: 'success',
+                });
+            } else {
+                notify({
+                    message: 'Subtitle could not be saved',
+                    level: 'error',
+                });
+            }
+        }
     };
 
     return (
@@ -718,7 +762,7 @@ export default function App({ defaultLang }) {
                 </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <div className={{ overflow: 'visible' }}>
+                    <div style={{ overflow: 'visible', background: "#000" }}>
                         {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}
@@ -737,8 +781,7 @@ export default function App({ defaultLang }) {
                             setConfiguration={props.setConfiguration}
                             updateSubOriginal={props.updateSubTranslate}
                             translationApi={props.translationApi}
-                />*/}
-                        {/* here */}
+                        />*/}
 
                         {/* <ScrollSync>
                             <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
@@ -793,61 +836,63 @@ export default function App({ defaultLang }) {
                                     </div>
                                 </ScrollSyncPane>
                             </div>
-                         </ScrollSync> */}
-                          {/* <ScrollSync> */}
-                            <div style={{ display: 'flex', position: 'relative', height:`90%`, zIndex: "200"}}>
-                         <Subtitles
-                                            currentIndex={props.currentIndex}
-                                            subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
-                                            checkSub={props.checkSub}
-                                            player={props.player}
-                                            updateSub={props.updateSubEnglish} 
-                                            language={props.language}
-                                            setLanguage={props.setLanguage}
-                                            setLoading={props.setLoading}
-                                            subtitleEnglish={props.subtitleEnglish}
-                                            formatSub={props.formatSub}
-                                            setSubtitle={props.setSubtitle}
-                                            notify={props.notify}
-                                            isPrimary={false}
-                                            configuration={props.configuration}
-                                            setConfiguration={props.setConfiguration}
-                                            updateSubOriginal={props.updateSubTranslate}
-                                            // translationApi={props.translationApi}
-                                            found={props.found}
-                                            currentFound={props.currentFound}
-                                            handleTranslationClose={props.handleTranslationClose}
-                                            handleTranslationShow={props.handleTranslationShow}
-                                            translationModalOpen={props.translationModalOpen}
-                                            />
-                                            {console.log(props.subtitle)}
-                                            <Subtitles
-                                            currentIndex={props.currentIndex}
-                                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
-                                            checkSub={props.checkSub}
-                                            player={props.player}
-                                            updateSub={props.updateSub}
-                                            language={props.language}
-                                            setLanguage={props.setLanguage}
-                                            setLoading={props.setLoading}
-                                            subtitleEnglish={props.subtitleEnglish}
-                                            formatSub={props.formatSub}
-                                            setSubtitle={props.setSubtitle}
-                                            notify={props.notify}
-                                            isPrimary={true}
-                                            clearedSubs={props.clearedSubs} //extra
-                                            setClearedSubs={props.setClearedSubs} //extra
-                                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
-                                            configuration={props.configuration}
-                                            setConfiguration={props.setConfiguration}
-                                            // translationApi={props.translationApi}
-                                         //   isTranslateClicked={props.isTranslateClicked} //added
-                                          //  setIsTranslateClicked={props.setIsTranslateClicked} //added
-                                            found={props.found}
-                                            currentFound={props.currentFound}
-                                        />
-                                        </div>
-                         {/* </ScrollSync> */}
+                            </ScrollSync> */}
+                        <div className="btn-parent-div">
+                            <Button className="save" onClick={saveTranscript}>Save 💾</Button>
+                        </div>
+
+                        <div style={{ display: 'flex', position: 'relative', height: `90%`, zIndex: '200' }}>
+                            <Subtitles
+                                currentIndex={props.currentIndex}
+                                subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
+                                checkSub={props.checkSub}
+                                player={props.player}
+                                updateSub={props.updateSubEnglish}
+                                language={props.language}
+                                setLanguage={props.setLanguage}
+                                setLoading={props.setLoading}
+                                subtitleEnglish={props.subtitleEnglish}
+                                formatSub={props.formatSub}
+                                setSubtitle={props.setSubtitle}
+                                notify={props.notify}
+                                isPrimary={false}
+                                configuration={props.configuration}
+                                setConfiguration={props.setConfiguration}
+                                updateSubOriginal={props.updateSubTranslate}
+                                // translationApi={props.translationApi}
+                                found={props.found}
+                                currentFound={props.currentFound}
+                                handleTranslationClose={props.handleTranslationClose}
+                                handleTranslationShow={props.handleTranslationShow}
+                                translationModalOpen={props.translationModalOpen}
+                            />
+                            {console.log(props.subtitle)}
+                            <Subtitles
+                                currentIndex={props.currentIndex}
+                                subtitle={props.subtitle} //subtitle to subtitleEnglish?
+                                checkSub={props.checkSub}
+                                player={props.player}
+                                updateSub={props.updateSub}
+                                language={props.language}
+                                setLanguage={props.setLanguage}
+                                setLoading={props.setLoading}
+                                subtitleEnglish={props.subtitleEnglish}
+                                formatSub={props.formatSub}
+                                setSubtitle={props.setSubtitle}
+                                notify={props.notify}
+                                isPrimary={true}
+                                clearedSubs={props.clearedSubs} //extra
+                                setClearedSubs={props.setClearedSubs} //extra
+                                setSubtitleOriginal={props.setSubtitleOriginal} //extra
+                                configuration={props.configuration}
+                                setConfiguration={props.setConfiguration}
+                                // translationApi={props.translationApi}
+                                //   isTranslateClicked={props.isTranslateClicked} //added
+                                //  setIsTranslateClicked={props.setIsTranslateClicked} //added
+                                found={props.found}
+                                currentFound={props.currentFound}
+                            />
+                        </div>
                     </div>
                 )}
 
@@ -948,11 +993,10 @@ export default function App({ defaultLang }) {
                             transcriptSource={props.transcriptSource}
                             setTranscriptSource={props.setTranscriptSource}
                             found={props.found}
-                            currentFound={props.currentFound}            
+                            currentFound={props.currentFound}
                             transcriptionModalOpen={props.transcriptionModalOpen}
                             handleTranscriptionClose={props.handleTranscriptionClose}
                         />
-                      
                     </>
                 )}
                 {/* <Tool {...props} /> */}

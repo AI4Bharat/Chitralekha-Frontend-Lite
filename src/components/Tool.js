@@ -308,7 +308,6 @@ const Style = styled.div`
                 border-radius: 10px;
                 cursor: pointer;
                 border: none;
-                margin-right: 20px;
                 text-align: center;
             }
 
@@ -1241,6 +1240,7 @@ export default function Header({
                 onVideoChange={onVideoChange}
                 onSubtitleChange={onSubtitleChange}
                 onInputClick={onInputClick}
+                clearData={clearData}
             />
 
             {/* <div className={`tool-button`}>
@@ -1335,6 +1335,7 @@ export default function Header({
                                 setIsSetConfiguration(true);
                                 player?.pause();
                             }}
+                            style={{marginRight: "20px"}}
                         >
                             <Translate value="SAME_LANGUAGE" />
                         </div>

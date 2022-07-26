@@ -345,7 +345,7 @@ export default function Subtitles({
                 langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
             }
             setLanguageAvailable(langArray);
-            localStorage.setItem('langTranslate', langArray[0].key);
+           // localStorage.setItem('langTranslate', langArray[0].key); // commented this out to prevent default language subtitles appearing in right pane
             setTranslate(langArray[0].key);
             //  setModeTranslate(langArray[0].key);
         }

@@ -10,14 +10,113 @@ import sub2ass from '../libs/readSub/sub2ass';
 import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
 import HamburgerMenu from 'react-hamburger-menu';
-import '../utils/ToolNavigation.css';
+//import '../utils/ToolNavigation.css';
 import BottomLinks from './BottomLinks';
-import GetVideoDetailsAPI from "../redux/actions/api/Video/GetVideoDetails"
-import { useDispatch, useSelector } from "react-redux"
-import APITransport from "../redux/actions/apitransport/apitransport"
+import Links from './Links';
+import GetVideoDetailsAPI from '../redux/actions/api/Video/GetVideoDetails';
+import { useDispatch, useSelector } from 'react-redux';
+import APITransport from '../redux/actions/apitransport/apitransport';
+import Navbar from './Header';
+import LoginForm from './Login';
+import SaveTranscriptAPI from '../redux/actions/api/Transcript/SaveTranscript';
+import ReactModal from 'react-modal';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import UploadModal from './UploadModal';
+import ExportModal from './ExportModal';
+import FindAndReplace from './FindAndReplace';
+import { Button } from 'react-bootstrap';
 
 const Style = styled.div`
-    border-left: 1px solid white;
+    border-bottom: 1px solid #63d471;
+
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    //  padding: 0.2rem calc((100vw - 1000px) / 2);
+    z-index: 100;
+
+    .top-panel-select {
+        width: 150px;
+        text-decoration: none;
+        align-items: center;
+        color: #fff;
+        height: 40px;
+        background: #3f51b5;
+        border-radius: 10px;
+        cursor: pointer;
+        border: none;
+        padding: 0 15px;
+        line-height: 2.7;
+
+        option {
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            color: #000;
+        }
+    }
+
+    .modal-textarea {
+        padding: 20px;
+    }
+
+    .youtube-link .youtube-textarea {
+        padding: 20px;
+    }
+
+    .top {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        select {
+            outline: none;
+            padding: 0 10px;
+            height: 40px;
+            border-radius: 3px;
+            border: none;
+        }
+    }
+
+    .modal-fetch-btn {
+        position: relative;
+        opacity: 0.85;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 35px;
+        width: 48%;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 13px;
+        background-color: black;
+        transition: all 0.2s ease 0s;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    .save-transcript {
+        .button-layout {
+            width: 150px;
+            text-decoration: none;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            height: 40px;
+            background: #3f51b5;
+            border-radius: 10px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .button-layout:hover {
+            background-color: #5264cc;
+        }
+    }
 
     .tool-button {
         display: flex;
@@ -35,7 +134,6 @@ const Style = styled.div`
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .btn {
             position: relative;
@@ -69,7 +167,11 @@ const Style = styled.div`
         }
     }
 
-    .seconday-options {
+    .export {
+        text-align: center;
+    }
+
+    .secondary-options {
         transform: scaleY(1) !important;
         transition: all 0.25s 0.4s;
         transform-origin: top;
@@ -88,7 +190,6 @@ const Style = styled.div`
     }
 
     .select-translation-api-container {
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
         display: flex;
         flex-direction: column;
         // justify-content: center;
@@ -112,7 +213,6 @@ const Style = styled.div`
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .btn {
             position: relative;
@@ -136,12 +236,7 @@ const Style = styled.div`
     }
 
     .export {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
-
-        .btn {
+        .export-btn {
             position: relative;
             opacity: 0.85;
             display: flex;
@@ -163,29 +258,23 @@ const Style = styled.div`
     }
 
     .operate {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
-
         .btn {
-            position: relative;
-            opacity: 0.85;
-            display: flex;
-            justify-content: center;
+            width: fit-content;
+            text-decoration: none;
             align-items: center;
-            height: 35px;
-            width: 48%;
-            border-radius: 3px;
             color: #fff;
+            height: 40px;
+            background: #3f51b5;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 13px;
-            background-color: #009688;
-            transition: all 0.2s ease 0s;
+            border: none;
+            padding: 0 15px;
+            line-height: 2.4;
+            margin-right: 20px;
+        }
 
-            &:hover {
-                opacity: 1;
-            }
+        .btn:hover {
+            background-color: #5264cc;
         }
     }
 
@@ -193,6 +282,9 @@ const Style = styled.div`
         transform: scaleY(1) !important;
         transition: all 0.25s 0.4s;
         transform-origin: top;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
         &-heading {
             opacity: 1;
@@ -203,33 +295,24 @@ const Style = styled.div`
         &-options {
             opacity: 1;
             display: flex;
-            flex-direction: column;
-            flex-wrap: wrap;
-            border-bottom: 1px solid rgb(255 255 255 / 20%);
             // align-items: center;
-            margin-top: -10px;
-            padding-left: 10px;
 
             .btn {
-                position: relative;
-                opacity: 0.85;
-                display: flex;
-                justify-content: center;
+                width: 150px;
+                text-decoration: none;
                 align-items: center;
-                height: 35px;
-                width: 95%;
-                border-radius: 3px;
+                justify-content: center;
                 color: #fff;
+                height: 40px;
+                background: #3f51b5;
+                border-radius: 10px;
                 cursor: pointer;
-                font-size: 13px;
-                background-color: #009688;
-                transition: all 0.2s ease 0s;
-                margin-bottom: 10px;
-                letter-spacing: 1.3px;
+                border: none;
+                text-align: center;
+            }
 
-                &:hover {
-                    opacity: 1;
-                }
+            .btn:hover {
+                background-color: #5264cc;
             }
         }
     }
@@ -239,22 +322,24 @@ const Style = styled.div`
         transition: all 0.25s;
         transform-origin: top;
         height: 0;
+        display: none;
     }
     .hide-config .configuration-heading {
         opacity: 0;
         transition: all 0.1s;
+        display: none;
     }
 
     .hide-config .configuration-options {
         opacity: 0;
         transition: all 0.1s;
+        display: none;
     }
 
     .translate {
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         select {
             width: 65%;
@@ -286,7 +371,6 @@ const Style = styled.div`
         display: flex;
         justify-content: space-between;
         padding: 10px;
-        border-bottom: 1px solid rgb(255 255 255 / 20%);
 
         .youtube-textarea {
             width: 65%;
@@ -321,13 +405,18 @@ const Style = styled.div`
         padding: 10px;
 
         span {
-            width: 49%;
-            font-size: 13px;
-            padding: 5px 0;
-            border-radius: 3px;
-            text-align: center;
-            color: rgb(255 255 255 / 75%);
-            background-color: rgb(255 255 255 / 20%);
+            width: fit-content;
+            text-decoration: none;
+            align-items: center;
+            color: #fff;
+            height: 40px;
+            background: #3f51b5;
+            border-radius: 10px;
+            cursor: not-allowed;
+            border: none;
+            padding: 0 15px;
+            line-height: 2.7;
+            margin: 0 10px;
         }
     }
 
@@ -343,7 +432,6 @@ const Style = styled.div`
                 color: #ffeb3b;
                 padding: 5px 10px;
                 animation: animation 3s infinite;
-                border-bottom: 1px solid rgb(255 255 255 / 30%);
             }
 
             @keyframes animation {
@@ -378,6 +466,38 @@ const Style = styled.div`
             background-color: #ff9800;
             transition: all 0.2s ease 0s;
         }
+    }
+
+    .signin-btn {
+        margin-left: auto;
+    }
+
+    .select-box {
+        margin-left: auto;
+    }
+
+    .export-btn-main {
+        width: 150px;
+        text-decoration: none;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        height: 40px;
+        background: #3f51b5;
+        border-radius: 10px;
+        cursor: pointer;
+        border: none;
+        margin: 0 20px;
+        line-height: 2.7;
+        padding: 0 15px;
+    }
+
+    .export-btn-main:hover {
+        background-color: #5264cc;
+    }
+
+    .d-none {
+        display: none;
     }
 `;
 // function useStickyState(defaultValue, key) {
@@ -435,10 +555,30 @@ export default function Header({
     setEnableConfiguration,
     isSetConfiguration,
     setIsSetConfiguration,
+    translationApi,
+    setTranslationApi,
+    setTranscribe,
+    onTranscribe,
     isSetVideo,
     setIsSetVideo,
     transcriptSource,
     setTranscriptSource,
+    find,
+    replace,
+    found,
+    setFind,
+    setReplace,
+    setFound,
+    handleReplace,
+    handleReplaceAll,
+    handleFind,
+    currentFound,
+    setCurrentFound,
+    handleTranscriptionClose,
+    handleTranscriptionShow,
+    handleTranslationClose,
+    handleTranslationShow,
+    fullscreen,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -446,8 +586,65 @@ export default function Header({
     const translate = 'en';
     const [toolOpen, setToolOpen] = useState(true);
     const dispatch = useDispatch();
-    const VideoDetails = useSelector(state => state.getVideoDetails.data);
+    const VideoDetails = useSelector((state) => state.getVideoDetails.data);
+    const [showLogin, setShowLogin] = useState(false);
+    const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
+
+
+     /* For Import Modal */
+     const [importModalOpen, setImportModalOpen] = useState(false);
+     const handleImportClose = () => setImportModalOpen(false);
+     const handleImportShow = () => setImportModalOpen(true);
+
+   
+
+    function useStickyState(defaultValue, key) {
+        const [value, setValue] = React.useState(() => {
+            const stickyValue = window.localStorage.getItem(key);
+            return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
+        });
+        React.useEffect(() => {
+            window.localStorage.setItem(key, JSON.stringify(value));
+        }, [key, value]);
+        return [value, setValue];
+    }
+
+    // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
+    const saveTranscript = async () => {
+        if (localStorage.getItem('subtitle')) {
+            setLoading(t('SAVING'));
+            const payload = {
+                output: sub2vtt(subtitle),
+            };
+            const saveObj = new SaveTranscriptAPI(
+                localStorage.getItem('transcript_id'),
+                localStorage.getItem('langTranscribe'),
+                payload,
+            );
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: 'POST',
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+            });
+            const resp = await res.json();
+            console.log(resp);
+            if (res.ok) {
+                localStorage.setItem('subtitle', JSON.stringify(subtitle));
+                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
+                notify({
+                    message: 'Subtitle saved successfully',
+                    level: 'success',
+                });
+            } else {
+                notify({
+                    message: 'Subtitle could not be saved',
+                    level: 'error',
+                });
+            }
+            setLoading('');
+        }
+    };
 
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
@@ -568,6 +765,8 @@ export default function Header({
         }
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
+    const props = {};
+
     const onVideoChange = useCallback(
         (event) => {
             const file = event.target.files[0];
@@ -665,7 +864,7 @@ export default function Header({
         //             console.log(err);
         //         });
         //     }
-    // } else {
+        // } else {
         //             // // Auto-transcribe
         //             // const data = {
         //             //     url: youtubeURL,
@@ -703,9 +902,9 @@ export default function Header({
         (event) => {
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
-                
+
                 console.log('called');
-       //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
+                //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
                 setLoading(t('LOADING'));
                 dispatch(APITransport(videoObj));
 
@@ -778,7 +977,7 @@ export default function Header({
                 //             //     });
                 //         }
                 //     });
-                
+
                 // // fetch(
                 // //     `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
                 // //     {
@@ -849,19 +1048,23 @@ export default function Header({
             // setIsSetVideo(true);
             // setLoading('')
         },
-        [
-            clearSubs,
-            youtubeURL,
-            translate,
-            player,
-            setSubtitle,
-            setLoading,
-            setIsSetVideo,
-        ],
+        [clearSubs, youtubeURL, translate, player, setSubtitle, setLoading, setIsSetVideo],
     );
 
     const handleChange = (e) => {
+        e.preventDefault();
         setYoutubeURL(e.target.value);
+    };
+
+    const clearData = () => {
+        setYoutubeURL('');
+        localStorage.setItem('videoSrc', null);
+        localStorage.setItem('isVideoPresent', false);
+        localStorage.setItem('lang', 'en');
+        localStorage.setItem('subtitleEnglish', null);
+        clearSubs();
+        clearSubsEnglish();
+        window.location.reload();
     };
 
     const onSubtitleChange = useCallback(
@@ -968,9 +1171,79 @@ export default function Header({
         }
     }, [setIsSetVideo, isSetVideo]);
 
+    class ExportSubtitleModal extends React.Component {
+        constructor() {
+            super();
+            this.state = {
+                showExportModal: false,
+                value: '',
+            };
+
+            this.handleOpenExportModal = this.handleOpenExportModal.bind(this);
+            this.handleCloseExportModal = this.handleCloseExportModal.bind(this);
+        }
+
+        handleOpenExportModal() {
+            this.setState({ showExportModal: true });
+        }
+
+        handleCloseExportModal() {
+            this.setState({ showExportModal: false });
+        }
+
+        render() {
+            return (
+                <>
+                    <Style>
+                        <div className="export-btn-main">
+                            <div className="export export-btn" onClick={this.handleOpenExportModal}>
+                                <Translate value="Export" />
+                            </div>
+                        </div>
+                    </Style>
+
+                    <ExportModal
+                        show={this.state.showExportModal}
+                        onHide={this.handleCloseExportModal}
+                        downloadSub={downloadSub}
+                        downloadSubReference={downloadSubReference}
+                    />
+                </>
+            );
+        }
+    }
+
     return (
-        <Style className={`tool ${toolOpen ? 'tool-open' : ''}`}>
-            <div className={`tool-button`}>
+        <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>
+            <Links />
+            
+            <select
+                onChange={(event) => {
+                    localStorage.setItem('selectValue', event.target.value);
+                    handleImportShow();
+                }}
+                className="top-panel-select"
+                value=""
+                style={{marginRight: "20px"}}
+            >
+                <option value="" disabled selected>Open</option>
+                <option value="video">Import Video</option>
+                <option value="subtitles">Import Subtitle</option>
+            </select>
+
+            <UploadModal
+                show={importModalOpen}
+                onHide={handleImportClose}
+                textAreaValue={youtubeURL}
+                textAreaValueChange={handleChange}
+                onYouTubeChange={onYouTubeChange}
+                onVideoChange={onVideoChange}
+                onSubtitleChange={onSubtitleChange}
+                onInputClick={onInputClick}
+                clearData={clearData}
+            />
+
+            {/* <div className={`tool-button`}>
                 <div
                     className="icon"
                     onClick={() => {
@@ -989,11 +1262,10 @@ export default function Header({
                         animationDuration={0.5}
                     />
                 </div>
-            </div>
+            </div> */}
 
-            <div className="top">
-            {/* <CalendarView />  */}
-                <div className="import ">
+            <Style>
+                {/* <div className="import ">
                     <div className="btn">
                         <Translate value="OPEN_VIDEO" />
                         <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
@@ -1002,21 +1274,22 @@ export default function Header({
                         <Translate value="OPEN_SUB" />
                         <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
                     </div>
-                </div>
-                <div className="youtube-link ">
-                    <textarea
-                        className="youtube-textarea"
-                        placeholder="Enter YouTube Link Here"
-                        value={youtubeURL}
-                        onChange={handleChange}
-                        // onKeyPress={(e) => }
-                    />
-                    <div className="btn" onClick={onYouTubeChange}>
-                        <Translate value="Fetch Video" />
-                    </div>
-                </div>
-                <div className="operate">
-                    <div
+                    </div> */}
+                {/* <div className="youtube-link ">
+                        <textarea
+                            className="youtube-textarea"
+                            placeholder="Enter YouTube Link Here"
+                            value={youtubeURL}
+                            onChange={handleChange}
+                            // onKeyPress={(e) => }
+                        />
+                        <div className="btn" onClick={onYouTubeChange}>
+                            <Translate value="Fetch Video" />
+                        </div>
+                    </div> */}
+
+                {/* <div className="operate"> */}
+                {/* <div
                         className="btn"
                         onClick={() => {
                             if (window.confirm(t('CLEAR_TIP')) === true) {
@@ -1031,38 +1304,38 @@ export default function Header({
                                 window.location.reload();
                             }
                         }}
-                    >
-                        <Translate value="CLEAR" />
-                    </div>
-                    <div className="btn" onClick={undoSubs}>
-                        <Translate value="UNDO" />
-                    </div>
-                </div>
-                <div className="operate">
-                    <div className="btn" onClick={clearSubsHandler}>
-                        <Translate value="Clear Subtitles" />
-                    </div>
-                </div>
+                            >
+                                <Translate value="CLEAR" />
+                            </div>
+                            <div className="btn" onClick={undoSubs}>
+                                <Translate value="UNDO" />
+                            </div>
+                        </div>
+                         <div className="operate">
+                        <div className="btn" onClick={clearSubsHandler}>
+                            <Translate value="Clear Subtitles" />
+                        </div> */}
+                {/* </div> */}
 
                 <div
                     className={`
-                        ${isSetVideo ? 'configuration' : 'hide-config'}
-                `}
+                            ${isSetVideo ? 'configuration' : 'hide-config'}
+                        `}
                 >
-                    <p className="configuration-heading">
-                        <b>Configuration Options</b>
-                    </p>
+                    {/* <p className="configuration-heading"><b>Configuration Options</b></p> */}
                     <div className="configuration-options">
                         <div
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - same');
+                                handleTranscriptionShow();
                                 const langTranscribe = localStorage.getItem('lang');
-                              //  console.log("lang " + langTranscribe);
+                                //  console.log("lang " + langTranscribe);
                                 setConfiguration('Same Language Subtitling');
                                 setIsSetConfiguration(true);
                                 player?.pause();
                             }}
+                            style={{marginRight: "20px"}}
                         >
                             <Translate value="SAME_LANGUAGE" />
                         </div>
@@ -1070,7 +1343,7 @@ export default function Header({
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - basic');
-                                
+                                handleTranslationShow();
                                 setConfiguration('Subtitling');
                                 setIsSetConfiguration(true);
                                 clearSubs();
@@ -1090,9 +1363,20 @@ export default function Header({
                         >
                             <Translate value="SIGN_LANGUAGE" />
                         </div> */}
-                        
+
+
                     </div>
+                    <ExportSubtitleModal/>
                 </div>
+
+                {/* <div className="save-transcript">
+                    <button className="button-layout" onClick={saveTranscript}>
+                        Save 💾
+                    </button>
+                </div> */}
+
+                
+
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
                     {/* {configuration === 'Subtitling' && (
                         <>
@@ -1114,7 +1398,7 @@ export default function Header({
                             </div>
                         </>
                     )} */}
-                    {configuration === 'Same Language Subtitling' && (
+                    {/* {configuration === 'Same Language Subtitling' && (
                         <>
                             <div className="select-translation-api-container">
                                 <p className="select-heading">
@@ -1134,7 +1418,7 @@ export default function Header({
                                     <option value="Manual Upload">Manual Upload</option>
                                 </select>
                             </div>
-                        </>)}
+                        </>)} */}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">
@@ -1142,10 +1426,10 @@ export default function Header({
                             </div>
                         </div>
                     ) : null}
-                    {configuration !== "Same Language Subtitling" && <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Translation</b>
-                    </p>}
-                    {configuration !== "Same Language Subtitling" && <div className="export" style={{ marginTop: '-20px' }}>
+                    {/*<p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
+                        <b>Export Your Subtitles</b>
+                    </p>
+                     <div className="export" style={{ marginTop: '-20px' }}>
                         <div className="btn" onClick={() => downloadSub('ass')}>
                             <Translate value="EXPORT_ASS" />
                         </div>
@@ -1169,40 +1453,95 @@ export default function Header({
                         <div className="btn" onClick={() => downloadSubReference('vtt')}>
                             <Translate value="EXPORT_VTT" />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-                <div className="">
-                    <BottomLinks />
-                </div>
+
+                <div className="">{/* <BottomLinks /> */}</div>
 
                 {/* <div className="translate">
-                    <select
-                        value={translate}
-                        onChange={(event) => {
-                            setTranslate(event.target.value);
-                            localStorage.setItem('lang', event.target.value);
-                        }}
-                    >
-                        {(languages[language] || languages.en).map((item) => (
-                            <option key={item.key} value={item.key}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </select>
-                    <div className="btn" onClick={onTranslate}>
-                        <Translate value="TRANSLATE" />
-                    </div>
-                </div> */}
+                        <select
+                            value={translate}
+                            onChange={(event) => {
+                                setTranslate(event.target.value);
+                                localStorage.setItem('lang', event.target.value);
+                            }}
+                        >
+                            {(languages[language] || languages.en).map((item) => (
+                                <option key={item.key} value={item.key}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="btn" onClick={onTranslate}>
+                            <Translate value="TRANSLATE" />
+                        </div>
+                    </div> */}
 
-                <div className="hotkey">
-                    <span>
+                {/* <div className="hotkey">
+                    <span className="button-layout">
                         <Translate value="HOTKEY_01" />
                     </span>
-                    <span>
+                    <span className="button-layout">
                         <Translate value="HOTKEY_02" />
                     </span>
-                </div>
+                </div> */}
+            </Style>
+
+            <div className="save-transcript">
+                <button className="button-layout" onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>
+                    Find / Replace
+                </button>
             </div>
+
+            {showFindReplaceModal ? (
+                <FindAndReplace
+                    find={find}
+                    replace={replace}
+                    found={found}
+                    setFind={setFind}
+                    setReplace={setReplace}
+                    setFound={setFound}
+                    showFindAndReplace={showFindReplaceModal}
+                    setShowFindAndReplace={setShowFindReplaceModal}
+                    handleReplace={handleReplace}
+                    handleReplaceAll={handleReplaceAll}
+                    handleFind={handleFind}
+                    currentFound={currentFound}
+                    setCurrentFound={setCurrentFound}
+                    configuration={configuration}
+                />
+            ) : null}
+
+            <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
+            <div className="signin-btn" style={{ zIndex: 200 }}>
+                {localStorage.getItem('user_id') ? (
+                    <div class="dropdown">
+                        <div className="user-details">
+                            <div className="user-initials">
+                                {localStorage.getItem('first_name')?.charAt(0).toUpperCase()}
+                                {localStorage.getItem('last_name')?.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="user-name">{localStorage.getItem('username')}</span>
+                        </div>
+                        <div class="user-menu">
+                            <a
+                                href="#"
+                                onClick={() => {
+                                    localStorage.clear();
+                                    window.location.reload();
+                                }}
+                            >
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                ) : (
+                    <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                        Sign In
+                    </span>
+                )}
+            </div>
+        
         </Style>
     );
 }

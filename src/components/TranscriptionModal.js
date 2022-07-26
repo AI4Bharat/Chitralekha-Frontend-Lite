@@ -70,7 +70,7 @@ const TranscriptionModal = (props) => {
                             
         </Modal.Body> 
         <Modal.Footer>
-          <div className="btn" onClick={props.onTranscribe} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
+          <div className="btn" onClick={()=>{props.onTranscribe(); props.handleTranscriptionClose();}} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
             <Translate value="TRANSCRIBE" />
           </div>
           <Button variant="dark" onClick={props.handleTranscriptionClose}>

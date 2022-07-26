@@ -591,12 +591,10 @@ export default function Header({
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
 
 
-     /* For Import Modal */
+     /* For Upload/Open Modal */
      const [importModalOpen, setImportModalOpen] = useState(false);
      const handleImportClose = () => setImportModalOpen(false);
      const handleImportShow = () => setImportModalOpen(true);
-
-   
 
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
@@ -1228,7 +1226,7 @@ export default function Header({
             >
                 <option value="" disabled selected>Open</option>
                 <option value="video">Import Video</option>
-                <option value="subtitles">Import Subtitle</option>
+                <option value="subtitles">Import Subtitle</option>      
             </select>
 
             <UploadModal

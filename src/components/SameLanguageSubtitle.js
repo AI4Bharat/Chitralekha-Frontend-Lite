@@ -27,7 +27,7 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
-    z-index: 200;
+    z-index: 100;
 
     .transcribe {
         display: flex;
@@ -229,7 +229,7 @@ export default function SameLanguageSubtitles({
     const GeneratedTranscript = useSelector(state => state.generateTranscript.data);
     const APIStatus = useSelector(state => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
-    
+
     const saveTranscript = useCallback(async () => {
         if (subtitle?.length > 0) {
             // setLoading(t('SAVING'));

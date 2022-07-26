@@ -21,6 +21,7 @@ import ReactModal from 'react-modal';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TranscriptionModal from './TranscriptionModal';
+import { Button } from 'react-bootstrap';
 
 const Style = styled.div`
     position: relative;
@@ -168,6 +169,12 @@ const Style = styled.div`
             }
         }
     }
+
+    .save {
+        margin: auto;
+        margin-top: 20px;
+        display: block;
+    }
 `;
 
 export default function SameLanguageSubtitles({
@@ -222,7 +229,6 @@ export default function SameLanguageSubtitles({
     const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
     const APIStatus = useSelector((state) => state.apiStatus);
     const waiting = useRef(false);
-
 
     const saveTranscript = useCallback(async () => {
             if (subtitle?.length > 0) {
@@ -537,6 +543,9 @@ export default function SameLanguageSubtitles({
          
             {console.log(languageAvailable)}
             <Style className="subtitles">
+                <Button className="save" onClick={saveTranscript}>
+                    Save 💾
+                </Button>
            
                 {/* {isPrimary && (
                     <div className="transcribe">

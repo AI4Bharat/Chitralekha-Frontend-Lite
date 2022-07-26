@@ -44,7 +44,7 @@ const UploadModal = (props) => {
                     <Button onClick={props.clearSubsHandler}>Clear</Button>
                 )}
                 {localStorage.getItem('selectValue') === 'video' ? (
-                    <Button onClick={props.onYouTubeChange}>Fetch</Button>
+                    <Button onClick={() => {props.onYouTubeChange(); props.onHide();}}>Fetch</Button>
                 ) : null}
                 <Button onClick={props.onHide}>Close</Button>
             </Modal.Footer>

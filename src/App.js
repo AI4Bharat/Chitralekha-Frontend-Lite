@@ -670,7 +670,7 @@ export default function App({ defaultLang }) {
 
     const renderTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
-            {!fullscreen ? 'Fullscreen' : 'Exit'}
+            {!fullscreen ? 'Fullscreen Video with Panels' : 'Exit'}
         </Tooltip>
     );
 

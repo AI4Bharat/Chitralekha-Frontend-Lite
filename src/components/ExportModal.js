@@ -8,7 +8,7 @@ import { useState } from 'react';
 const ExportModal = (props) => {
     const [radioTranscribeSelected, setRadioTranscribeSelected] = useState('ass');
     const [radioTranslateSelected, setRadioTranslateSelected] = useState('ass');
-     console.log(props);
+    // console.log(props);
    // console.log(downloadSub);
     return (
         <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
@@ -32,8 +32,8 @@ const ExportModal = (props) => {
                                         checked={radioTranscribeSelected === value}
                                         onChange={()=>setRadioTranscribeSelected(value)}
                                     />
-                                    {console.log(index)}
-                                    {console.log('transcribe radio selected value '+ radioTranscribeSelected)}
+                                    
+                                    {/* {console.log('transcribe radio selected value '+ radioTranscribeSelected)} */}
                                 </div>
                             ))}
                         </Form>
@@ -54,7 +54,7 @@ const ExportModal = (props) => {
                                         onChange={e=>setRadioTranslateSelected(value)}
                                     />
 
-                                    {console.log('translate radio selected value '+ radioTranslateSelected)}
+                                    {/* {console.log('translate radio selected value '+ radioTranslateSelected)} */}
                                 </div>
                             ))}
                         </Form>

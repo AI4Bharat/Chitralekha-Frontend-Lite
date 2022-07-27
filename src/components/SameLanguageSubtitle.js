@@ -602,7 +602,7 @@ export default function SameLanguageSubtitles({
 
                 <Table
                     headerHeight={40}
-                    width={250}
+                    width={300}
                     height={height}
                     rowHeight={80}
                     scrollToIndex={currentIndex + 2}
@@ -660,7 +660,7 @@ export default function SameLanguageSubtitles({
                                         //         : 'en'
                                         // }
                                         maxOptions={5}
-                                        renderComponent={(props) => <textarea {...props} />}
+                                        renderComponent={(props) => <textarea {...props} style={{height: "70px", fontSize: "14px"}} />}
                                     />
                                     {/* <textarea
                                     maxLength={200}

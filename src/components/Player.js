@@ -27,7 +27,7 @@ const Style = styled.div`
             position: relative;
             z-index: 10;
             outline: none;
-            max-height: 100%;
+            max-height: 90%;
             max-width: 100%;
             box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
             background-color: #000;

@@ -58,8 +58,7 @@ const Style = styled.div`
         }
 
         .subtitles {
-            width: 250px;
-            max-width: 32vw;
+            width: 300px;
         }
 
         .tool {

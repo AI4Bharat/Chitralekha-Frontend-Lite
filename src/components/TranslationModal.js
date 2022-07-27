@@ -21,7 +21,7 @@ const TranslationModal = (props) => {
 
       <Modal show={props.translationModalOpen} onHide={props.handleTranslationClose} style={{top: "20%"}}>
         <Modal.Header closeButton>
-          <Modal.Title style={{textAlign: "center", width: "100%"}}>Translate</Modal.Title>
+          <Modal.Title>Translate</Modal.Title>
         </Modal.Header>
          <Modal.Body>
          <p style={{display:"inline-block", marginRight:"10px", fontWeight:"500"}}>Select Language</p> 
@@ -58,7 +58,7 @@ const TranslationModal = (props) => {
         <div className="btn" onClick={()=>{props.onTranslate(); props.handleTranslationClose();}} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
             <Translate value="TRANSLATE" />
           </div>
-          <Button variant="dark" onClick={props.handleTranslationClose}>
+          <Button variant="dark" onClick={props.handleTranslationClose} style={{marginLeft: "20px"}}>
             Close
           </Button>
         </Modal.Footer>

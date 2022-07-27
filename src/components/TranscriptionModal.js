@@ -21,11 +21,11 @@ const TranscriptionModal = (props) => {
 
       <Modal show={props.transcriptionModalOpen} onHide={props.handleTranscriptionClose} style={{top: "20%"}}>
         <Modal.Header closeButton>
-          <Modal.Title style={{textAlign: "center", width: "100%"}}>Transcribe</Modal.Title>
+          <Modal.Title>Transcribe</Modal.Title>
         </Modal.Header>
          <Modal.Body>
          <div style={{marginBottom: "2px"}}>
-          <p style={{display:"inline-block", marginRight:"10px", fontWeight:"500"}}>Select Language</p> 
+          <p style={{display:"inline-block", marginRight:"10px", fontWeight:"500", width: "200px"}}>Select Language</p> 
         <select
         value={props.modeTranscribe}
         onChange={(event) => {
@@ -50,7 +50,7 @@ const TranscriptionModal = (props) => {
                             <br/>
                             <span>
                             <div className="select-translation-api-container">
-                                <p className="select-heading" style={{display: "inline-block", marginRight: "10px", fontWeight:"500"}}>Transcript Source</p>
+                                <p className="select-heading" style={{display: "inline-block", marginRight: "10px", fontWeight:"500", width: "200px"}}>Transcript Source</p>
                                 <select
                                     value={props.transcriptSource}
                                     onChange={(e) => {
@@ -73,7 +73,7 @@ const TranscriptionModal = (props) => {
           <div className="btn" onClick={()=>{props.onTranscribe(); props.handleTranscriptionClose();}} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
             <Translate value="TRANSCRIBE" />
           </div>
-          <Button variant="dark" onClick={props.handleTranscriptionClose}>
+          <Button variant="dark" onClick={props.handleTranscriptionClose} style={{marginLeft: "20px"}}>
             Close
           </Button>
         </Modal.Footer>

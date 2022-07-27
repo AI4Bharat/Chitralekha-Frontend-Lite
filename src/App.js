@@ -762,7 +762,7 @@ export default function App({ defaultLang }) {
                 </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <div style={{ overflow: 'visible', background: "#000" }}>
+                    <div style={{ overflow: 'hidden', background: "#000" }}>
                         {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}

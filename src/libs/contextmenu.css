@@ -19,6 +19,7 @@
     opacity: 1;
     pointer-events: auto;
     z-index: 9999;
+    transform: translateY(30px);
 }
 
 .react-contextmenu-item {

@@ -142,9 +142,13 @@ export default function App({ defaultLang }) {
 
     /* For Translation Modal */
     const [translationModalOpen, setTranslationModalOpen] = useState(false);
-    const handleTranslationClose = () => setTranslationModalOpen(false);
+    const handleTranslationClose = () => {
+        setTranslationModalOpen(false);
+        setIsTranslateClicked(true);
+    }
     const handleTranslationShow = () => setTranslationModalOpen(true);
 
+    
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);

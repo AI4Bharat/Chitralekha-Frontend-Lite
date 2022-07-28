@@ -27,6 +27,8 @@ import ExportModal from './ExportModal';
 import FindAndReplace from './FindAndReplace';
 import { Button } from 'react-bootstrap';
 import { Dropdown } from 'react-bootstrap';
+import Toggle from 'react-toggle';
+import "react-toggle/style.css";
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -580,6 +582,7 @@ export default function Header({
     handleTranslationClose,
     handleTranslationShow,
     fullscreen,
+    isTranslateClicked,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -592,6 +595,8 @@ export default function Header({
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
 
     const [showDropdown, setShowDropdown] = useState(false);
+
+    const [toggleState, setToggleState] = useState('Same Language Subtitling');
 
      /* For Upload/Open Modal */
      const [importModalOpen, setImportModalOpen] = useState(false);
@@ -1162,6 +1167,20 @@ export default function Header({
         [subtitleEnglish],
     );
 
+    const handleToggleChange = () =>{
+        if(toggleState=='Subtitling'){
+           setConfiguration(toggleState);
+           setIsSetConfiguration(true);
+            setToggleState('Same Language Subtitling')
+            
+        }
+        else{
+            setConfiguration(toggleState);
+           setIsSetConfiguration(true);
+            setToggleState('Subtitling');
+        }
+    }
+
     useEffect(() => {
         if (isSetVideo === false) {
             if (window.localStorage.getItem('isVideoPresent') === 'true') {
@@ -1513,6 +1532,25 @@ export default function Header({
                     </span>
                 </div> */}
             </Style>
+{isTranslateClicked &&
+<>          
+            <Toggle
+            id='toggle-panel'
+            icons={false}
+            defaultChecked={'Subtitling'}
+            onChange={()=> {handleToggleChange(); console.log(toggleState);}}
+            aria-labelledby='toggle-panel'
+            />
+            <span id='toggle-panel' style={{padding: "0 10px"}}>
+                {
+                    configuration == 'Same Language Subtitling'
+                    ? 'Transcription'
+                    : 'Translation'
+                }
+            </span>
+            
+            </>
+}
 
             <div className="save-transcript">
                 <button className="button-layout" onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>

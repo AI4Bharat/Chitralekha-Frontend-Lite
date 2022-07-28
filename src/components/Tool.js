@@ -25,6 +25,8 @@ import 'react-tabs/style/react-tabs.css';
 import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
 import FindAndReplace from './FindAndReplace';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
 import { Dropdown } from 'react-bootstrap';
 import Toggle from 'react-toggle';
@@ -1214,11 +1216,9 @@ export default function Header({
             return (
                 <>
                     <Style>
-                        <div className="export-btn-main">
-                            <div className="export export-btn" onClick={this.handleOpenExportModal}>
-                                <Translate value="Export" />
-                            </div>
-                        </div>
+                        <Button onClick={this.handleOpenExportModal} style={{ marginRight: '20px' }}>
+                            <Translate value="Export" />
+                        </Button>
                     </Style>
 
                     <ExportModal
@@ -1235,20 +1235,63 @@ export default function Header({
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>
             <Links />
-            
-            <select
+
+            <DropdownButton
+                id="dropdown-basic-button"
+                title="Upload"
                 onChange={(event) => {
                     localStorage.setItem('selectValue', event.target.value);
                     handleImportShow();
                 }}
-                className="top-panel-select"
-                value=""
-                style={{marginRight: "20px"}}
+                style={{ marginRight: '20px' }}
             >
-                <option value="" disabled selected>Open</option>
-                <option value="video">Import Video</option>
-                <option value="subtitles">Import Subtitle</option>      
-            </select>
+                <Dropdown.Item
+                    name="video"
+                    onClick={(event) => {
+                        localStorage.setItem('selectValue', event.target.name);
+                        handleImportShow();
+                    }}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-camera-video "
+                        style={{marginRight: "10px"}}
+                        viewBox="0 0 16 16"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2V5zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556v4.35zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H2z"
+                        />
+                    </svg>
+                    Import Video
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item
+                    name="subtitles"
+                    onClick={(event) => {
+                        localStorage.setItem('selectValue', event.target.name);
+                        handleImportShow();
+                    }}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-card-text"
+                        style={{marginRight: "10px"}}
+                        viewBox="0 0 16 16"
+                    >
+                        <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
+                        <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z" />
+                    </svg>
+                    Import Subtitle
+                </Dropdown.Item>
+            </DropdownButton>
+
             {/* <Dropdown
                 onMouseLeave={() => {setShowDropdown(false);console.log(showDropdown);}}
                 onMouseEnter={() => {setShowDropdown(!showDropdown); console.log(showDropdown);}}
@@ -1369,37 +1412,36 @@ export default function Header({
                         `}
                 >
                     {/* <p className="configuration-heading"><b>Configuration Options</b></p> */}
-                    <div className="configuration-options">
-                        <div
-                            className="btn"
-                            onClick={() => {
-                                console.log('Configuration - same');
-                                handleTranscriptionShow();
-                                const langTranscribe = localStorage.getItem('lang');
-                                //  console.log("lang " + langTranscribe);
-                                setConfiguration('Same Language Subtitling');
-                                setIsSetConfiguration(true);
-                                player?.pause();
-                            }}
-                            style={{marginRight: "20px"}}
-                        >
-                            <Translate value="SAME_LANGUAGE" />
-                        </div>
-                        <div
-                            className="btn"
-                            onClick={() => {
-                                console.log('Configuration - basic');
-                                handleTranslationShow();
-                                setConfiguration('Subtitling');
-                                setIsSetConfiguration(true);
-                                clearSubs();
-                                player?.pause();
-                            }}
-                        >
-                            <Translate value="MAIN_LANGUAGE" />
-                        </div>
+                    <Button
+                        onClick={() => {
+                            console.log('Configuration - same');
+                            handleTranscriptionShow();
+                            const langTranscribe = localStorage.getItem('lang');
+                            //  console.log("lang " + langTranscribe);
+                            setConfiguration('Same Language Subtitling');
+                            setIsSetConfiguration(true);
+                            player?.pause();
+                        }}
+                        style={{ marginRight: '20px' }}
+                    >
+                        <Translate value="SAME_LANGUAGE" />
+                    </Button>
 
-                        {/* <div
+                    <Button
+                        onClick={() => {
+                            console.log('Configuration - basic');
+                            handleTranslationShow();
+                            setConfiguration('Subtitling');
+                            setIsSetConfiguration(true);
+                            clearSubs();
+                            player?.pause();
+                        }}
+                        style={{ marginRight: '20px' }}
+                    >
+                        <Translate value="MAIN_LANGUAGE" />
+                    </Button>
+
+                    {/* <div
                             className="btn"
                             onClick={() => {
                                 console.log('Configuration - sign');
@@ -1409,19 +1451,8 @@ export default function Header({
                         >
                             <Translate value="SIGN_LANGUAGE" />
                         </div> */}
-
-
-                    </div>
-                    <ExportSubtitleModal/>
+                    <ExportSubtitleModal />
                 </div>
-
-                {/* <div className="save-transcript">
-                    <button className="button-layout" onClick={saveTranscript}>
-                        Save 💾
-                    </button>
-                </div> */}
-
-                
 
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
                     {/* {configuration === 'Subtitling' && (
@@ -1553,9 +1584,7 @@ export default function Header({
 }
 
             <div className="save-transcript">
-                <button className="button-layout" onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>
-                    Find / Replace
-                </button>
+                <Button onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>Find / Replace</Button>
             </div>
 
             {showFindReplaceModal ? (
@@ -1580,33 +1609,26 @@ export default function Header({
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
             <div className="signin-btn" style={{ zIndex: 200 }}>
                 {localStorage.getItem('user_id') ? (
-                    <div class="dropdown">
-                        <div className="user-details">
-                            <div className="user-initials">
-                                {localStorage.getItem('first_name')?.charAt(0).toUpperCase()}
-                                {localStorage.getItem('last_name')?.charAt(0).toUpperCase()}
-                            </div>
-                            <span className="user-name">{localStorage.getItem('username')}</span>
-                        </div>
-                        <div class="user-menu">
-                            <a
-                                href="#"
-                                onClick={() => {
-                                    localStorage.clear();
-                                    window.location.reload();
-                                }}
-                            >
-                                Logout
-                            </a>
-                        </div>
-                    </div>
+                     <DropdownButton
+                     id="dropdown-basic-button"
+                     title={localStorage.getItem('username')}
+                     style={{ marginRight: '20px' }}
+                 >
+                     <Dropdown.Item
+                         onClick={() => {
+                            localStorage.clear();
+                            window.location.reload();
+                         }}
+                     >
+                        Logout
+                     </Dropdown.Item>
+                 </DropdownButton>
                 ) : (
-                    <span onClick={() => setShowLogin(!showLogin)} className="loginicon">
+                    <Button onClick={() => setShowLogin(!showLogin)} style={{ marginRight: '20px' }}>
                         Sign In
-                    </span>
+                    </Button>
                 )}
             </div>
-        
         </Style>
     );
 }

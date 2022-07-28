@@ -28,7 +28,6 @@ import FindAndReplace from './FindAndReplace';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
-import { Dropdown } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import "react-toggle/style.css";
 

@@ -26,6 +26,7 @@ import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
 import FindAndReplace from './FindAndReplace';
 import { Button } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -590,13 +591,12 @@ export default function Header({
     const [showLogin, setShowLogin] = useState(false);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
 
+    const [showDropdown, setShowDropdown] = useState(false);
 
-     /* For Import Modal */
+     /* For Upload/Open Modal */
      const [importModalOpen, setImportModalOpen] = useState(false);
      const handleImportClose = () => setImportModalOpen(false);
      const handleImportShow = () => setImportModalOpen(true);
-
-   
 
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
@@ -1228,9 +1228,36 @@ export default function Header({
             >
                 <option value="" disabled selected>Open</option>
                 <option value="video">Import Video</option>
-                <option value="subtitles">Import Subtitle</option>
+                <option value="subtitles">Import Subtitle</option>      
             </select>
+            {/* <Dropdown
+                onMouseLeave={() => {setShowDropdown(false);console.log(showDropdown);}}
+                onMouseEnter={() => {setShowDropdown(!showDropdown); console.log(showDropdown);}}
+                style={{ width: '166px' }}
+                
+                >
+                <Dropdown.Toggle
+                    className="main-style"
+                    id="dropdown-basic"
+                >
+                    Open
+                </Dropdown.Toggle>
 
+                <Dropdown.Menu
+                    show={showDropdown}
+                    onChange={(event) => {
+                        localStorage.setItem('selectValue', event.target.value);
+                        handleImportShow();
+                    }}
+                    value="">
+                    <Dropdown.Item value="video" as="button" onClick={()=>{localStorage.setItem('selectValue', 'video'); handleImportShow();}}>
+                    Import Video
+                    </Dropdown.Item>
+                    <Dropdown.Item value="subtitles" as="button" onClick={()=>{localStorage.setItem('selectValue', 'subtitles'); handleImportShow();}}>
+                    Import Subtitle
+                    </Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown> */}
             <UploadModal
                 show={importModalOpen}
                 onHide={handleImportClose}

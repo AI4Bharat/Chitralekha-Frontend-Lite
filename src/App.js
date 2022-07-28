@@ -58,8 +58,7 @@ const Style = styled.div`
         }
 
         .subtitles {
-            width: 250px;
-            max-width: 32vw;
+            width: 300px;
         }
 
         .tool {
@@ -671,7 +670,7 @@ export default function App({ defaultLang }) {
 
     const renderTooltip = (props) => (
         <Tooltip id="button-tooltip" {...props}>
-            {!fullscreen ? 'Fullscreen' : 'Exit'}
+            {!fullscreen ? 'Fullscreen Video with Panels' : 'Exit'}
         </Tooltip>
     );
 
@@ -762,7 +761,7 @@ export default function App({ defaultLang }) {
                 </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <div style={{ overflow: 'visible', background: "#000" }}>
+                    <div style={{ overflow: 'hidden', background: "#000" }}>
                         {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}

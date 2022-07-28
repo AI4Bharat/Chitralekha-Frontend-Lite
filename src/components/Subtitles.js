@@ -92,6 +92,7 @@ const Style = styled.div`
     .ReactVirtualized__Table {
         .ReactVirtualized__Table__Grid {
             outline: none;
+            max-width: 20vw;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
@@ -345,7 +346,7 @@ export default function Subtitles({
                 langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
             }
             setLanguageAvailable(langArray);
-            localStorage.setItem('langTranslate', langArray[0].key);
+           // localStorage.setItem('langTranslate', langArray[0].key); // commented this out to prevent default language subtitles appearing in right pane
             setTranslate(langArray[0].key);
             //  setModeTranslate(langArray[0].key);
         }
@@ -772,8 +773,9 @@ export default function Subtitles({
                         {/* <div style={{overflow: 'auto'}}> */}
 
                         <Table
+                            
                             headerHeight={40}
-                            width={250}
+                            width={300}
                             height={height}
                             rowHeight={80}
                             scrollToIndex={currentIndex + 2}
@@ -846,7 +848,7 @@ export default function Subtitles({
                                                 }
                                                 maxOptions={5}
                                                 readOnly={isPrimary ? false : true}
-                                                renderComponent={(props) => <textarea {...props} />}
+                                                renderComponent={(props) => <textarea {...props} style={{height: "70px", fontSize: "14px"}}/>}
                                             />
                                             {/* <textarea
                                     maxLength={200}

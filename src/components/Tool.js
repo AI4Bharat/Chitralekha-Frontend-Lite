@@ -1438,6 +1438,8 @@ export default function Header({
                             const langTranscribe = localStorage.getItem('lang');
                             //  console.log("lang " + langTranscribe);
                             setConfiguration('Same Language Subtitling');
+                            setToggleState('Same Language Subtitling');
+                            handleToggleChange();
                             setIsSetConfiguration(true);
                             player?.pause();
                         }}
@@ -1451,6 +1453,8 @@ export default function Header({
                             console.log('Configuration - basic');
                             handleTranslationShow();
                             setConfiguration('Subtitling');
+                            setToggleState('Subtitling');
+                            handleToggleChange();
                             setIsSetConfiguration(true);
                             clearSubs();
                             player?.pause();
@@ -1586,13 +1590,13 @@ export default function Header({
             {isTranslateClicked && (
                 <div className="toggle-parent">
                     <div
-                        className={`toggle-div ${toggleState === 'Same Language Subtitling' ? 'toggle-active' : ''}`}
+                        className={`toggle-div ${toggleState === 'Subtitling' ? 'toggle-active' : ''}`}
                         onClick={() => handleToggleChange('Same Language Subtitling')}
                     >
                         Transcription
                     </div>
                     <div
-                        className={`toggle-div ${toggleState === 'Subtitling' ? 'toggle-active' : ''}`}
+                        className={`toggle-div ${toggleState === 'Same Language Subtitling' ? 'toggle-active' : ''}`}
                         onClick={() => handleToggleChange('Subtitling')}
                     >
                         Translation

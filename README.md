@@ -1,17 +1,23 @@
-<h1 align="center">Welcome to SubPlayer 👋</h1>
-<p>
-  <img alt="Version" src="https://img.shields.io/badge/version-3.0.0-blue.svg?cacheSeconds=2592000" />
-</p>
+# Chitralekha Frontend
+Frontend repository for Chitralekha - an open source platform tool for video subtitling across various Indic languages, using ML model support.
 
+You can watch a demo of our tool - [Video](https://www.youtube.com/watch?v=Jq3CcEb9pxQ)
 ### 🏠 [Homepage](https://subplayer-task.netlify.app/)
 
-### ✨ [Demo](https://subplayer-task.netlify.app/)
+## Pre-requisites
+The project was created using [React 17.0.2](https://reactjs.org/docs/getting-started.html). All major dependencies are listed below:
+- redux
+- react-redux
+- axios
+- styled-components
+- react-bootstrap
 
-## Install
-
-```sh
-npm install
-```
+## Setting up the server locally
+1.  Clone the repository - git clone --recursive https://github.com/AI4Bharat/Chitralekha-Frontend.git
+2.  Install dependencies - ``` npm install ```
+3.  Create a `.env` file in the root of your directory by copying the `.env.example` and set the backend API variables
+3.  Run the app in the development mode - ``` npm run start ```
+4.  Open http://localhost:3000 to view it in your browser
 
 ## Description
 
@@ -20,20 +26,9 @@ npm install
 -   The API described will then fetch the video and subtitle link which will be displayed on the player
 -   Using the React Transliterate library, select a language, and start typing for your words to be converted into that particular language
 
-## Usage
+#### For more information please check [Chitralekha-App](https://github.com/AI4Bharat/Chitralekha-App)
 
-```sh
-npm start
-```
-
-## Author
-
-👤 **Rajat Maheshwari**
-
--   Website: https://rajatmaheshwari.me/
--   Github: [@rajatmaheshwari2512](https://github.com/rajatmaheshwari2512)
-
-## Show your support
+### Show your support
 
 Give a ⭐️ if this project helped you!
 

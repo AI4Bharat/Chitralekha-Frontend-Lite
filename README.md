@@ -2,7 +2,6 @@
 Frontend repository for Chitralekha - an open source platform tool for video subtitling across various Indic languages, using ML model support.
 
 You can watch a demo of our tool - [Video](https://www.youtube.com/watch?v=Jq3CcEb9pxQ)
-### 🏠 [Homepage](https://subplayer-task.netlify.app/)
 
 ## Pre-requisites
 The project was created using [React 17.0.2](https://reactjs.org/docs/getting-started.html). All major dependencies are listed below:

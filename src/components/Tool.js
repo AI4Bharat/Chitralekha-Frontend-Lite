@@ -500,30 +500,8 @@ const Style = styled.div`
         background-color: #5264cc;
     }
 
-    .toggle-parent {
-        display: flex;
-        background: #fff;
-        color: #000;
-        font-size: 16px;
-        border-radius: 0.375rem;
+    .react-toggle {
         margin: 0 20px 0 0;
-        cursor: pointer;
-        transition: 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15) all;
-
-        .toggle-div {
-            padding: 6px 12px;
-        }
-
-        .toggle-active {
-            background: #0d6efd;
-            border-radius: 0.375rem;
-            color: #fff;
-            border: 1px solid #0d6efd;
-            transition: 0.3s ease all;
-            &:hover {
-                background: #0b5ed7;
-            }
-        }
     }
 `;
 // function useStickyState(defaultValue, key) {
@@ -1448,6 +1426,21 @@ export default function Header({
                         <Translate value="SAME_LANGUAGE" />
                     </Button>
 
+                    {isTranslateClicked && (
+                        <>
+                            <Toggle
+                                id="toggle-panel"
+                                icons={false}
+                                defaultChecked={'Subtitling'}
+                                onChange={() => {
+                                    handleToggleChange();
+                                    console.log(toggleState);
+                                }}
+                                aria-labelledby="toggle-panel"
+                            />
+                        </>
+                    )}
+
                     <Button
                         onClick={() => {
                             console.log('Configuration - basic');
@@ -1586,23 +1579,6 @@ export default function Header({
                     </span>
                 </div> */}
             </Style>
-
-            {isTranslateClicked && (
-                <div className="toggle-parent">
-                    <div
-                        className={`toggle-div ${toggleState === 'Subtitling' ? 'toggle-active' : ''}`}
-                        onClick={() => handleToggleChange('Same Language Subtitling')}
-                    >
-                        Transcription
-                    </div>
-                    <div
-                        className={`toggle-div ${toggleState === 'Same Language Subtitling' ? 'toggle-active' : ''}`}
-                        onClick={() => handleToggleChange('Subtitling')}
-                    >
-                        Translation
-                    </div>
-                </div>
-            )}
 
             <div className="save-transcript">
                 <Button onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>Find / Replace</Button>

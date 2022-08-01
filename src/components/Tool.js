@@ -30,6 +30,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
+import axios from 'axios';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -599,6 +600,7 @@ export default function Header({
 
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
 
+    const [videos, setVideos] = useState([]);
     /* For Upload/Open Modal */
     const [importModalOpen, setImportModalOpen] = useState(false);
     const handleImportClose = () => setImportModalOpen(false);
@@ -614,6 +616,21 @@ export default function Header({
         }, [key, value]);
         return [value, setValue];
     }
+
+    const client = axios.create({
+        baseURL: "https://backend.chitralekha.ai4bharat.org/video/list_recent" ,
+        params: {
+            count: 5,
+        }
+      });
+    
+    useEffect(() => {
+        client.get().then((response) => {
+           setVideos(response.data);
+        });
+     }, []);
+     
+        
 
     // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
@@ -1327,6 +1344,7 @@ export default function Header({
                 onSubtitleChange={onSubtitleChange}
                 onInputClick={onInputClick}
                 clearData={clearData}
+                videos={videos}
             />
 
             {/* <div className={`tool-button`}>

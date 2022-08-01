@@ -3,39 +3,8 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FloatingLabel, Tab, Tabs } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import axios from 'axios';
-import { useState, useEffect } from 'react';
+
 import { FaClipboardCheck } from 'react-icons/fa';
-
-const client = axios.create({
-    baseURL: "https://backend.chitralekha.ai4bharat.org/video/list_recent" ,
-    params: {
-        count: 5,
-    }
-  });
-
-const VideoLinks = () => {
-    const [videos, setVideos] = useState([]);
- 
-    useEffect(() => {
-       client.get().then((response) => {
-          setVideos(response.data);
-       });
-    }, []);
- 
-    return (
-        <div className="video-links" style={{textAlign: "center", margin: "auto", padding: "20px"}}>
-        <h6 style={{marginBottom: "10px"}}>Recent Video Links <FaClipboardCheck /></h6>
-        {videos.map((video) => {
-           return (
-              <div key={video.id}>
-                 <a href={video.url}><p className="video-name">{video.name}</p></a>
-              </div>
-           );
-        })}
-      </div>
-    );
- };
 
 const UploadModal = (props) => {
     return (
@@ -45,7 +14,16 @@ const UploadModal = (props) => {
             </Modal.Header>
 
             <Modal.Body>
-                <VideoLinks />
+            <div className="video-links" style={{textAlign: "center", margin: "auto", padding: "20px"}}>
+        <h6 style={{marginBottom: "10px"}}>Recent Video Links <FaClipboardCheck /></h6>
+        {props.videos.map((video) => {
+           return (
+              <div key={video.id}>
+                 <a href={video.url}><p className="video-name">{video.name}</p></a>
+              </div>
+           );
+        })}
+      </div>
                 {localStorage.getItem('selectValue') == 'video' ? (
                     <Tabs defaultActiveKey="URL" id="fill-tab-example" className="mb-3" fill variant="pills">
                         <Tab eventKey="URL" title="Youtube URL">

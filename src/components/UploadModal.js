@@ -14,20 +14,20 @@ const UploadModal = (props) => {
             </Modal.Header>
 
             <Modal.Body>
-            <div className="video-links" style={{textAlign: "center", margin: "auto", padding: "20px"}}>
-        <h6 style={{marginBottom: "10px"}}>Recent Video Links <FaClipboardCheck /></h6>
-        {props.videos.map((video) => {
-           return (
-              <div key={video.id}>
-                 <a href={video.url}><p className="video-name">{video.name}</p></a>
-              </div>
-           );
-        })}
-      </div>
                 {localStorage.getItem('selectValue') == 'video' ? (
                     <Tabs defaultActiveKey="URL" id="fill-tab-example" className="mb-3" fill variant="pills">
                         <Tab eventKey="URL" title="Youtube URL">
-                            <FloatingLabel
+                        <div className="video-links" style={{textAlign: "center", margin: "auto", padding: "20px"}}>
+                            <h6 style={{marginBottom: "10px"}}>Recent Video Links <FaClipboardCheck /></h6>
+                            {props.videos.map((video) => {
+                            return (
+                                <div key={video.id}>
+                                    <a href={video.url}><p className="video-name">{video.name}</p></a>
+                                </div>
+                            );
+                            })}
+                        </div>
+                         <FloatingLabel
                                 controlId="floatingTextarea2"
                                 label="Enter YouTube Link Here"
                                 style={{ color: '#000' }}

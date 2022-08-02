@@ -29,7 +29,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
-import "react-toggle/style.css";
+import 'react-toggle/style.css';
+import axios from 'axios';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -500,8 +501,8 @@ const Style = styled.div`
         background-color: #5264cc;
     }
 
-    .d-none {
-        display: none;
+    .react-toggle {
+        margin: 0 20px 0 0;
     }
 `;
 // function useStickyState(defaultValue, key) {
@@ -599,10 +600,11 @@ export default function Header({
 
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
 
-     /* For Upload/Open Modal */
-     const [importModalOpen, setImportModalOpen] = useState(false);
-     const handleImportClose = () => setImportModalOpen(false);
-     const handleImportShow = () => setImportModalOpen(true);
+    const [videos, setVideos] = useState([]);
+    /* For Upload/Open Modal */
+    const [importModalOpen, setImportModalOpen] = useState(false);
+    const handleImportClose = () => setImportModalOpen(false);
+    const handleImportShow = () => setImportModalOpen(true);
 
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
@@ -614,6 +616,21 @@ export default function Header({
         }, [key, value]);
         return [value, setValue];
     }
+
+    const client = axios.create({
+        baseURL: "https://backend.chitralekha.ai4bharat.org/video/list_recent" ,
+        params: {
+            count: 5,
+        }
+      });
+    
+    useEffect(() => {
+        client.get().then((response) => {
+           setVideos(response.data);
+        });
+     }, []);
+     
+        
 
     // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
@@ -1168,19 +1185,17 @@ export default function Header({
         [subtitleEnglish],
     );
 
-    const handleToggleChange = () =>{
-        if(toggleState=='Subtitling'){
-           setConfiguration(toggleState);
-           setIsSetConfiguration(true);
-            setToggleState('Same Language Subtitling')
-            
-        }
-        else{
+    const handleToggleChange = () => {
+        if (toggleState == 'Subtitling') {
             setConfiguration(toggleState);
-           setIsSetConfiguration(true);
+            setIsSetConfiguration(true);
+            setToggleState('Same Language Subtitling');
+        } else {
+            setConfiguration(toggleState);
+            setIsSetConfiguration(true);
             setToggleState('Subtitling');
         }
-    }
+    };
 
     useEffect(() => {
         if (isSetVideo === false) {
@@ -1257,7 +1272,7 @@ export default function Header({
                         height="16"
                         fill="currentColor"
                         class="bi bi-camera-video "
-                        style={{marginRight: "10px"}}
+                        style={{ marginRight: '10px' }}
                         viewBox="0 0 16 16"
                     >
                         <path
@@ -1281,7 +1296,7 @@ export default function Header({
                         height="16"
                         fill="currentColor"
                         class="bi bi-card-text"
-                        style={{marginRight: "10px"}}
+                        style={{ marginRight: '10px' }}
                         viewBox="0 0 16 16"
                     >
                         <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z" />
@@ -1329,6 +1344,7 @@ export default function Header({
                 onSubtitleChange={onSubtitleChange}
                 onInputClick={onInputClick}
                 clearData={clearData}
+                videos={videos}
             />
 
             {/* <div className={`tool-button`}>
@@ -1418,6 +1434,8 @@ export default function Header({
                             const langTranscribe = localStorage.getItem('lang');
                             //  console.log("lang " + langTranscribe);
                             setConfiguration('Same Language Subtitling');
+                           // setToggleState('Same Language Subtitling');
+                            handleToggleChange();
                             setIsSetConfiguration(true);
                             player?.pause();
                         }}
@@ -1426,11 +1444,28 @@ export default function Header({
                         <Translate value="SAME_LANGUAGE" />
                     </Button>
 
+                    {isTranslateClicked && (
+                        <>
+                            <Toggle
+                                id="toggle-panel"
+                                icons={false}
+                                defaultChecked={'Subtitling'}
+                                onChange={() => {
+                                    handleToggleChange();
+                                    console.log(toggleState);
+                                }}
+                                aria-labelledby="toggle-panel"
+                            />
+                        </>
+                    )}
+
                     <Button
                         onClick={() => {
                             console.log('Configuration - basic');
                             handleTranslationShow();
                             setConfiguration('Subtitling');
+                           // setToggleState('Subtitling');
+                            handleToggleChange();
                             setIsSetConfiguration(true);
                             clearSubs();
                             player?.pause();
@@ -1562,25 +1597,6 @@ export default function Header({
                     </span>
                 </div> */}
             </Style>
-{isTranslateClicked &&
-<>          
-            <Toggle
-            id='toggle-panel'
-            icons={false}
-            defaultChecked={'Subtitling'}
-            onChange={()=> {handleToggleChange(); console.log(toggleState);}}
-            aria-labelledby='toggle-panel'
-            />
-            <span id='toggle-panel' style={{padding: "0 10px"}}>
-                {
-                    configuration == 'Same Language Subtitling'
-                    ? 'Transcription'
-                    : 'Translation'
-                }
-            </span>
-            
-            </>
-}
 
             <div className="save-transcript">
                 <Button onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>Find / Replace</Button>
@@ -1608,20 +1624,20 @@ export default function Header({
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
             <div className="signin-btn" style={{ zIndex: 200 }}>
                 {localStorage.getItem('user_id') ? (
-                     <DropdownButton
-                     id="dropdown-basic-button"
-                     title={localStorage.getItem('username')}
-                     style={{ marginRight: '20px' }}
-                 >
-                     <Dropdown.Item
-                         onClick={() => {
-                            localStorage.clear();
-                            window.location.reload();
-                         }}
-                     >
-                        Logout
-                     </Dropdown.Item>
-                 </DropdownButton>
+                    <DropdownButton
+                        id="dropdown-basic-button"
+                        title={localStorage.getItem('username')}
+                        style={{ marginRight: '20px' }}
+                    >
+                        <Dropdown.Item
+                            onClick={() => {
+                                localStorage.clear();
+                                window.location.reload();
+                            }}
+                        >
+                            Logout
+                        </Dropdown.Item>
+                    </DropdownButton>
                 ) : (
                     <Button onClick={() => setShowLogin(!showLogin)} style={{ marginRight: '20px' }}>
                         Sign In

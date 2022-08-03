@@ -234,3 +234,35 @@
 .mr-10 {
   margin-right: 10px;
 }
+
+.video-links {
+  font-size: 16px;
+  margin: 30px 0;
+}
+
+.video-links-heading {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.video-links-heading svg {
+  vertical-align: baseline;
+}
+
+.video-name {
+  margin: 0;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  color: #202020;
+}
+
+a.video-name:hover {
+  text-decoration: underline;
+  color: #0d6efd;
+}
+
+a.video-name:visited {
+  color: #0d6efd;
+  text-decoration: underline;
+}

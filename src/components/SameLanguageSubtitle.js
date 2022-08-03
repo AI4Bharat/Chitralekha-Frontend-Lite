@@ -236,7 +236,6 @@ export default function SameLanguageSubtitles({
             const payload = {
                 output: sub2vtt(subtitle),
             };
-            console.log(payload);
             const saveObj = new SaveTranscriptAPI(
                 localStorage.getItem('transcript_id'),
                 localStorage.getItem('langTranscribe'),
@@ -249,7 +248,7 @@ export default function SameLanguageSubtitles({
                 headers: saveObj.getHeaders().headers,
             });
             const resp = await res.json();
-            console.log(resp, 'resp');
+
             if (res.ok) {
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
                 localStorage.setItem('transcript_id', resp.id);
@@ -422,7 +421,6 @@ export default function SameLanguageSubtitles({
 
     const parseSubtitles = useCallback(
         (subtitles) => {
-            console.log(subtitles);
             const suburl = vtt2url(subtitles);
             url2sub(suburl).then((urlsub) => {
                 // setSubtitle(formatSub(urlsub));
@@ -436,7 +434,6 @@ export default function SameLanguageSubtitles({
     );
 
     useEffect(() => {
-        console.log(Transcript, 'transcript');
         if (transcribeReq.current && Transcript.data?.output) {
             transcribeReq.current = false;
             localStorage.setItem('transcript_id', Transcript.id);
@@ -446,7 +443,6 @@ export default function SameLanguageSubtitles({
 
     useEffect(() => {
         if (fetchError.current && APIStatus?.error) {
-            console.log(APIStatus.error, 'errror');
             if (transcriptSource === 'AI4Bharat') {
                 generateTranscription();
                 fetchError.current = false;
@@ -475,7 +471,6 @@ export default function SameLanguageSubtitles({
         }
     }, [GeneratedTranscript]);
 
-    console.log(GeneratedTranscript, 'generate');
 
     //
     const onTranscribe = useCallback(() => {
@@ -557,7 +552,6 @@ export default function SameLanguageSubtitles({
                 onTranscribe={onTranscribe}
             />
 
-            {console.log(languageAvailable)}
             <Style className="subtitles">
                 <Button className="save" onClick={saveTranscript}>
                     Save 💾
@@ -671,7 +665,7 @@ export default function SameLanguageSubtitles({
                                         // }
                                         maxOptions={5}
                                         renderComponent={(props) => (
-                                            <textarea {...props} style={{ height: '70px', fontSize: '14px' }} />
+                                            <textarea {...props} style={{ height: '70px', fontSize: '18px' }} />
                                         )}
                                     />
                                     {/* <textarea

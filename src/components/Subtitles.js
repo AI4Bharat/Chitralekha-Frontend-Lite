@@ -271,7 +271,6 @@ export default function Subtitles({
                 headers: saveObj.getHeaders().headers,
             });
             const resp = await res.json();
-            console.log(resp);
             // if (res.ok) {
             // localStorage.setItem('subtitle', JSON.stringify(subtitle));
             // notify({
@@ -429,14 +428,12 @@ export default function Subtitles({
 
     const parseTranslations = useCallback(
         (translations) => {
-            console.log('hi');
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
             for (let i = 0; i < transcript.length; i++) {
                 if (transcript[i].text === translations[i].source) {
                     transcript[i].text = translations[i].target;
                 }
             }
-            console.log(transcript);
             localStorage.setItem('subtitle', JSON.stringify(transcript));
             setSubtitle(formatSub(transcript));
             setLoading('');
@@ -501,7 +498,6 @@ export default function Subtitles({
         //  setIsTranslateClicked(true);
         translateReq.current = true;
 
-        console.log('when translate button clicked ' + isTranslateClicked);
         // console.log('Translation API '+translationApi); // either AI4Bharat or Google Translate
         setLoading(t('TRANSLATING'));
         if (clearedSubs) {
@@ -657,7 +653,6 @@ export default function Subtitles({
         // console.log('google api');
 
         // if (translationApi === 'AI4Bharat') {
-        console.log('here1', 'translate');
         getTranslations();
         // return ai4BharatBatchTranslate(
         //     formatSub(JSON.parse(window.localStorage.getItem('subtitleEnglish'))),
@@ -721,7 +716,6 @@ export default function Subtitles({
             {subtitle && (
                 <Style className="subtitles">
 
-                    {console.log('when translate button clicked ' + isTranslateClicked)}
                     {/* <CalendarView />  */}
                     {isPrimary && translate && languageAvailable && (
                         <div className="translate">
@@ -797,7 +791,6 @@ export default function Subtitles({
                                             }
                                         }}
                                     >
-                                        {console.log('langTranslate ' + localStorage.getItem('langTranslate'))}
                                         {/* {console.log('before react transliterate '+localStorage.getItem('lang'))} */}
                                         <div className="item">
                                             <ReactTransliterate
@@ -848,7 +841,7 @@ export default function Subtitles({
                                                 }
                                                 maxOptions={5}
                                                 readOnly={isPrimary ? false : true}
-                                                renderComponent={(props) => <textarea {...props} style={{height: "70px", fontSize: "14px"}}/>}
+                                                renderComponent={(props) => <textarea {...props} style={{height: "70px", fontSize: "18px"}}/>}
                                             />
                                             {/* <textarea
                                     maxLength={200}

@@ -124,7 +124,6 @@ const VideoWrap = memo(
 );
 
 export default function Player(props) {
-    console.log(props);
     const [currentSub, setCurrentSub] = useState(null);
     const [focusing, setFocusing] = useState(false);
     const [inputItemCursor, setInputItemCursor] = useState(0);

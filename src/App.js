@@ -22,7 +22,7 @@ import debounce from 'lodash/debounce';
 import { render } from 'react-dom';
 import Header from './components/Tool';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import SaveTranscriptAPI from "./redux/actions/api/Transcript/SaveTranscript"
+import SaveTranscriptAPI from './redux/actions/api/Transcript/SaveTranscript';
 import { sub2vtt } from './libs/readSub';
 
 const Style = styled.div`
@@ -145,10 +145,9 @@ export default function App({ defaultLang }) {
     const handleTranslationClose = () => {
         setTranslationModalOpen(false);
         setIsTranslateClicked(true);
-    }
+    };
     const handleTranslationShow = () => setTranslationModalOpen(true);
 
-    
     const newSub = useCallback((item) => new Sub(item), []);
     const hasSub = useCallback((sub) => subtitle.indexOf(sub), [subtitle]);
     const hasSubEnglish = useCallback((sub) => subtitleEnglish.indexOf(sub), [subtitleEnglish]);
@@ -765,7 +764,7 @@ export default function App({ defaultLang }) {
                 </div>
                 {configuration === '' && <></>}
                 {configuration === 'Subtitling' && (
-                    <div style={{ overflow: 'hidden', background: "#000" }}>
+                    <div style={{ overflow: 'hidden', background: '#000' }}>
                         {/* <Subtitles
                             currentIndex={props.currentIndex}
                             subtitle={props.subtitleEnglish}
@@ -841,7 +840,9 @@ export default function App({ defaultLang }) {
                             </div>
                             </ScrollSync> */}
                         <div className="btn-parent-div">
-                            <Button className="save" onClick={saveTranscript}>Save 💾</Button>
+                            <Button className="save" onClick={saveTranscript}>
+                                Save 💾
+                            </Button>
                         </div>
 
                         <div style={{ display: 'flex', position: 'relative', height: `90%`, zIndex: '200' }}>
@@ -1027,7 +1028,7 @@ export default function App({ defaultLang }) {
             {/* <BottomLinks /> */}
 
             <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
-                <Button className="full-screen-btn" onClick={() => handleFullscreen(!fullscreen)}>
+                <Button className="full-screen-btn" onClick={() => handleFullscreen()}>
                     {fullscreen ? (
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

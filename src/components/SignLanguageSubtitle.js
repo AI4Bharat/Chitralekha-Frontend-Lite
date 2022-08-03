@@ -321,7 +321,7 @@ export default function SignLanguageSubtitles({
                                                 : 'en'
                                         }
                                         maxOptions={5}
-                                        renderComponent={(props) => <textarea {...props} />}
+                                        renderComponent={(props) => <textarea {...props} style={{ height: '70px', fontSize: '18px' }}/>}
                                     />
                                     {/* <textarea
                                     maxLength={200}

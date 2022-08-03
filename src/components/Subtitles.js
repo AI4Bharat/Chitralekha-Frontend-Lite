@@ -739,6 +739,11 @@ export default function Subtitles({
                                    //  console.log('in onChange translate lang ' +localStorage.getItem('lang'));
                                      console.log('in onChange translate langTranslate ' +localStorage.getItem('langTranslate'));
                                     // console.log(event.target.value);
+
+                                     // console.log('in select');
+                                   //  console.log('in onChange translate lang ' +localStorage.getItem('lang'));
+                                     console.log('in onChange translate langTranslate ' +localStorage.getItem('langTranslate'));
+                                    // console.log(event.target.value);
                                 }}
                             >
                                 {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(

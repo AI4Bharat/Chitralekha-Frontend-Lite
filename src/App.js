@@ -554,6 +554,7 @@ export default function App({ defaultLang }) {
         // console.log(translationApi);
         const localSubtitleString = window.localStorage.getItem('subtitle');
         //   console.log(localSubtitleString)
+         //   console.log(localSubtitleString)
         const localSubtitleEnglish = window.localStorage.getItem('subtitleEnglish');
         //  console.log(localSubtitleEnglish)
         // const fetchSubtitle = () =>

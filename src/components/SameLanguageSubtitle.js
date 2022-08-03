@@ -568,7 +568,6 @@ export default function SameLanguageSubtitles({
                         <div className="heading">
                             <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
                         </div>
-                        {console.log('save transcript')}
                            {console.log('rendering here')}
                          <div className="options">
                            <select

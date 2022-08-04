@@ -32,27 +32,31 @@ const UploadModal = (props) => {
                                 />
                             </FloatingLabel>
 
-                            <div className="video-links">
-                                <p className="video-links-heading">
-                                    Recent Video Links <FaClipboardCheck />
-                                </p>
+                            {localStorage.getItem('isLoggedIn') ? (
+                                <div className="video-links">
+                                    <p className="video-links-heading">
+                                        Recent Video Links <FaClipboardCheck />
+                                    </p>
 
-                                {props.videos.map((video) => {
-                                    return (
-                                        <a
-                                            href="javascript:void(0)"
-                                            className="video-name"
-                                            onClick={() => {
-                                                props.textAreaValueChange(video.url);
-                                                props.onRecentVideoLinkClick(video.url);
-                                                props.onHide();
-                                            }}
-                                        >
-                                            {video.name}
-                                        </a>
-                                    );
-                                })}
-                            </div>
+                                    <ul>
+                                    {props.videos.map((video) => {
+                                        return (
+                                            <li
+                                                href="javascript:void(0)"
+                                                className="video-name"
+                                                onClick={() => {
+                                                    props.textAreaValueChange(video.url);
+                                                    props.onRecentVideoLinkClick(video.url);
+                                                    props.onHide();
+                                                }}
+                                            >
+                                                {video.name}
+                                            </li>
+                                        );
+                                    })}
+                                    </ul>
+                                </div>
+                            ) : null}
                         </Tab>
                         <Tab eventKey="Upload" title="Upload">
                             <Form.Control type="file" onChange={props.onVideoChange} onClick={props.onInputClick} />
@@ -65,11 +69,6 @@ const UploadModal = (props) => {
 
             <Modal.Footer>
                 {localStorage.getItem('selectValue') === 'video' ? (
-                    <Button onClick={props.clearData}>Clear</Button>
-                ) : (
-                    <Button onClick={props.clearSubsHandler}>Clear</Button>
-                )}
-                {localStorage.getItem('selectValue') === 'video' ? (
                     <Button
                         onClick={() => {
                             props.onYouTubeChange();
@@ -80,7 +79,7 @@ const UploadModal = (props) => {
                         Fetch
                     </Button>
                 ) : null}
-                <Button onClick={props.onHide} variant="dark" style={{ marginLeft: '20px' }}>
+                <Button onClick={props.onHide} variant="dark">
                     Close
                 </Button>
             </Modal.Footer>

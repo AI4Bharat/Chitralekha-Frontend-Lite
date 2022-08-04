@@ -943,8 +943,11 @@ export default function Header({
         localStorage.setItem('isVideoPresent', false);
         localStorage.setItem('lang', 'en');
         localStorage.setItem('subtitleEnglish', null);
+
         clearSubs();
         clearSubsEnglish();
+        clearSubsHandler();
+
         window.location.reload();
     };
 
@@ -1109,7 +1112,7 @@ export default function Header({
 
             <DropdownButton
                 id="dropdown-basic-button"
-                title="Upload"
+                title="Import"
                 onChange={(event) => {
                     localStorage.setItem('selectValue', event.target.value);
                     handleImportShow();
@@ -1292,7 +1295,7 @@ export default function Header({
                             //  console.log("lang " + langTranscribe);
                             setConfiguration('Same Language Subtitling');
                             // setToggleState('Same Language Subtitling');
-                            handleToggleChange();
+                            // handleToggleChange();
                             setIsSetConfiguration(true);
                             player?.pause();
                         }}
@@ -1319,8 +1322,7 @@ export default function Header({
                         onClick={() => {
                             handleTranslationShow();
                             setConfiguration('Subtitling');
-                            // setToggleState('Subtitling');
-                            handleToggleChange();
+                            // handleToggleChange();
                             setIsSetConfiguration(true);
                             clearSubs();
                             player?.pause();
@@ -1440,7 +1442,7 @@ export default function Header({
                         </select>
                         <div className="btn" onClick={onTranslate}>
                             <Translate value="TRANSLATE" />
-                        </div>
+                </div>
                     </div> */}
 
                 {/* <div className="hotkey">
@@ -1452,6 +1454,10 @@ export default function Header({
                     </span>
                 </div> */}
             </Style>
+
+            <Button onClick={() => clearData()} style={{ marginRight: '20px' }}>
+                Clear
+            </Button>
 
             <div className="save-transcript">
                 <Button onClick={() => setShowFindReplaceModal(!showFindReplaceModal)}>Find / Replace</Button>

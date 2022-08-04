@@ -32,6 +32,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
                     localStorage.setItem('email', rsp_data.user?.email);
                     localStorage.setItem('first_name', rsp_data.user?.first_name);
                     localStorage.setItem('last_name', rsp_data.user?.last_name);
+                    localStorage.setItem('isLoggedIn', true);
                     handleClose();
                 }
             })

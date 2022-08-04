@@ -32,27 +32,29 @@ const UploadModal = (props) => {
                                 />
                             </FloatingLabel>
 
-                            <div className="video-links">
-                                <p className="video-links-heading">
-                                    Recent Video Links <FaClipboardCheck />
-                                </p>
+                            {localStorage.getItem('isLoggedIn') ? (
+                                <div className="video-links">
+                                    <p className="video-links-heading">
+                                        Recent Video Links <FaClipboardCheck />
+                                    </p>
 
-                                {props.videos.map((video) => {
-                                    return (
-                                        <a
-                                            href="javascript:void(0)"
-                                            className="video-name"
-                                            onClick={() => {
-                                                props.textAreaValueChange(video.url);
-                                                props.onRecentVideoLinkClick(video.url);
-                                                props.onHide();
-                                            }}
-                                        >
-                                            {video.name}
-                                        </a>
-                                    );
-                                })}
-                            </div>
+                                    {props.videos.map((video) => {
+                                        return (
+                                            <a
+                                                href="javascript:void(0)"
+                                                className="video-name"
+                                                onClick={() => {
+                                                    props.textAreaValueChange(video.url);
+                                                    props.onRecentVideoLinkClick(video.url);
+                                                    props.onHide();
+                                                }}
+                                            >
+                                                {video.name}
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            ) : null}
                         </Tab>
                         <Tab eventKey="Upload" title="Upload">
                             <Form.Control type="file" onChange={props.onVideoChange} onClick={props.onInputClick} />

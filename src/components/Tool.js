@@ -1105,7 +1105,6 @@ export default function Header({
             );
         }
     }
-    console.log(process.env);
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>

@@ -216,7 +216,7 @@ export default function SameLanguageSubtitles({
     const TRANSCRIPT_TYPES = {
         Youtube: 'uos',
         AI4Bharat: 'umg',
-        'Manual Upload': 'mc',
+        Custom: 'mc',
     };
 
     //change
@@ -515,7 +515,7 @@ export default function SameLanguageSubtitles({
         //             level: 'error',
         //         });
         //     });
-    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish]);
+    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);
 
     // useEffect(() => {
     //     if (localStorage.getItem('lang')) {

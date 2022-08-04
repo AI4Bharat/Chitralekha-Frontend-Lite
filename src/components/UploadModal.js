@@ -38,9 +38,10 @@ const UploadModal = (props) => {
                                         Recent Video Links <FaClipboardCheck />
                                     </p>
 
+                                    <ul>
                                     {props.videos.map((video) => {
                                         return (
-                                            <a
+                                            <li
                                                 href="javascript:void(0)"
                                                 className="video-name"
                                                 onClick={() => {
@@ -50,9 +51,10 @@ const UploadModal = (props) => {
                                                 }}
                                             >
                                                 {video.name}
-                                            </a>
+                                            </li>
                                         );
                                     })}
+                                    </ul>
                                 </div>
                             ) : null}
                         </Tab>
@@ -67,11 +69,6 @@ const UploadModal = (props) => {
 
             <Modal.Footer>
                 {localStorage.getItem('selectValue') === 'video' ? (
-                    <Button onClick={props.clearData}>Clear</Button>
-                ) : (
-                    <Button onClick={props.clearSubsHandler}>Clear</Button>
-                )}
-                {localStorage.getItem('selectValue') === 'video' ? (
                     <Button
                         onClick={() => {
                             props.onYouTubeChange();
@@ -82,7 +79,7 @@ const UploadModal = (props) => {
                         Fetch
                     </Button>
                 ) : null}
-                <Button onClick={props.onHide} variant="dark" style={{ marginLeft: '20px' }}>
+                <Button onClick={props.onHide} variant="dark">
                     Close
                 </Button>
             </Modal.Footer>

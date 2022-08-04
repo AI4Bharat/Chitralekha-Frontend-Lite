@@ -105,21 +105,14 @@ const Style = styled.div`
     }
 
     .save-transcript {
-        .button-layout {
-            width: 150px;
-            text-decoration: none;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            height: 40px;
-            background: #3f51b5;
-            border-radius: 10px;
-            cursor: pointer;
-            border: none;
-        }
+        .btn {
+            background: #19ab27;
+            border-color: #19ab27;
 
-        .button-layout:hover {
-            background-color: #5264cc;
+            &:hover {
+                background: #19ab27;
+                border-color: #19ab27;
+            }
         }
     }
 
@@ -618,19 +611,17 @@ export default function Header({
     }
 
     const client = axios.create({
-        baseURL: "https://backend.chitralekha.ai4bharat.org/video/list_recent" ,
+        baseURL: 'https://backend.chitralekha.ai4bharat.org/video/list_recent',
         params: {
             count: 5,
-        }
-      });
-    
+        },
+    });
+
     useEffect(() => {
         client.get().then((response) => {
-           setVideos(response.data);
+            setVideos(response.data);
         });
-     }, []);
-     
-        
+    }, []);
 
     // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
@@ -651,7 +642,6 @@ export default function Header({
                 headers: saveObj.getHeaders().headers,
             });
             const resp = await res.json();
-            console.log(resp);
             if (res.ok) {
                 localStorage.setItem('subtitle', JSON.stringify(subtitle));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
@@ -926,157 +916,25 @@ export default function Header({
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
 
-                console.log('called');
-                //         clearSubsHandler(); // added this so that subtitles of previous video do not remain even on new video load
                 setLoading(t('LOADING'));
                 dispatch(APITransport(videoObj));
-
-                // fetch(
-                //     `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=${translate}`,
-                //     {
-                //         method: 'POST',
-                //     },
-                // )
-                //     .then((resp) => {
-                //         return resp.json();
-                //     })
-                //     .then((resp) => {
-                //         const url = resp.video;
-                //         player.src = url;
-
-                //         localStorage.setItem('videoSrc', resp.video);
-                //         localStorage.setItem('audioSrc', resp.audio);
-                //         localStorage.setItem('youtubeURL', youtubeURL);
-
-                //         if (resp.subtitles) {
-                //             const sub = resp.subtitles;
-
-                //             fetch(sub)
-                //                 .then((subtext) => {
-                //                     return subtext.text();
-                //                 })
-                //                 .then((subtext) => {
-                //                    // console.log(subtext);
-                //                     player.currentTime = 0;
-                //                     clearSubs();
-                //                     const suburl = vtt2url(subtext);
-                //                     url2sub(suburl).then((urlsub) => {
-                //                         setSubtitle(urlsub);
-                //                         localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                //                     });
-                //                 })
-                //                 .catch((err) => {
-                //                     console.log(err);
-                //                 });
-                //         } else {
-                //             // // Auto-transcribe
-                //             // const data = {
-                //             //     url: youtubeURL,
-                //             //     vad_level: 2,
-                //             //     chunk_size: 10,
-                //             //     language: 'en',
-                //             // };
-
-                //             // fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
-                //             //     method: 'POST',
-                //             //     headers: { 'Content-Type': 'application/json' },
-                //             //     body: JSON.stringify(data),
-                //             // })
-                //             //     .then((resp) => {
-                //             //         return resp.json();
-                //             //     })
-                //             //     .then((resp) => {
-                //             //         console.log(resp.output);
-                //             //         player.currentTime = 0;
-                //             //         clearSubs();
-                //             //         const suburl = vtt2url(resp.output);
-                //             //         url2sub(suburl).then((urlsub) => {
-                //             //             setSubtitle(urlsub);
-                //             //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
-                //             //         });
-                //             //     })
-                //             //     .catch((err) => {
-                //             //         console.log(err);
-                //             //     });
-                //         }
-                //     });
-
-                // // fetch(
-                // //     `${process.env.REACT_APP_ASR_URL}/get_youtube_video_link_with_captions?url=${youtubeURL}&lang=en`,
-                // //     {
-                // //         method: 'POST',
-                // //     },
-                // // )
-                // //     .then((resp) => {
-                // //         return resp.json();
-                // //     })
-                // //     .then((resp) => {
-                // //         //const url = resp.video;
-                // //         const audio = resp.audio;
-
-                // //         if (resp.subtitles) {
-                // //             const sub = resp.subtitles;
-                // //             fetch(sub)
-                // //                 .then((subtext) => {
-                // //                     return subtext.text();
-                // //                 })
-                // //                 .then((subtext) => {
-                // //                     clearSubsEnglish();
-                // //                     const suburl = vtt2url(subtext);
-                // //                     url2sub(suburl).then((urlsub) => {
-                // //                         setSubtitleEnglish(urlsub);
-                // //                         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                // //                     });
-
-                // //                     setLoading('');
-                // //                 })
-                // //                 .catch((err) => {
-                // //                     console.log(err);
-                // //                 });
-                // //         } else {
-                // //             const data = {
-                // //                 audio_url: audio,
-                // //                 vad_level: 2,
-                // //                 chunk_size: 10,
-                // //                 language: 'en',
-                // //             };
-
-                // //             fetch(`${process.env.REACT_APP_ASR_URL}/transcribe_audio`, {
-                // //                 method: 'POST',
-                // //                 headers: { 'Content-Type': 'application/json' },
-                // //                 body: JSON.stringify(data),
-                // //             })
-                // //                 .then((resp) => {
-                // //                     return resp.json();
-                // //                 })
-                // //                 .then((resp) => {
-                // //                     console.log(resp.output);
-                // //                     player.currentTime = 0;
-                // //                     clearSubs();
-                // //                     const suburl = vtt2url(resp.output);
-                // //                     url2sub(suburl).then((urlsub) => {
-                // //                         setSubtitleEnglish(urlsub);
-                // //                         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-                // //                     });
-                // //                 })
-                // //                 .then(() => setLoading(''))
-                // //                 .catch((err) => {
-                // //                     console.log(err);
-                // //                 });
-                // //         }
-                // //     });
             }
-
-            // localStorage.setItem('isVideoPresent', true);
-            // setIsSetVideo(true);
-            // setLoading('')
         },
         [clearSubs, youtubeURL, translate, player, setSubtitle, setLoading, setIsSetVideo],
     );
 
-    const handleChange = (e) => {
-        e.preventDefault();
-        setYoutubeURL(e.target.value);
+    const onRecentVideoLinkClick = useCallback(
+        (url) => {
+            const videoObj = new GetVideoDetailsAPI(url);
+
+            setLoading(t('LOADING'));
+            dispatch(APITransport(videoObj));
+        },
+        [clearSubs, youtubeURL, translate, player, setSubtitle, setLoading, setIsSetVideo],
+    );
+
+    const handleChange = (value) => {
+        setYoutubeURL(value);
     };
 
     const clearData = () => {
@@ -1200,7 +1058,6 @@ export default function Header({
     useEffect(() => {
         if (isSetVideo === false) {
             if (window.localStorage.getItem('isVideoPresent') === 'true') {
-                console.log('here inside loop');
                 setIsSetVideo(!isSetVideo);
             }
         }
@@ -1345,6 +1202,7 @@ export default function Header({
                 onInputClick={onInputClick}
                 clearData={clearData}
                 videos={videos}
+                onRecentVideoLinkClick={onRecentVideoLinkClick}
             />
 
             {/* <div className={`tool-button`}>
@@ -1429,12 +1287,11 @@ export default function Header({
                     {/* <p className="configuration-heading"><b>Configuration Options</b></p> */}
                     <Button
                         onClick={() => {
-                            console.log('Configuration - same');
                             handleTranscriptionShow();
                             const langTranscribe = localStorage.getItem('lang');
                             //  console.log("lang " + langTranscribe);
                             setConfiguration('Same Language Subtitling');
-                           // setToggleState('Same Language Subtitling');
+                            // setToggleState('Same Language Subtitling');
                             handleToggleChange();
                             setIsSetConfiguration(true);
                             player?.pause();
@@ -1452,7 +1309,6 @@ export default function Header({
                                 defaultChecked={'Subtitling'}
                                 onChange={() => {
                                     handleToggleChange();
-                                    console.log(toggleState);
                                 }}
                                 aria-labelledby="toggle-panel"
                             />
@@ -1461,10 +1317,9 @@ export default function Header({
 
                     <Button
                         onClick={() => {
-                            console.log('Configuration - basic');
                             handleTranslationShow();
                             setConfiguration('Subtitling');
-                           // setToggleState('Subtitling');
+                            // setToggleState('Subtitling');
                             handleToggleChange();
                             setIsSetConfiguration(true);
                             clearSubs();

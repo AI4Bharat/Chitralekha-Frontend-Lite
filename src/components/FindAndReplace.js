@@ -26,10 +26,6 @@ const FindAndReplace = ({
         setCurrentFound();
     };
 
-    console.log(
-        
-        find,
-        '0-=-=-=-=-=');
     return (
         <>
             <Modal show={showFindAndReplace} onHide={handleClose} centered>

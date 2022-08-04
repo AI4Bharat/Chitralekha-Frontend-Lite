@@ -127,7 +127,7 @@ export default function App({ defaultLang }) {
         console.log('showPopup ' + showPopup);
         return <>{showPopup ? <div>Test </div> : console.log('in else')}</>;
     };
-    const [transcriptSource, setTranscriptSource] = useState(process.env.REACT_APP_IS_RECRUITMENT ? 'AI4Bharat' : 'Youtube');
+    const [transcriptSource, setTranscriptSource] = useState(process.env.REACT_APP_IS_RECRUITMENT ? 'Youtube' : 'AI4Bharat');
     const [showFindAndReplace, setShowFindAndReplace] = useState(false);
     const [find, setFind] = useState('');
     const [replace, setReplace] = useState('');

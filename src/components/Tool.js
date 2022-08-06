@@ -982,7 +982,7 @@ export default function Header({
     );
 
     const onInputClick = useCallback((event) => {
-        setTranscriptSource('Manual Upload');
+        setTranscriptSource('Custom');
         event.target.value = '';
     }, []);
 

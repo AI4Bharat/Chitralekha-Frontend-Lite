@@ -1484,7 +1484,7 @@ export default function Header({
             ) : null}
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
             <div className="signin-btn" style={{ zIndex: 200 }}>
-                {process.env.REACT_APP_IS_RECRUITMENT ? null : localStorage.getItem('user_id') ? (
+                {process.env.REACT_APP_LITE ? null : localStorage.getItem('user_id') ? (
                     <DropdownButton
                         id="dropdown-basic-button"
                         title={localStorage.getItem('username')}

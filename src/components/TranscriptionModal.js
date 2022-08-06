@@ -60,9 +60,10 @@ const TranscriptionModal = (props) => {
                                         props.player?.pause();
                                     }}
                                     style={{display: "inline-block",padding: "6px 4px", borderRadius: "5px", minWidth: "200px"}}
+                                    disabled={!!process.env.REACT_APP_LITE}
                                 >
-                                    {!process.env.REACT_APP_IS_RECRUITMENT && <option value="AI4Bharat">AI4Bharat</option>}
-                                     <option value="Youtube">Youtube</option> 
+                                    {!process.env.REACT_APP_LITE && <option value="AI4Bharat">AI4Bharat</option>}
+                                     {!process.env.REACT_APP_LITE && <option value="Youtube">Youtube</option>}
                                      <option value="Custom">Custom</option> 
                                 </select>
                             </div>

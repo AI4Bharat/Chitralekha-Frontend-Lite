@@ -296,12 +296,12 @@ export default function SameLanguageSubtitles({
         }
         fetchTranscriptionLanguages();
         return () => {
-            saveTranscript();
+            !!localStorage.getItem('user_id') && saveTranscript();
         };
     }, []);
 
     useEffect(() => {
-        if (subtitle?.length > 0 && !waiting) {
+        if (!!localStorage.getItem('user_id') && subtitle?.length > 0 && !waiting) {
             setWaiting(true);
             setTimeout(() => {
                 setWaiting(false);
@@ -310,7 +310,7 @@ export default function SameLanguageSubtitles({
     }, [subtitle]);
 
     useEffect(() => {
-        if (!waiting) {
+        if (!!localStorage.getItem('user_id') && !waiting) {
             saveTranscript();
         }
     }, [waiting]);
@@ -553,9 +553,9 @@ export default function SameLanguageSubtitles({
             />
 
             <Style className="subtitles">
-                <Button className="save" onClick={saveTranscript}>
+                {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranscript}>
                     Save 💾
-                </Button>
+                </Button>}
 
                 {/* {isPrimary && (
                     <div className="transcribe">

@@ -313,7 +313,7 @@ export default function Subtitles({
         }
 
         return () => {
-            saveTranslation();
+            !!localStorage.getItem('user_id') && saveTranslation();
             if (scrollDivs.length >= 2) {
                 for (let i = 0; i < scrollDivs.length; i++) {
                     scrollDivs[i].removeEventListener('scroll', syncScroll);
@@ -323,7 +323,7 @@ export default function Subtitles({
     }, []);
 
     useEffect(() => {
-        if (subtitle?.length > 0 && !waiting) {
+        if (!!localStorage.getItem('user_id') && subtitle?.length > 0 && !waiting) {
             setWaiting(true);
             setTimeout(() => {
                 setWaiting(false);
@@ -332,7 +332,7 @@ export default function Subtitles({
     }, [subtitle]);
 
     useEffect(() => {
-        if (!waiting) {
+        if (!waiting && !!localStorage.getItem('user_id')) {
             saveTranslation();
         }
     }, [waiting]);
@@ -608,7 +608,7 @@ export default function Subtitles({
             // }
             // if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
-            // console.log("localstorage get item");
+            // console.log("localStorage get item");
             // console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
             // return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
             //     .then((res) => {

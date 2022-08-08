@@ -127,7 +127,7 @@ export default function App({ defaultLang }) {
         console.log('showPopup ' + showPopup);
         return <>{showPopup ? <div>Test </div> : console.log('in else')}</>;
     };
-    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
+    const [transcriptSource, setTranscriptSource] = useState(process.env.REACT_APP_LITE ? 'Custom' : 'AI4Bharat');
     const [showFindAndReplace, setShowFindAndReplace] = useState(false);
     const [find, setFind] = useState('');
     const [replace, setReplace] = useState('');

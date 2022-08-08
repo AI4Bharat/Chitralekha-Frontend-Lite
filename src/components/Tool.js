@@ -1105,6 +1105,7 @@ export default function Header({
             );
         }
     }
+    console.log(transcriptSource, 'transcriptSource');
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>
@@ -1481,10 +1482,9 @@ export default function Header({
                     configuration={configuration}
                 />
             ) : null}
-
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
             <div className="signin-btn" style={{ zIndex: 200 }}>
-                {localStorage.getItem('user_id') ? (
+                {process.env.REACT_APP_LITE ? null : localStorage.getItem('user_id') ? (
                     <DropdownButton
                         id="dropdown-basic-button"
                         title={localStorage.getItem('username')}

@@ -182,7 +182,7 @@ export default function Player(props) {
            ? props.subtitle[props.currentIndex]
            : props.subtitleEnglish[props.currentIndex]
     );
-    }, [props.subtitle, props.currentIndex]);
+    }, [props.configuration, props.subtitle, props.subtitleEnglish, props.currentIndex]);
 
     const onChange = useCallback(
         (event) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, FloatingLabel, Form } from 'react-bootstrap';
 import LoginAPI from '../redux/actions/api/User/Login';
 import RegisterAPI from '../redux/actions/api/User/Register';
@@ -11,6 +11,19 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
     const [details, setDetails] = useState(initDetails);
     const [err, setErr] = useState('');
     const [isSignIn, setIsSignIn] = useState(true);
+
+    const onKeyDown = (event) => {
+        if (event.keyCode === 13) {
+            handleLogin(event);
+        }
+    }
+
+    useEffect(() => {
+        window.addEventListener('keydown', onKeyDown);
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+        }
+    }, [])
 
     const handleLogin = (e) => {
         e.preventDefault();

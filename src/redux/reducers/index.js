@@ -8,6 +8,7 @@ import generateTranslation from './Translation/GenerateTranslation';
 import getTranslationLanguages from './Translation/GetTranslationLanguages';
 import saveTranslation from './Translation/SaveTranslation';
 import fetchTranslation from './Translation/FetchTranslation';
+import getRecentLinks from './Video/GetRecentLinks';
 
 const index = {
     apiStatus,
@@ -20,6 +21,7 @@ const index = {
     getTranslationLanguages,
     saveTranslation,
     fetchTranslation,
+    getRecentLinks,
 };
 
 export default index;

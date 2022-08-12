@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { Card, FloatingLabel, Tab, Tabs } from 'react-bootstrap';
+import { FloatingLabel, Tab, Tabs } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 
 import { FaClipboardCheck } from 'react-icons/fa';
+import APITransport from '../redux/actions/apitransport/apitransport';
+import GetRecentLinksAPI from '../redux/actions/api/Video/GetRecentLinks';
+import { useDispatch, useSelector } from 'react-redux';
 
 const UploadModal = (props) => {
+
+    const dispatch = useDispatch();
+    const recentLinks = useSelector(state => state.getRecentLinks.data);
+
+    const fetchRecentLinks = () => {
+        const linksObj = new GetRecentLinksAPI();
+        dispatch(APITransport(linksObj));
+    }
+
+    useEffect(() => {
+        fetchRecentLinks();
+    }, []);
+
+    console.log(recentLinks, "test");
+
     return (
         <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
@@ -16,7 +34,7 @@ const UploadModal = (props) => {
             </Modal.Header>
 
             <Modal.Body>
-                {localStorage.getItem('selectValue') == 'video' ? (
+                {localStorage.getItem('selectValue') === 'video' ? (
                     <Tabs defaultActiveKey="URL" id="fill-tab-example" className="mb-3" fill variant="pills">
                         <Tab eventKey="URL" title="Youtube URL">
                             <FloatingLabel
@@ -39,7 +57,7 @@ const UploadModal = (props) => {
                                     </p>
 
                                     <ul>
-                                    {props.videos.map((video) => {
+                                    {recentLinks?.map((video) => {
                                         return (
                                             <li
                                                 href="javascript:void(0)"

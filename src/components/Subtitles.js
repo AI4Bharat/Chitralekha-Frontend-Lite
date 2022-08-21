@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect, useDeferredValue, useRef } fro
 import { Table, Column, MultiGrid } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
-import { ReactTransliterate } from 'react-transliterate';
+import { IndicTransliterate, getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
@@ -259,9 +259,19 @@ export default function Subtitles({
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
 
-    const fetchTranslationLanguages = () => {
-        const langObj = new GetTranslationLanguagesAPI();
-        dispatch(APITransport(langObj));
+    const fetchTranslationLanguages = async() => {
+        let langs = await getTransliterationLanguages();
+        console.log(langs, "langArray");
+        if (langs?.length > 0) {
+            let langArray = [{name: 'English', key: 'en'}];
+            for (const index in langs) {
+                langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+            }
+            langArray.push({ name: 'Other Language', key: 'xx' });
+            setLanguageAvailable(langArray);
+            localStorage.setItem('langTranscribe', langArray[0].key);
+            setTranslate(langArray[0].key);
+        }
     };
 
     const saveTranslation = async () => {
@@ -822,7 +832,7 @@ export default function Subtitles({
                                     >
                                         {/* {console.log('before react transliterate '+localStorage.getItem('lang'))} */}
                                         <div className="item">
-                                            <ReactTransliterate
+                                            <IndicTransliterate
                                                 className={[
                                                     'textarea',
                                                     currentIndex === props.index ? 'highlight' : '',

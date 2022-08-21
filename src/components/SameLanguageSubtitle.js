@@ -6,7 +6,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
-import { ReactTransliterate } from 'react-transliterate';
+import { IndicTransliterate, getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
 // import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
@@ -238,7 +238,7 @@ export default function SameLanguageSubtitles({
     const transcribeReq = useRef(false);
     const fetchError = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
-    const languageChoices = useSelector((state) => state.getTranscriptLanguages.data);
+    // const languageChoices = useSelector((state) => state.getTranscriptLanguages.data);
     const Transcript = useSelector((state) => state.fetchTranscript.data);
     const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
     const APIStatus = useSelector((state) => state.apiStatus);
@@ -279,9 +279,19 @@ export default function SameLanguageSubtitles({
         }
     }, [subtitle, setLoading]);
 
-    const fetchTranscriptionLanguages = () => {
-        const langObj = new GetTranscriptLanguagesAPI();
-        dispatch(APITransport(langObj));
+    const fetchTranscriptionLanguages = async () => {
+        let langs = await getTransliterationLanguages();
+        console.log(langs, "langArray");
+        if (langs?.length > 0) {
+            let langArray = [{name: 'English', key: 'en'}];
+            for (const index in langs) {
+                langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+            }
+            langArray.push({ name: 'Other Language', key: 'xx' });
+            setLanguageAvailable(langArray);
+            localStorage.setItem('langTranscribe', langArray[0].key);
+            setTranscribe(langArray[0].key);
+        }
     };
 
     const fetchTranscription = () => {
@@ -330,17 +340,17 @@ export default function SameLanguageSubtitles({
         }
     }, [waiting]);
 
-    useEffect(() => {
-        if (languageChoices?.data) {
-            let langArray = [];
-            for (const key in languageChoices.data) {
-                langArray.push({ name: `${key}`, key: `${languageChoices.data[key]}` });
-            }
-            setLanguageAvailable(langArray);
-            localStorage.setItem('langTranscribe', langArray[0].key);
-            setTranscribe(langArray[0].key);
-        }
-    }, [languageChoices]);
+    // useEffect(() => {
+    //     if (languageChoices?.data) {
+    //         let langArray = [];
+    //         for (const key in languageChoices.data) {
+    //             langArray.push({ name: `${key}`, key: `${languageChoices.data[key]}` });
+    //         }
+    //         setLanguageAvailable(langArray);
+    //         localStorage.setItem('langTranscribe', langArray[0].key);
+    //         setTranscribe(langArray[0].key);
+    //     }
+    // }, [languageChoices]);
 
     // useEffect(() => {
     //  /*   console.log("languages");
@@ -486,7 +496,6 @@ export default function SameLanguageSubtitles({
         }
     }, [GeneratedTranscript]);
 
-
     //
     const onTranscribe = useCallback(() => {
         // console.log(localStorage.getItem('youtubeURL'));
@@ -568,9 +577,11 @@ export default function SameLanguageSubtitles({
             />
 
             <Style className="subtitles">
-                {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranscript}>
-                    Save 💾
-                </Button>}
+                {!!localStorage.getItem('user_id') && (
+                    <Button className="save" onClick={saveTranscript}>
+                        Save 💾
+                    </Button>
+                )}
                 <div className="transliterate-toggle">
                     <Toggle
                         id="toggle-panel"
@@ -653,7 +664,7 @@ export default function SameLanguageSubtitles({
                                 }}
                             >
                                 <div className="item">
-                                    <ReactTransliterate
+                                    <IndicTransliterate
                                         className={[
                                             'textarea',
                                             currentIndex === props.index ? 'highlight' : '',

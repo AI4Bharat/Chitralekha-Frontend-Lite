@@ -22,6 +22,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TranslationModal from './TranslationModal';
 import { Button } from 'react-bootstrap';
+import Toggle from 'react-toggle';
+import 'react-toggle/style.css';
 // import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 const Style = styled.div`
     position: relative;
@@ -31,7 +33,7 @@ const Style = styled.div`
 
     .translate {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: space-evenly;
         align-items: center;
         border-bottom: 1px solid rgb(255 255 255 / 20%);
@@ -55,7 +57,7 @@ const Style = styled.div`
             border-radius: 3px;
         }
 
-        .btn {
+        ${'' /* .btn {
             opacity: 0.85;
             display: flex;
             justify-content: center;
@@ -71,6 +73,21 @@ const Style = styled.div`
 
             &:hover {
                 opacity: 1;
+            }
+        } */}
+        .save {
+            display: block;
+            margin: 0;
+        }
+
+        .transliterate-toggle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            p {
+                margin: 0;
             }
         }
     }
@@ -240,6 +257,7 @@ export default function Subtitles({
     const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
     const APIStatus = useSelector(state => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
+    const [transliterate, setTransliterate] = useState(true);
 
     const fetchTranslationLanguages = () => {
         const langObj = new GetTranslationLanguagesAPI();
@@ -719,7 +737,19 @@ export default function Subtitles({
                     {/* <CalendarView />  */}
                     {isPrimary && translate && languageAvailable && (
                         <div className="translate">
-                            <div className="options">
+                                {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranslation}>
+                                    Save 💾
+                                </Button>}
+                                <div className="transliterate-toggle">
+                                    <Toggle
+                                        id="toggle-panel"
+                                        icons={false}
+                                        checked={transliterate}
+                                        onChange={() => setTransliterate(!transliterate)}
+                                        aria-labelledby="toggle-panel"
+                                    />
+                                    <p>Transliteration</p>
+                                </div>
                                 {/* <select
                             
                                // value="kn"
@@ -749,8 +779,7 @@ export default function Subtitles({
                                 <Translate value="TRANSLATE" />
                             </div> */}
                                 {/* {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} */}
-                               
-                            </div>
+                                
                         </div>
                     )}
 
@@ -817,6 +846,7 @@ export default function Subtitles({
                                                 }}
                                                 onBlur={() => handleBlur(props.rowData, props.index)}
                                                 enabled={
+                                                    transliterate &&
                                                     isPrimary
                                                         ? !(
                                                               !localStorage.getItem('langTranslate') ||

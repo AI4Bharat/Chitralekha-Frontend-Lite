@@ -839,11 +839,6 @@ export default function App({ defaultLang }) {
                                 </ScrollSyncPane>
                             </div>
                             </ScrollSync> */}
-                        <div className="btn-parent-div">
-                            <Button className="save" onClick={saveTranscript}>
-                                Save 💾
-                            </Button>
-                        </div>
 
                         <div style={{ display: 'flex', position: 'relative', height: `90%`, zIndex: '200' }}>
                             <Subtitles

@@ -22,6 +22,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TranscriptionModal from './TranscriptionModal';
 import { Button } from 'react-bootstrap';
+import Toggle from 'react-toggle';
+import 'react-toggle/style.css';
 
 const Style = styled.div`
     position: relative;
@@ -175,6 +177,18 @@ const Style = styled.div`
         margin-top: 20px;
         display: block;
     }
+
+    .transliterate-toggle {
+        display: flex;
+        flex-direction: row;
+        margin-top: 20px;
+        column-gap: 10px;
+        justify-content: center;
+        font-size: 18px;
+        p {
+            margin: 0;
+        }
+    }
 `;
 
 export default function SameLanguageSubtitles({
@@ -229,6 +243,7 @@ export default function SameLanguageSubtitles({
     const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
     const APIStatus = useSelector((state) => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
+    const [transliterate, setTransliterate] = useState(true);
 
     const saveTranscript = useCallback(async () => {
         if (subtitle?.length > 0) {
@@ -556,7 +571,16 @@ export default function SameLanguageSubtitles({
                 {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranscript}>
                     Save 💾
                 </Button>}
-
+                <div className="transliterate-toggle">
+                    <Toggle
+                        id="toggle-panel"
+                        icons={false}
+                        checked={transliterate}
+                        onChange={() => setTransliterate(!transliterate)}
+                        aria-labelledby="toggle-panel"
+                    />
+                    <p>Transliteration</p>
+                </div>
                 {/* {isPrimary && (
                     <div className="transcribe">
                         <div className="heading">
@@ -649,6 +673,7 @@ export default function SameLanguageSubtitles({
                                         }}
                                         onBlur={() => handleBlur(props.rowData, props.index)}
                                         enabled={
+                                            transliterate &&
                                             !(
                                                 !localStorage.getItem('langTranscribe') ||
                                                 localStorage.getItem('langTranscribe') === 'en' ||

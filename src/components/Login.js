@@ -113,7 +113,7 @@ const LoginForm = ({ showLogin, setShowLogin }) => {
                     </Modal.Header>
                     <Modal.Body>
                         {err && <p className="err-msg">{err}</p>}
-                        <FloatingLabel controlId="floatingInput" label="Username" className="mb-3">
+                        <FloatingLabel controlId="floatingInput" label="Username / Email" className="mb-3">
                             <Form.Control
                                 type="text"
                                 placeholder="name@example.com"

@@ -688,7 +688,8 @@ export default function SameLanguageSubtitles({
                                             !(
                                                 !localStorage.getItem('langTranscribe') ||
                                                 localStorage.getItem('langTranscribe') === 'en' ||
-                                                localStorage.getItem('langTranscribe') === 'en-k'
+                                                localStorage.getItem('langTranscribe') === 'en-k' ||
+                                                localStorage.getItem('langTranscribe') === 'xx'
                                             )
                                         }
                                         lang={localStorage.getItem('langTranscribe')}

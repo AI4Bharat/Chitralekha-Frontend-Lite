@@ -861,12 +861,14 @@ export default function Subtitles({
                                                         ? !(
                                                               !localStorage.getItem('langTranslate') ||
                                                               localStorage.getItem('langTranslate') === 'en' ||
-                                                              localStorage.getItem('langTranslate') === 'en-k'
+                                                              localStorage.getItem('langTranslate') === 'en-k' ||
+                                                              localStorage.getItem('langTranslate') === 'xx'
                                                           )
                                                         : !(
                                                               !localStorage.getItem('langTranscribe') ||
                                                               localStorage.getItem('langTranscribe') === 'en' ||
-                                                              localStorage.getItem('langTranscribe') === 'en-k'
+                                                              localStorage.getItem('langTranscribe') === 'en-k' || 
+                                                              localStorage.getItem('langTranscribe') === 'xx'
                                                           )
                                                 }
                                                 lang={

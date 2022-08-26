@@ -1286,7 +1286,7 @@ export default function Header({
                             setIsSetConfiguration(true);
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px' }}
+                        style={{ marginRight: '20px', backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '' }}
                     >
                         <Translate value="SAME_LANGUAGE" />
                     </Button>
@@ -1314,7 +1314,7 @@ export default function Header({
                             clearSubs();
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px' }}
+                        style={{ marginRight: '20px', backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '' }}
                     >
                         <Translate value="MAIN_LANGUAGE" />
                     </Button>

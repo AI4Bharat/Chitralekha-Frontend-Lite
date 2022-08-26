@@ -56,25 +56,7 @@ const Style = styled.div`
             height: 35px;
             border-radius: 3px;
         }
-
-        ${'' /* .btn {
-            opacity: 0.85;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 35px;
-            width: 50%;
-            border-radius: 3px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 13px;
-            background-color: #673ab7;
-            transition: all 0.2s ease 0s;
-
-            &:hover {
-                opacity: 1;
-            }
-        } */}
+        
         .save {
             display: block;
             margin: 0;
@@ -750,7 +732,12 @@ export default function Subtitles({
                                 {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranslation}>
                                     Save 💾
                                 </Button>}
-                                <div className="transliterate-toggle">
+                                {!(
+                                    !localStorage.getItem('langTranslate') ||
+                                    localStorage.getItem('langTranslate') === 'en' ||
+                                    localStorage.getItem('langTranslate') === 'en-k' ||
+                                    localStorage.getItem('langTranslate') === 'xx'
+                                ) && <div className="transliterate-toggle">
                                     <Toggle
                                         id="toggle-panel"
                                         icons={false}
@@ -759,7 +746,7 @@ export default function Subtitles({
                                         aria-labelledby="toggle-panel"
                                     />
                                     <p>Transliteration</p>
-                                </div>
+                                </div>}
                                 {/* <select
                             
                                // value="kn"

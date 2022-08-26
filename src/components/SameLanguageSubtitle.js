@@ -33,7 +33,7 @@ const Style = styled.div`
 
     .transcribe {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: space-evenly;
         align-items: center;
         border-bottom: 1px solid rgb(255 255 255 / 20%);
@@ -63,24 +63,9 @@ const Style = styled.div`
             border-radius: 3px;
         }
 
-        .btn {
-            opacity: 0.85;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 35px;
-            width: 60%;
-            border-radius: 3px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 13px;
-            background-color: #673ab7;
-            transition: all 0.2s ease 0s;
-            margin-right: 10px;
-
-            &:hover {
-                opacity: 1;
-            }
+        .save {
+            display: block;
+            margin: 0;
         }
     }
 
@@ -172,17 +157,10 @@ const Style = styled.div`
         }
     }
 
-    .save {
-        margin: auto;
-        margin-top: 20px;
-        display: block;
-    }
-
     .transliterate-toggle {
         display: flex;
-        flex-direction: row;
-        margin-top: 20px;
-        column-gap: 10px;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
         font-size: 18px;
         p {
@@ -577,20 +555,27 @@ export default function SameLanguageSubtitles({
             />
 
             <Style className="subtitles">
-                {!!localStorage.getItem('user_id') && (
-                    <Button className="save" onClick={saveTranscript}>
-                        Save 💾
-                    </Button>
-                )}
-                <div className="transliterate-toggle">
-                    <Toggle
-                        id="toggle-panel"
-                        icons={false}
-                        checked={transliterate}
-                        onChange={() => setTransliterate(!transliterate)}
-                        aria-labelledby="toggle-panel"
-                    />
-                    <p>Transliteration</p>
+                <div className="transcribe">
+                    {!!localStorage.getItem('user_id') && (
+                        <Button className="save" onClick={saveTranscript}>
+                            Save 💾
+                        </Button>
+                    )}
+                    {!(
+                        !localStorage.getItem('langTranscribe') ||
+                        localStorage.getItem('langTranscribe') === 'en' ||
+                        localStorage.getItem('langTranscribe') === 'en-k' ||
+                        localStorage.getItem('langTranscribe') === 'xx'
+                    ) && <div className="transliterate-toggle">
+                        <Toggle
+                            id="toggle-panel"
+                            icons={false}
+                            checked={transliterate}
+                            onChange={() => setTransliterate(!transliterate)}
+                            aria-labelledby="toggle-panel"
+                        />
+                        <p>Transliteration</p>
+                    </div>}
                 </div>
                 {/* {isPrimary && (
                     <div className="transcribe">

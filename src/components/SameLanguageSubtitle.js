@@ -426,9 +426,9 @@ export default function SameLanguageSubtitles({
         (subtitles) => {
             const suburl = vtt2url(subtitles);
             url2sub(suburl).then((urlsub) => {
-                // setSubtitle(formatSub(urlsub));
+                setSubtitle(formatSub(urlsub));
                 setSubtitleEnglish(formatSub(urlsub));
-                //localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                localStorage.setItem('subtitle', JSON.stringify(urlsub));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
                 setLoading('');
             });
@@ -582,7 +582,7 @@ export default function SameLanguageSubtitles({
                         <div className="heading">
                             <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
                         </div>
-                        {console.log('rendering here')}
+                           {console.log('rendering here')}
                          <div className="options">
                            <select
                                // value={transcribe == null ? '' : transcribe}

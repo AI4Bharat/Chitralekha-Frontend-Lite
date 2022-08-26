@@ -281,7 +281,7 @@ export default function SameLanguageSubtitles({
                 for (const index in langs) {
                     langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
                 }
-                langArray.push({ name: 'Other Language', key: 'xx' });
+                if (transcriptSource === 'Custom') langArray.push({ name: 'Other Language', key: 'xx' });
                 setLanguageAvailable(langArray);
                 localStorage.setItem('langTranscribe', langArray[0].key);
                 setModeTranscribe(langArray[0].key);

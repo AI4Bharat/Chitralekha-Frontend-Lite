@@ -212,11 +212,9 @@ export default function SameLanguageSubtitles({
     };
 
     //change
-    const [transcribe, setTranscribe] = useState(null);
     const transcribeReq = useRef(false);
     const fetchError = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
-    // const languageChoices = useSelector((state) => state.getTranscriptLanguages.data);
     const Transcript = useSelector((state) => state.fetchTranscript.data);
     const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
     const APIStatus = useSelector((state) => state.apiStatus);
@@ -258,19 +256,42 @@ export default function SameLanguageSubtitles({
     }, [subtitle, setLoading]);
 
     const fetchTranscriptionLanguages = async () => {
-        let langs = await getTransliterationLanguages();
-        console.log(langs, "langArray");
-        if (langs?.length > 0) {
-            let langArray = [{name: 'English', key: 'en'}];
-            for (const index in langs) {
-                langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+        setLanguageAvailable([]);
+        if (transcriptSource === 'AI4Bharat') {
+            let apiObj = new GetTranscriptLanguagesAPI();
+            const res = await fetch(apiObj.apiEndPoint(), {
+                method: 'GET',
+                headers: apiObj.getHeaders().headers,
+            });
+            const resp = await res.json();
+            if (res.ok) {
+                let langArray = [];
+                for (const key in resp.data) {
+                    langArray.push({ name: `${key}`, key: `${resp.data[key]}` });
+                }
+                setLanguageAvailable(langArray);
+                localStorage.setItem('langTranscribe', langArray[0].key);
+                setModeTranscribe(langArray[0].key);
             }
-            langArray.push({ name: 'Other Language', key: 'xx' });
-            setLanguageAvailable(langArray);
-            localStorage.setItem('langTranscribe', langArray[0].key);
-            setTranscribe(langArray[0].key);
+        } else {
+            let langs = await getTransliterationLanguages();
+            console.log(langs, "langArray");
+            if (langs?.length > 0) {
+                let langArray = [{name: 'English', key: 'en'}];
+                for (const index in langs) {
+                    langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+                }
+                langArray.push({ name: 'Other Language', key: 'xx' });
+                setLanguageAvailable(langArray);
+                localStorage.setItem('langTranscribe', langArray[0].key);
+                setModeTranscribe(langArray[0].key);
+            }
         }
     };
+
+    useEffect(() => {
+        fetchTranscriptionLanguages();
+    }, [transcriptSource]);
 
     const fetchTranscription = () => {
         const transcriptObj = new FetchTranscriptAPI(
@@ -293,11 +314,10 @@ export default function SameLanguageSubtitles({
 
     useEffect(() => {
         if (localStorage.getItem('langTranscribe')) {
-            setTranscribe(localStorage.getItem('langTranscribe'));
+            setModeTranscribe(localStorage.getItem('langTranscribe'));
         } else {
-            setTranscribe('en');
+            setModeTranscribe('en');
         }
-        fetchTranscriptionLanguages();
         return () => {
             !!localStorage.getItem('user_id') && saveTranscript();
         };
@@ -547,7 +567,6 @@ export default function SameLanguageSubtitles({
                 languageAvailable={languageAvailable}
                 modeTranscribe={modeTranscribe}
                 setModeTranscribe={setModeTranscribe}
-                setTranscribe={setTranscribe}
                 transcriptSource={transcriptSource}
                 setTranscriptSource={setTranscriptSource}
                 player={player}

@@ -1,25 +1,17 @@
 import styled from 'styled-components';
-import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect, useDeferredValue, useRef } from 'react';
-import { Table, Column, MultiGrid } from 'react-virtualized';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
-import { IndicTransliterate, getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
+import { IndicTransliterate } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
-// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
-import googleTranslate from '../libs/googleTranslate';
 import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
-// import { ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
-// import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
 import GetTranslationLanguagesAPI from '../redux/actions/api/Translation/GetTranslationLanguages';
 import FetchTranslationAPI from '../redux/actions/api/Translation/FetchTranslation';
 import GenerateTranslationAPI from '../redux/actions/api/Translation/GenerateTranslation';
 import SaveTranslationAPI from '../redux/actions/api/Translation/SaveTranslation';
 import APITransport from '../redux/actions/apitransport/apitransport';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactModal from 'react-modal';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
 import TranslationModal from './TranslationModal';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
@@ -242,18 +234,8 @@ export default function Subtitles({
     const [transliterate, setTransliterate] = useState(true);
 
     const fetchTranslationLanguages = async() => {
-        let langs = await getTransliterationLanguages();
-        console.log(langs, "langArray");
-        if (langs?.length > 0) {
-            let langArray = [{name: 'English', key: 'en'}];
-            for (const index in langs) {
-                langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
-            }
-            langArray.push({ name: 'Other Language', key: 'xx' });
-            setLanguageAvailable(langArray);
-            localStorage.setItem('langTranscribe', langArray[0].key);
-            setTranslate(langArray[0].key);
-        }
+        const langObj = new GetTranslationLanguagesAPI();
+        dispatch(APITransport(langObj));
     };
 
     const saveTranslation = async () => {
@@ -348,7 +330,6 @@ export default function Subtitles({
     }, [waiting]);
 
     useEffect(() => {
-        // if (translationApi === "AI4Bharat") {
         if (languageChoices && Object.keys(languageChoices).length > 0) {
             let langArray = [];
             for (const key in languageChoices) {
@@ -359,12 +340,6 @@ export default function Subtitles({
             setTranslate(langArray[0].key);
             //  setModeTranslate(langArray[0].key);
         }
-        // } else {
-        //     setLanguageAvailable(languages);
-        //     localStorage.setItem('langTranslate', languages['en'][1].key); //changes
-        //     setTranslate(languages['en'][1].key);
-        //     setModeTranslate(languages['en'][1].key);
-        // }
     }, [languageChoices]);
 
     // useEffect(() => {

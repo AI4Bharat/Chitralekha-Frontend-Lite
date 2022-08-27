@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { FloatingLabel, Tab, Tabs } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-
+import { getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
 import { FaClipboardCheck } from 'react-icons/fa';
 import APITransport from '../redux/actions/apitransport/apitransport';
 import GetRecentLinksAPI from '../redux/actions/api/Video/GetRecentLinks';
@@ -13,6 +13,20 @@ const UploadModal = (props) => {
 
     const dispatch = useDispatch();
     const recentLinks = useSelector(state => state.getRecentLinks.data);
+    const [languageAvailable, setLanguageAvailable] = useState([]);
+    
+    const fetchTranscriptionLanguages = async () => {
+        let langs = await getTransliterationLanguages();
+        console.log(langs, "langArray");
+        if (langs?.length > 0) {
+            let langArray = [{name: 'English', key: 'en'}];
+            for (const index in langs) {
+                langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+            }
+            langArray.push({ name: 'Other Language', key: 'xx' });
+            setLanguageAvailable(langArray);
+        }
+    };
 
     const fetchRecentLinks = () => {
         const linksObj = new GetRecentLinksAPI();
@@ -21,6 +35,7 @@ const UploadModal = (props) => {
 
     useEffect(() => {
         fetchRecentLinks();
+        fetchTranscriptionLanguages();
     }, []);
 
     console.log(recentLinks, "test");
@@ -81,7 +96,27 @@ const UploadModal = (props) => {
                         </Tab>
                     </Tabs>
                 ) : (
-                    <Form.Control type="file" onChange={props.onSubtitleChange} onClick={props.onInputClick} />
+                    <div>
+                        <div style={{display: "flex", flexDirection: "row", alignItems: "center", columnGap: "20px", marginBottom: "20px"}}>
+                            <label style={{margin: 0}}>Select Language:</label>
+                            <select
+                                onChange={(event) => {
+                                    localStorage.setItem('langTranscribe', event.target.value);
+                                    props.setTranscribe(localStorage.getItem('langTranscribe'));
+                                }}
+                                style={{padding: "6px 4px", borderRadius: "5px", flex: 1}}
+                            >
+                                {languageAvailable?.map(
+                                    (item) => (
+                                        <option key={item.key} value={item.key}>
+                                            {item.name}
+                                        </option>
+                                    ),
+                                )}
+                            </select>
+                        </div>
+                        <Form.Control type="file" onChange={props.onSubtitleChange} onClick={props.onInputClick} />
+                    </div>
                 )}
             </Modal.Body>
 

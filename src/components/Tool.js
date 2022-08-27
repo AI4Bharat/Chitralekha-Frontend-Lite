@@ -1193,6 +1193,7 @@ export default function Header({
                 onInputClick={onInputClick}
                 clearData={clearData}
                 onRecentVideoLinkClick={onRecentVideoLinkClick}
+                setTranscribe={setTranscribe}
             />
 
             {/* <div className={`tool-button`}>

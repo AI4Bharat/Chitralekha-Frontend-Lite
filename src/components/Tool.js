@@ -596,7 +596,7 @@ export default function Header({
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
     const cookies = new Cookies();
 
-    const [videos, setVideos] = useState([]);
+    // const [videos, setVideos] = useState([]);
     /* For Upload/Open Modal */
     const [importModalOpen, setImportModalOpen] = useState(false);
     const handleImportClose = () => setImportModalOpen(false);
@@ -612,19 +612,6 @@ export default function Header({
         }, [key, value]);
         return [value, setValue];
     }
-
-    const client = axios.create({
-        baseURL: 'https://backend.chitralekha.ai4bharat.org/video/list_recent',
-        params: {
-            count: 5,
-        },
-    });
-
-    useEffect(() => {
-        client.get().then((response) => {
-            setVideos(response.data);
-        });
-    }, []);
 
     // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
     // const [isSetVideo, setIsSetVideo] = useState(false);
@@ -985,7 +972,7 @@ export default function Header({
     );
 
     const onInputClick = useCallback((event) => {
-        setTranscriptSource('Manual Upload');
+        setTranscriptSource('Custom');
         event.target.value = '';
     }, []);
 
@@ -1108,6 +1095,7 @@ export default function Header({
             );
         }
     }
+    console.log(transcriptSource, 'transcriptSource');
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>
@@ -1207,8 +1195,8 @@ export default function Header({
                 onSubtitleChange={onSubtitleChange}
                 onInputClick={onInputClick}
                 clearData={clearData}
-                videos={videos}
                 onRecentVideoLinkClick={onRecentVideoLinkClick}
+                setTranscribe={setTranscribe}
             />
 
             {/* <div className={`tool-button`}>
@@ -1302,7 +1290,7 @@ export default function Header({
                             setIsSetConfiguration(true);
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px' }}
+                        style={{ marginRight: '20px', backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '' }}
                     >
                         <Translate value="SAME_LANGUAGE" />
                     </Button>
@@ -1330,7 +1318,7 @@ export default function Header({
                             clearSubs();
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px' }}
+                        style={{ marginRight: '20px', backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '' }}
                     >
                         <Translate value="MAIN_LANGUAGE" />
                     </Button>
@@ -1484,10 +1472,9 @@ export default function Header({
                     configuration={configuration}
                 />
             ) : null}
-
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
             <div className="signin-btn" style={{ zIndex: 200 }}>
-                {localStorage.getItem('user_id') ? (
+                {process.env.REACT_APP_LITE ? null : localStorage.getItem('user_id') ? (
                     <DropdownButton
                         id="dropdown-basic-button"
                         title={localStorage.getItem('username')}

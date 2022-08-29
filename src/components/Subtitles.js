@@ -1,27 +1,21 @@
 import styled from 'styled-components';
-import languages from '../libs/languages';
-import React, { useState, useCallback, useEffect, useDeferredValue, useRef } from 'react';
-import { Table, Column, MultiGrid } from 'react-virtualized';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
-import { ReactTransliterate } from 'react-transliterate';
+import { IndicTransliterate } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
-// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
-import googleTranslate from '../libs/googleTranslate';
 import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
-// import { ai4BharatASRTranslate } from '../libs/ai4BharatTranslate';
-// import { sub2vtt, url2sub, vtt2url } from '../libs/readSub';
 import GetTranslationLanguagesAPI from '../redux/actions/api/Translation/GetTranslationLanguages';
 import FetchTranslationAPI from '../redux/actions/api/Translation/FetchTranslation';
 import GenerateTranslationAPI from '../redux/actions/api/Translation/GenerateTranslation';
 import SaveTranslationAPI from '../redux/actions/api/Translation/SaveTranslation';
 import APITransport from '../redux/actions/apitransport/apitransport';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactModal from 'react-modal';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
 import TranslationModal from './TranslationModal';
 import { Button } from 'react-bootstrap';
+import Toggle from 'react-toggle';
+import 'react-toggle/style.css';
 // import { ScrollSync, ScrollSyncPane } from 'react-scroll-sync';
 const Style = styled.div`
     position: relative;
@@ -31,7 +25,7 @@ const Style = styled.div`
 
     .translate {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: space-evenly;
         align-items: center;
         border-bottom: 1px solid rgb(255 255 255 / 20%);
@@ -54,23 +48,20 @@ const Style = styled.div`
             height: 35px;
             border-radius: 3px;
         }
+        
+        .save {
+            display: block;
+            margin: 0;
+        }
 
-        .btn {
-            opacity: 0.85;
+        .transliterate-toggle {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 35px;
-            width: 50%;
-            border-radius: 3px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 13px;
-            background-color: #673ab7;
-            transition: all 0.2s ease 0s;
-
-            &:hover {
-                opacity: 1;
+            justify-content: center;
+            font-size: 18px;
+            p {
+                margin: 0;
             }
         }
     }
@@ -240,8 +231,9 @@ export default function Subtitles({
     const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
     const APIStatus = useSelector(state => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
+    const [transliterate, setTransliterate] = useState(true);
 
-    const fetchTranslationLanguages = () => {
+    const fetchTranslationLanguages = async() => {
         const langObj = new GetTranslationLanguagesAPI();
         dispatch(APITransport(langObj));
     };
@@ -313,7 +305,7 @@ export default function Subtitles({
         }
 
         return () => {
-            saveTranslation();
+            !!localStorage.getItem('user_id') && saveTranslation();
             if (scrollDivs.length >= 2) {
                 for (let i = 0; i < scrollDivs.length; i++) {
                     scrollDivs[i].removeEventListener('scroll', syncScroll);
@@ -323,7 +315,7 @@ export default function Subtitles({
     }, []);
 
     useEffect(() => {
-        if (subtitle?.length > 0 && !waiting) {
+        if (!!localStorage.getItem('user_id') && subtitle?.length > 0 && !waiting) {
             setWaiting(true);
             setTimeout(() => {
                 setWaiting(false);
@@ -332,13 +324,12 @@ export default function Subtitles({
     }, [subtitle]);
 
     useEffect(() => {
-        if (!waiting) {
+        if (!waiting && !!localStorage.getItem('user_id')) {
             saveTranslation();
         }
     }, [waiting]);
 
     useEffect(() => {
-        // if (translationApi === "AI4Bharat") {
         if (languageChoices && Object.keys(languageChoices).length > 0) {
             let langArray = [];
             for (const key in languageChoices) {
@@ -349,12 +340,6 @@ export default function Subtitles({
             setTranslate(langArray[0].key);
             //  setModeTranslate(langArray[0].key);
         }
-        // } else {
-        //     setLanguageAvailable(languages);
-        //     localStorage.setItem('langTranslate', languages['en'][1].key); //changes
-        //     setTranslate(languages['en'][1].key);
-        //     setModeTranslate(languages['en'][1].key);
-        // }
     }, [languageChoices]);
 
     // useEffect(() => {
@@ -608,7 +593,7 @@ export default function Subtitles({
             // }
             // if (translationApi === 'AI4Bharat') {
             // console.log('ai4bharat api');
-            // console.log("localstorage get item");
+            // console.log("localStorage get item");
             // console.log("langTranslate translation api"+localStorage.getItem('langTranslate'));
             // return ai4BharatBatchTranslate(formatSub(subtitleEnglish), 'hi', translate)
             //     .then((res) => {
@@ -719,7 +704,24 @@ export default function Subtitles({
                     {/* <CalendarView />  */}
                     {isPrimary && translate && languageAvailable && (
                         <div className="translate">
-                            <div className="options">
+                                {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranslation}>
+                                    Save 💾
+                                </Button>}
+                                {!(
+                                    !localStorage.getItem('langTranslate') ||
+                                    localStorage.getItem('langTranslate') === 'en' ||
+                                    localStorage.getItem('langTranslate') === 'en-k' ||
+                                    localStorage.getItem('langTranslate') === 'xx'
+                                ) && <div className="transliterate-toggle">
+                                    <Toggle
+                                        id="toggle-panel"
+                                        icons={false}
+                                        checked={transliterate}
+                                        onChange={() => setTransliterate(!transliterate)}
+                                        aria-labelledby="toggle-panel"
+                                    />
+                                    <p>Transliteration</p>
+                                </div>}
                                 {/* <select
                             
                                // value="kn"
@@ -749,8 +751,7 @@ export default function Subtitles({
                                 <Translate value="TRANSLATE" />
                             </div> */}
                                 {/* {subtitle?.length > 0 && <span title="Save Translation" className='save-btn' onClick={saveTranslation}>💾</span>} */}
-                               
-                            </div>
+                                
                         </div>
                     )}
 
@@ -793,7 +794,7 @@ export default function Subtitles({
                                     >
                                         {/* {console.log('before react transliterate '+localStorage.getItem('lang'))} */}
                                         <div className="item">
-                                            <ReactTransliterate
+                                            <IndicTransliterate
                                                 className={[
                                                     'textarea',
                                                     currentIndex === props.index ? 'highlight' : '',
@@ -817,16 +818,19 @@ export default function Subtitles({
                                                 }}
                                                 onBlur={() => handleBlur(props.rowData, props.index)}
                                                 enabled={
+                                                    transliterate &&
                                                     isPrimary
                                                         ? !(
                                                               !localStorage.getItem('langTranslate') ||
                                                               localStorage.getItem('langTranslate') === 'en' ||
-                                                              localStorage.getItem('langTranslate') === 'en-k'
+                                                              localStorage.getItem('langTranslate') === 'en-k' ||
+                                                              localStorage.getItem('langTranslate') === 'xx'
                                                           )
                                                         : !(
                                                               !localStorage.getItem('langTranscribe') ||
                                                               localStorage.getItem('langTranscribe') === 'en' ||
-                                                              localStorage.getItem('langTranscribe') === 'en-k'
+                                                              localStorage.getItem('langTranscribe') === 'en-k' || 
+                                                              localStorage.getItem('langTranscribe') === 'xx'
                                                           )
                                                 }
                                                 lang={

@@ -129,7 +129,7 @@ export default function App({ defaultLang }) {
         console.log('showPopup ' + showPopup);
         return <>{showPopup ? <div>Test </div> : console.log('in else')}</>;
     };
-    const [transcriptSource, setTranscriptSource] = useState('AI4Bharat');
+    const [transcriptSource, setTranscriptSource] = useState(process.env.REACT_APP_LITE ? 'Custom' : 'AI4Bharat');
     const [showFindAndReplace, setShowFindAndReplace] = useState(false);
     const [find, setFind] = useState('');
     const [replace, setReplace] = useState('');
@@ -857,11 +857,6 @@ export default function App({ defaultLang }) {
                                 </ScrollSyncPane>
                             </div>
                             </ScrollSync> */}
-                        <div className="btn-parent-div">
-                            <Button className="save" onClick={saveTranscript}>
-                                Save 💾
-                            </Button>
-                        </div>
 
                         <div style={{ display: 'flex', position: 'relative', height: `90%`, zIndex: '200' }}>
                             <Subtitles

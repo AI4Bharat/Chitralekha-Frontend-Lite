@@ -39,6 +39,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
     "styled-components": "^5.3.1",
+    "universal-cookie": "^4.0.4",
     "wfplayer": "^2.1.0"
   },
   "scripts": {

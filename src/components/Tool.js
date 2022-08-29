@@ -31,6 +31,7 @@ import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -578,6 +579,8 @@ export default function Header({
     handleTranslationShow,
     fullscreen,
     isTranslateClicked,
+    showLogin, 
+    setShowLogin,
 }) {
     // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
@@ -586,12 +589,12 @@ export default function Header({
     const [toolOpen, setToolOpen] = useState(true);
     const dispatch = useDispatch();
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
-    const [showLogin, setShowLogin] = useState(false);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
 
     const [showDropdown, setShowDropdown] = useState(false);
 
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
+    const cookies = new Cookies();
 
     const [videos, setVideos] = useState([]);
     /* For Upload/Open Modal */
@@ -1493,6 +1496,7 @@ export default function Header({
                         <Dropdown.Item
                             onClick={() => {
                                 localStorage.clear();
+                                cookies.remove("registered");
                                 window.location.reload();
                             }}
                         >

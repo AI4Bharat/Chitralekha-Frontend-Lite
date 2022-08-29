@@ -24,6 +24,8 @@ import Header from './components/Tool';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SaveTranscriptAPI from './redux/actions/api/Transcript/SaveTranscript';
 import { sub2vtt } from './libs/readSub';
+import FirstTimeModal from './components/FirstTimeModal';
+import Cookies from 'universal-cookie';
 
 const Style = styled.div`
     height: 100%;
@@ -134,6 +136,20 @@ export default function App({ defaultLang }) {
     const [found, setFound] = useState([]);
     const [currentFound, setCurrentFound] = useState();
     const [fullscreen, setFullscreen] = useState(false);
+    const [firstTimeOpen, setFirstTimeOpen] = useState(true);
+    const [showLogin, setShowLogin] = useState(false);
+    const cookies = new Cookies('registered');
+
+    useEffect(()=>{
+        if (cookies.get('registered')) {
+          setFirstTimeOpen(false);
+        } else if (!cookies.get('registered')) {
+           cookies.set('registered', 'true', {
+            path: '/',
+           });
+           setFirstTimeOpen(true);
+        }
+    }, [])
 
     /* For Transcription Modal */
     const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
@@ -669,6 +685,8 @@ export default function App({ defaultLang }) {
         handleTranslationClose,
         handleTranslationShow,
         fullscreen,
+        showLogin, 
+        setShowLogin,
     };
 
     const renderTooltip = (props) => (
@@ -1054,6 +1072,12 @@ export default function App({ defaultLang }) {
                     )}
                 </Button>
             </OverlayTrigger>
+
+            <FirstTimeModal 
+                show={firstTimeOpen}
+                handleClose={() => setFirstTimeOpen(false)}
+                setLoginOpen={() => setShowLogin(true)}
+            />
         </Style>
     );
 }

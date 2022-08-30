@@ -801,6 +801,7 @@ export default function Header({
                 }
             }
 
+            localStorage.setItem("videoName", file.name.replace(/\.[^.$]+$/, ''));
             localStorage.setItem('isVideoPresent', true);
             setIsSetVideo(true);
         },

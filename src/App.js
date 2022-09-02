@@ -25,7 +25,6 @@ import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SaveTranscriptAPI from './redux/actions/api/Transcript/SaveTranscript';
 import { sub2vtt } from './libs/readSub';
 import FirstTimeModal from './components/FirstTimeModal';
-import Cookies from 'universal-cookie';
 
 const Style = styled.div`
     height: 100%;
@@ -138,16 +137,13 @@ export default function App({ defaultLang }) {
     const [fullscreen, setFullscreen] = useState(false);
     const [firstTimeOpen, setFirstTimeOpen] = useState(true);
     const [showLogin, setShowLogin] = useState(false);
-    const cookies = new Cookies('registered');
 
     useEffect(()=>{
-        if (cookies.get('registered')) {
+        if (localStorage.getItem('registered')) {
           setFirstTimeOpen(false);
-        } else if (!cookies.get('registered')) {
-           cookies.set('registered', 'true', {
-            path: '/',
-           });
-           setFirstTimeOpen(true);
+        } else if (!localStorage.getItem('registered')) {
+          localStorage.setItem('registered', true);
+          setFirstTimeOpen(true);
         }
     }, [])
 

@@ -773,7 +773,7 @@ export default function Subtitles({
                             width={300}
                             height={height}
                             rowHeight={80}
-                            scrollToIndex={currentIndex + 2}
+                            scrollToIndex={currentIndex === -1 ? undefined : currentIndex + 2}
                             rowCount={subtitle.length}
                             rowGetter={({ index }) => subtitle[index]}
                             headerRowRenderer={() => null}

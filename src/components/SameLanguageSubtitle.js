@@ -648,7 +648,7 @@ export default function SameLanguageSubtitles({
                     width={300}
                     height={height}
                     rowHeight={80}
-                    scrollToIndex={currentIndex + 2}
+                    scrollToIndex={currentIndex === -1 ? undefined : currentIndex + 2}
                     rowCount={subtitleEnglish.length}
                     rowGetter={({ index }) => subtitleEnglish[index]}
                     headerRowRenderer={() => null}

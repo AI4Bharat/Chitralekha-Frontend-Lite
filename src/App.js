@@ -763,7 +763,7 @@ export default function App({ defaultLang }) {
                     <Player {...props} />
                 </div>
                 {configuration === '' && <></>}
-                {configuration === 'Subtitling' && (
+                {(configuration === 'Subtitling' || translationModalOpen) && (
                     <div style={{ overflow: 'hidden', background: '#000' }}>
                         {/* <Subtitles
                             currentIndex={props.currentIndex}
@@ -938,7 +938,7 @@ export default function App({ defaultLang }) {
                     </>
                 )}
 
-                {configuration === 'Same Language Subtitling' && (
+                {(configuration === 'Same Language Subtitling' || transcriptionModalOpen) && (
                     <>
                         {/* original same lang subtitle config */}
                         {/* <SameLanguageSubtitles

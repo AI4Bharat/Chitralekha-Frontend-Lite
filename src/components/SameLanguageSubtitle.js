@@ -189,6 +189,7 @@ export default function SameLanguageSubtitles({
     clearSubs,
     clearSubsEnglish,
     configuration,
+    setConfiguration,
     setSubtitleEnglish,
     translationApi,
     transcriptSource,
@@ -571,9 +572,10 @@ export default function SameLanguageSubtitles({
                 setTranscriptSource={setTranscriptSource}
                 player={player}
                 onTranscribe={onTranscribe}
+                setConfiguration={setConfiguration}
             />
 
-            <Style className="subtitles">
+            {configuration === "Same Language Subtitling" && <Style className="subtitles">
                 <div className="transcribe">
                     {!!localStorage.getItem('user_id') && (
                         <Button className="save" onClick={saveTranscript}>
@@ -731,7 +733,7 @@ export default function SameLanguageSubtitles({
                         );
                     }}
                 ></Table>
-            </Style>
+            </Style>}
         </>
         //    )
     );

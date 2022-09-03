@@ -183,6 +183,7 @@ export default React.memo(
         //     (item) => item.startTime <= currentTime && item.endTime > currentTime,
         // );
         const onMouseDown = (sub, event, type) => {
+            console.log(sub, event, type, "test");
             lastSub = sub;
             if (event.button !== 0) return;
             isDroging = true;

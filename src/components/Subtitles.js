@@ -207,6 +207,7 @@ export default function Subtitles({
     clearedSubs,
     setClearedSubs,
     configuration,
+    setConfiguration,
     translationApi,
     updateSubOriginal = null,
     isTranslateClicked = false,
@@ -289,21 +290,24 @@ export default function Subtitles({
             //  setModeTranslate(localStorage.getItem('langTranslate'));
         }
         fetchTranslationLanguages();
+    }, []);
 
-        const scrollDivs = document.getElementsByClassName('ReactVirtualized__Table__Grid');
-        const syncScroll = (e) => {
+    useEffect(() => {
+        let scrollDivs = [];
+        let syncScroll = (e) => {
             scrollDivs[
                 e.currentTarget.scrollNum === scrollDivs.length - 1 ? 0 : e.currentTarget.scrollNum + 1
             ].scrollTop = e.currentTarget.scrollTop;
         };
-
-        if (scrollDivs.length >= 2) {
-            for (let i = 0; i < scrollDivs.length; i++) {
-                scrollDivs[i].scrollNum = i;
-                scrollDivs[i].addEventListener('scroll', syncScroll);
+        if (configuration==='Subtitling') {
+            scrollDivs = document.getElementsByClassName('ReactVirtualized__Table__Grid');
+            if (scrollDivs.length >= 2) {
+                for (let i = 0; i < scrollDivs.length; i++) {
+                    scrollDivs[i].scrollNum = i;
+                    scrollDivs[i].addEventListener('scroll', syncScroll);
+                }
             }
         }
-
         return () => {
             !!localStorage.getItem('user_id') && saveTranslation();
             if (scrollDivs.length >= 2) {
@@ -312,7 +316,7 @@ export default function Subtitles({
                 }
             }
         };
-    }, []);
+    }, [configuration]);
 
     useEffect(() => {
         if (!!localStorage.getItem('user_id') && subtitle?.length > 0 && !waiting) {
@@ -696,9 +700,10 @@ export default function Subtitles({
                 languageAvailable={languageAvailable}
                 language={language}
                 onTranslate={onTranslate}
+                setConfiguration={setConfiguration}
             />
 
-            {subtitle && (
+            {configuration === 'Subtitling' && subtitle && (
                 <Style className="subtitles">
 
                     {/* <CalendarView />  */}

@@ -1281,10 +1281,10 @@ export default function Header({
                             handleTranscriptionShow();
                             const langTranscribe = localStorage.getItem('lang');
                             //  console.log("lang " + langTranscribe);
-                            setConfiguration('Same Language Subtitling');
-                            // setToggleState('Same Language Subtitling');
-                            // handleToggleChange();
-                            setIsSetConfiguration(true);
+                            // setConfiguration('Same Language Subtitling');
+                            // // setToggleState('Same Language Subtitling');
+                            // // handleToggleChange();
+                            // setIsSetConfiguration(true);
                             player?.pause();
                         }}
                         style={{ marginRight: '20px', backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '' }}
@@ -1309,10 +1309,10 @@ export default function Header({
                     <Button
                         onClick={() => {
                             handleTranslationShow();
-                            setConfiguration('Subtitling');
-                            // handleToggleChange();
-                            setIsSetConfiguration(true);
-                            clearSubs();
+                            // setConfiguration('Subtitling');
+                            // // handleToggleChange();
+                            // setIsSetConfiguration(true);
+                            // clearSubs();
                             player?.pause();
                         }}
                         style={{ marginRight: '20px', backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '' }}

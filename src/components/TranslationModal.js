@@ -44,7 +44,14 @@ const TranslationModal = (props) => {
           <br />          
         </Modal.Body> 
         <Modal.Footer>
-          <div className="btn" onClick={()=>{props.onTranslate(); props.handleTranslationClose();}} style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
+          <div 
+            className="btn" 
+            onClick={()=>{
+              props.setConfiguration('Subtitling');
+              props.onTranslate(); 
+              props.handleTranslationClose();
+            }} 
+            style={{display:"inline-block", marginRight:"5px", backgroundColor:"#0d6efd", color:"white", padding:"7px"}}>
             <Translate value="TRANSLATE" />
           </div>
           <Button variant="dark" onClick={props.handleTranslationClose} style={{marginLeft: "20px"}}>

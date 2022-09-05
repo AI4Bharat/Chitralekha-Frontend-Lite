@@ -770,6 +770,11 @@ export default function Header({
 
     const onVideoChange = useCallback(
         (event) => {
+            clearSubs();
+            clearSubsEnglish();
+            clearSubsHandler();
+            setConfiguration('');
+
             const file = event.target.files[0];
             if (file) {
                 const ext = getExt(file.name);
@@ -902,6 +907,11 @@ export default function Header({
 
     const onYouTubeChange = useCallback(
         (event) => {
+            clearSubs();
+            clearSubsEnglish();
+            clearSubsHandler();
+            setConfiguration('');
+
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
 
@@ -914,6 +924,11 @@ export default function Header({
 
     const onRecentVideoLinkClick = useCallback(
         (url) => {
+            clearSubs();
+            clearSubsEnglish();
+            clearSubsHandler();
+            setConfiguration('');
+            
             const videoObj = new GetVideoDetailsAPI(url);
 
             setLoading(t('LOADING'));
@@ -932,11 +947,13 @@ export default function Header({
         localStorage.setItem('isVideoPresent', false);
         localStorage.setItem('lang', 'en');
         localStorage.setItem('subtitleEnglish', null);
+        localStorage.setItem('videoName', "");
 
         clearSubs();
         clearSubsEnglish();
         clearSubsHandler();
-
+        setConfiguration('');
+        
         window.location.reload();
     };
 
@@ -1145,7 +1162,7 @@ export default function Header({
                         width="16"
                         height="16"
                         fill="currentColor"
-                        class="bi bi-card-text"
+                        className="bi bi-card-text"
                         style={{ marginRight: '10px' }}
                         viewBox="0 0 16 16"
                     >

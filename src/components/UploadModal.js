@@ -17,7 +17,6 @@ const UploadModal = (props) => {
     
     const fetchTranscriptionLanguages = async () => {
         let langs = await getTransliterationLanguages();
-        console.log(langs, "langArray");
         if (langs?.length > 0) {
             let langArray = [{name: 'English', key: 'en'}];
             for (const index in langs) {
@@ -37,8 +36,6 @@ const UploadModal = (props) => {
         fetchRecentLinks();
         fetchTranscriptionLanguages();
     }, []);
-
-    console.log(recentLinks, "test");
 
     return (
         <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>

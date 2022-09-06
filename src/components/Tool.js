@@ -946,10 +946,10 @@ export default function Header({
                 if (['ass', 'vtt', 'srt', 'json'].includes(ext)) {
                     file2sub(file)
                         .then((res) => {
-                            clearSubs();
+                            // clearSubs();
                             localStorage.removeItem('transcript_id');
                             setSubtitle(res);
-                            setSubtitleEnglish(res); //added setSubtitleEnglish
+                            // setSubtitleEnglish(res); //added setSubtitleEnglish
                         })
                         .catch((err) => {
                             notify({

@@ -435,10 +435,10 @@ export default function App({ defaultLang }) {
         [hasSub, hasSubEnglish, copySubs, copySubsEnglish, setSubtitle, setSubtitleEnglish, newSub],
     );
 
-    const saveTranscript = useCallback(async () => {
-        if (subtitleEnglish?.length > 0) {
+    const saveTranscript = useCallback(async (sub) => {
+        if (sub ? sub.length > 0 : subtitleEnglish?.length > 0) {
             const payload = {
-                output: sub2vtt(subtitleEnglish),
+                output: sub2vtt(sub ?? subtitleEnglish),
             };
             const saveObj = new SaveTranscriptAPI(
                 localStorage.getItem('transcript_id'),
@@ -454,9 +454,11 @@ export default function App({ defaultLang }) {
             const resp = await res.json();
 
             if (res.ok) {
-                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitleEnglish));
+                localStorage.setItem('subtitleEnglish', JSON.stringify(sub ? sub : subtitleEnglish));
                 localStorage.setItem('transcript_id', resp.id);
             }
+            setLoading('');
+        } else {
             setLoading('');
         }
     }, [subtitleEnglish, setLoading]);

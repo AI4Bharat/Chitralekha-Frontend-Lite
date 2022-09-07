@@ -766,8 +766,7 @@ export default function Header({
                         .then((res) => {
                             localStorage.removeItem('transcript_id');
                             setSubtitleEnglish(res);
-                            console.log("saved subtitle", res);
-                            saveTranscript();
+                            saveTranscript(res);
                         })
                         .catch((err) => {
                             notify({

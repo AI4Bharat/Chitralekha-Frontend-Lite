@@ -1,26 +1,16 @@
 import styled from 'styled-components';
-// import languages from '../libs/languages';
 import { t, Translate } from 'react-i18nify';
 import React, { useState, useCallback, useEffect } from 'react';
 import { getExt, download } from '../utils';
-import { file2sub, sub2vtt, sub2srt, sub2txt, url2sub, vtt2url } from '../libs/readSub';
+import { file2sub, sub2vtt, sub2srt, sub2txt } from '../libs/readSub';
 import sub2ass from '../libs/readSub/sub2ass';
-// import googleTranslate from '../libs/googleTranslate';
-// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import FFmpeg from '@ffmpeg/ffmpeg';
 import SimpleFS from '@forlagshuset/simple-fs';
-import HamburgerMenu from 'react-hamburger-menu';
-//import '../utils/ToolNavigation.css';
-import BottomLinks from './BottomLinks';
 import Links from './Links';
 import GetVideoDetailsAPI from '../redux/actions/api/Video/GetVideoDetails';
 import { useDispatch, useSelector } from 'react-redux';
 import APITransport from '../redux/actions/apitransport/apitransport';
-import Navbar from './Header';
 import LoginForm from './Login';
-import SaveTranscriptAPI from '../redux/actions/api/Transcript/SaveTranscript';
-import ReactModal from 'react-modal';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import UploadModal from './UploadModal';
 import ExportModal from './ExportModal';
@@ -30,7 +20,6 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
-// import axios from 'axios';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -498,32 +487,6 @@ const Style = styled.div`
         margin: 0 20px 0 0;
     }
 `;
-// function useStickyState(defaultValue, key) {
-//     const [value, setValue] = React.useState(() => {
-//       const stickyValue = window.localStorage.getItem(key);
-//       return stickyValue !== null
-//         ? JSON.parse(stickyValue)
-//         : defaultValue;
-//     });
-//     React.useEffect(() => {
-//       window.localStorage.setItem(key, JSON.stringify(value));
-//     }, [key, value]);
-//     return [value, setValue];
-//   }
-
-// const CalendarView = () => {
-//     const [mode, setMode] = useStickyState('day', 'calendar-view');
-//     return (
-//       <>
-//         <select onChange={ev => setMode(ev.target.value)}>
-//           <option value="day">Day</option>
-//           <option value="week">Week</option>
-//           <option value="month">Month</option>
-//         </select>
-//         {/* Calendar stuff here */}
-//       </>
-//     )
-//   }
 
 FFmpeg.createFFmpeg({ log: true }).load();
 const fs = new SimpleFS.FileSystem();
@@ -555,7 +518,6 @@ export default function Header({
     setIsSetConfiguration,
     translationApi,
     setTranslationApi,
-    setTranscribe,
     onTranscribe,
     isSetVideo,
     setIsSetVideo,
@@ -578,8 +540,8 @@ export default function Header({
     handleTranslationShow,
     fullscreen,
     isTranslateClicked,
+    saveTranscript,
 }) {
-    // const [translate, setTranslate] = useState('en');
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
     const translate = 'en';
@@ -588,78 +550,16 @@ export default function Header({
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
     const [showLogin, setShowLogin] = useState(false);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
-
-    const [showDropdown, setShowDropdown] = useState(false);
-
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
-
-    // const [videos, setVideos] = useState([]);
-    /* For Upload/Open Modal */
     const [importModalOpen, setImportModalOpen] = useState(false);
     const handleImportClose = () => setImportModalOpen(false);
     const handleImportShow = () => setImportModalOpen(true);
 
-    function useStickyState(defaultValue, key) {
-        const [value, setValue] = React.useState(() => {
-            const stickyValue = window.localStorage.getItem(key);
-            return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
-        });
-        React.useEffect(() => {
-            window.localStorage.setItem(key, JSON.stringify(value));
-        }, [key, value]);
-        return [value, setValue];
-    }
-
-    // const [modeTranscribe, setModeTranscribe] = useStickyState('as', 'transcribed-view');
-    // const [isSetVideo, setIsSetVideo] = useState(false);
-    const saveTranscript = async () => {
-        if (localStorage.getItem('subtitle')) {
-            setLoading(t('SAVING'));
-            const payload = {
-                output: sub2vtt(subtitle),
-            };
-            const saveObj = new SaveTranscriptAPI(
-                localStorage.getItem('transcript_id'),
-                localStorage.getItem('langTranscribe'),
-                payload,
-            );
-            const res = await fetch(saveObj.apiEndPoint(), {
-                method: 'POST',
-                body: JSON.stringify(saveObj.getBody()),
-                headers: saveObj.getHeaders().headers,
-            });
-            const resp = await res.json();
-            if (res.ok) {
-                localStorage.setItem('subtitle', JSON.stringify(subtitle));
-                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
-                notify({
-                    message: 'Subtitle saved successfully',
-                    level: 'success',
-                });
-            } else {
-                notify({
-                    message: 'Subtitle could not be saved',
-                    level: 'error',
-                });
-            }
-            setLoading('');
-        }
-    };
-
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
-
-        // let tempSubs = subtitle.slice(0);
-        // tempSubs.map((sub) => {
-        //     sub.text = '';
-        //     sub.text2 = '';
-        //     return true;
-        // });
         setSubtitle([]);
         setSubtitleEnglish([]);
         localStorage.removeItem('subtitleEnglish');
-
-        // setSubtitleOriginal(tempSubs);
         setClearedSubs(true);
         player?.pause();
     };
@@ -681,7 +581,6 @@ export default function Header({
                 const output = `${Date.now()}.mp3`;
                 await ffmpeg.run('-i', file.name, '-ac', '1', '-ar', '8000', output);
                 const uint8 = ffmpeg.FS('readFile', output);
-                // download(URL.createObjectURL(new Blob([uint8])), `${output}`);
                 await waveform.decoder.decodeAudioData(uint8);
                 waveform.drawer.update();
                 setProcessing(0);
@@ -765,8 +664,6 @@ export default function Header({
         }
     }, [notify, setProcessing, setLoading, videoFile, subtitle]);
 
-    const props = {};
-
     const onVideoChange = useCallback(
         (event) => {
             const file = event.target.files[0];
@@ -779,7 +676,6 @@ export default function Header({
                     const url = URL.createObjectURL(new Blob([file]));
                     waveform.decoder.destroy();
                     waveform.drawer.update();
-                    // waveform.seek(0);
                     player.currentTime = 0;
                     clearSubs();
                     setSubtitle([
@@ -804,10 +700,6 @@ export default function Header({
         [newSub, notify, player, setSubtitle, waveform, clearSubs, decodeAudioData, setIsSetVideo],
     );
 
-    // const fetchTranscript = () => {
-    //     const transcriptObj = new FetchTranscriptAPI();
-    // }
-
     useEffect(() => {
         if (VideoDetails.direct_video_url) {
             localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
@@ -820,82 +712,7 @@ export default function Header({
             player.src = VideoDetails.direct_video_url;
             player.currentTime = 0;
             clearSubs();
-            // if (VideoDetails.transcript_id) {
-            //     localStorage.setItem('transcript_id', VideoDetails.transcript_id);
-            //     setSubtitleEnglish(formatSub(VideoDetails.subtitles));
-            //     localStorage.setItem('subtitleEnglish', JSON.stringify(VideoDetails.subtitles));
-            //     setTranscriptSource('Youtube');
-            //     // fetch(VideoDetails.subtitles)
-            //     // .then((subtext) => {
-            //     //     return subtext.text();
-            //     // })
-            //     // .then((subtext) => {
-            //     //     const suburl = vtt2url(subtext);
-            //     //     url2sub(suburl).then((urlsub) => {
-            //     //         setSubtitle(urlsub);
-            //     //         setSubtitleEnglish(urlsub);
-            //     //         localStorage.setItem('subtitle', JSON.stringify(urlsub));
-            //     //         localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-            //     //     });
-            //     // })
-            //     // .catch((err) => {
-            //     //     console.log(err);
-            //     // });
-            // }
         }
-        // if (resp.subtitles) {
-        //     const sub = resp.subtitles;
-
-        //     fetch(sub)
-        //         .then((subtext) => {
-        //             return subtext.text();
-        //         })
-        //         .then((subtext) => {
-        //            // console.log(subtext);
-        //             player.currentTime = 0;
-        //             clearSubs();
-        //             const suburl = vtt2url(subtext);
-        //             url2sub(suburl).then((urlsub) => {
-        //                 setSubtitle(urlsub);
-        //                 localStorage.setItem('subtitle', JSON.stringify(urlsub));
-        //             });
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //         });
-        //     }
-        // } else {
-        //             // // Auto-transcribe
-        //             // const data = {
-        //             //     url: youtubeURL,
-        //             //     vad_level: 2,
-        //             //     chunk_size: 10,
-        //             //     language: 'en',
-        //             // };
-
-        //             // fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
-        //             //     method: 'POST',
-        //             //     headers: { 'Content-Type': 'application/json' },
-        //             //     body: JSON.stringify(data),
-        //             // })
-        //             //     .then((resp) => {
-        //             //         return resp.json();
-        //             //     })
-        //             //     .then((resp) => {
-        //             //         console.log(resp.output);
-        //             //         player.currentTime = 0;
-        //             //         clearSubs();
-        //             //         const suburl = vtt2url(resp.output);
-        //             //         url2sub(suburl).then((urlsub) => {
-        //             //             setSubtitle(urlsub);
-        //             //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
-        //             //         });
-        //             //     })
-        //             //     .catch((err) => {
-        //             //         console.log(err);
-        //             //     });
-        //         }
-        //     });
     }, [VideoDetails]);
 
     const onYouTubeChange = useCallback(
@@ -942,26 +759,29 @@ export default function Header({
         (event) => {
             const file = event.target.files[0];
             if (file) {
+                setLoading(t('LOADING'));
                 const ext = getExt(file.name);
                 if (['ass', 'vtt', 'srt', 'json'].includes(ext)) {
                     file2sub(file)
                         .then((res) => {
-                            // clearSubs();
                             localStorage.removeItem('transcript_id');
-                            setSubtitle(res);
-                            // setSubtitleEnglish(res); //added setSubtitleEnglish
+                            setSubtitleEnglish(res);
+                            console.log("saved subtitle", res);
+                            saveTranscript();
                         })
                         .catch((err) => {
                             notify({
                                 message: err.message,
                                 level: 'error',
                             });
+                            setLoading('');
                         });
                 } else {
                     notify({
                         message: `${t('SUB_EXT_ERR')}: ${ext}`,
                         level: 'error',
                     });
+                    setLoading('');
                 }
             }
         },
@@ -1154,34 +974,6 @@ export default function Header({
                 </Dropdown.Item>
             </DropdownButton>
 
-            {/* <Dropdown
-                onMouseLeave={() => {setShowDropdown(false);console.log(showDropdown);}}
-                onMouseEnter={() => {setShowDropdown(!showDropdown); console.log(showDropdown);}}
-                style={{ width: '166px' }}
-                
-                >
-                <Dropdown.Toggle
-                    className="main-style"
-                    id="dropdown-basic"
-                >
-                    Open
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu
-                    show={showDropdown}
-                    onChange={(event) => {
-                        localStorage.setItem('selectValue', event.target.value);
-                        handleImportShow();
-                    }}
-                    value="">
-                    <Dropdown.Item value="video" as="button" onClick={()=>{localStorage.setItem('selectValue', 'video'); handleImportShow();}}>
-                    Import Video
-                    </Dropdown.Item>
-                    <Dropdown.Item value="subtitles" as="button" onClick={()=>{localStorage.setItem('selectValue', 'subtitles'); handleImportShow();}}>
-                    Import Subtitle
-                    </Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown> */}
             <UploadModal
                 show={importModalOpen}
                 onHide={handleImportClose}
@@ -1193,98 +985,18 @@ export default function Header({
                 onInputClick={onInputClick}
                 clearData={clearData}
                 onRecentVideoLinkClick={onRecentVideoLinkClick}
-                setTranscribe={setTranscribe}
+                setLoading={setLoading}
             />
 
-            {/* <div className={`tool-button`}>
-                <div
-                    className="icon"
-                    onClick={() => {
-                        console.log('hamburger clicked');
-                        setToolOpen(!toolOpen);
-                    }}
-                >
-                    <HamburgerMenu
-                        isOpen={toolOpen}
-                        width={22}
-                        height={18}
-                        strokeWidth={2}
-                        rotate={0}
-                        color={'#fff'}
-                        borderRadius={0}
-                        animationDuration={0.5}
-                    />
-                </div>
-            </div> */}
-
             <Style>
-                {/* <div className="import ">
-                    <div className="btn">
-                        <Translate value="OPEN_VIDEO" />
-                        <input className="file" type="file" onChange={onVideoChange} onClick={onInputClick} />
-                    </div>
-                    <div className="btn">
-                        <Translate value="OPEN_SUB" />
-                        <input className="file" type="file" onChange={onSubtitleChange} onClick={onInputClick} />
-                    </div>
-                    </div> */}
-                {/* <div className="youtube-link ">
-                        <textarea
-                            className="youtube-textarea"
-                            placeholder="Enter YouTube Link Here"
-                            value={youtubeURL}
-                            onChange={handleChange}
-                            // onKeyPress={(e) => }
-                        />
-                        <div className="btn" onClick={onYouTubeChange}>
-                            <Translate value="Fetch Video" />
-                        </div>
-                    </div> */}
-
-                {/* <div className="operate"> */}
-                {/* <div
-                        className="btn"
-                        onClick={() => {
-                            if (window.confirm(t('CLEAR_TIP')) === true) {
-                                // localStorage.setItem('videoSrc', '/sample.mp4');
-                           //     window.localStorage.clear(); //added this to clear the remaining localstorage values
-                                localStorage.setItem('videoSrc', null);
-                                localStorage.setItem('isVideoPresent', false);
-                                localStorage.setItem('lang', 'en');
-                                localStorage.setItem('subtitleEnglish', null);
-                                clearSubs();
-                                clearSubsEnglish();
-                                window.location.reload();
-                            }
-                        }}
-                            >
-                                <Translate value="CLEAR" />
-                            </div>
-                            <div className="btn" onClick={undoSubs}>
-                                <Translate value="UNDO" />
-                            </div>
-                        </div>
-                         <div className="operate">
-                        <div className="btn" onClick={clearSubsHandler}>
-                            <Translate value="Clear Subtitles" />
-                        </div> */}
-                {/* </div> */}
-
                 <div
                     className={`
                             ${isSetVideo ? 'configuration' : 'hide-config'}
                         `}
                 >
-                    {/* <p className="configuration-heading"><b>Configuration Options</b></p> */}
                     <Button
                         onClick={() => {
                             handleTranscriptionShow();
-                            const langTranscribe = localStorage.getItem('lang');
-                            //  console.log("lang " + langTranscribe);
-                            // setConfiguration('Same Language Subtitling');
-                            // // setToggleState('Same Language Subtitling');
-                            // // handleToggleChange();
-                            // setIsSetConfiguration(true);
                             player?.pause();
                         }}
                         style={{ marginRight: '20px', backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '' }}
@@ -1309,72 +1021,16 @@ export default function Header({
                     <Button
                         onClick={() => {
                             handleTranslationShow();
-                            // setConfiguration('Subtitling');
-                            // // handleToggleChange();
-                            // setIsSetConfiguration(true);
-                            // clearSubs();
                             player?.pause();
                         }}
                         style={{ marginRight: '20px', backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '' }}
                     >
                         <Translate value="MAIN_LANGUAGE" />
                     </Button>
-
-                    {/* <div
-                            className="btn"
-                            onClick={() => {
-                                console.log('Configuration - sign');
-                                setConfiguration('Sign Language Subtitling');
-                                setIsSetConfiguration(true);
-                            }}
-                        >
-                            <Translate value="SIGN_LANGUAGE" />
-                        </div> */}
                     <ExportSubtitleModal />
                 </div>
 
                 <div className={`secondary-options ${isSetConfiguration ? '' : 'hide-secondary-options'}`}>
-                    {/* {configuration === 'Subtitling' && (
-                        <>
-                            <div className="select-translation-api-container">
-                                <p className="select-heading">
-                                    <b>Translation Api</b>
-                                </p>
-                                <select
-                                    value={translationApi}
-                                    onChange={(e) => {
-                                        // console.log(e.target.value);
-                                        setTranslationApi(e.target.value);
-                                        player?.pause();
-                                    }}
-                                >
-                                    <option value="AI4Bharat">AI4Bharat</option>
-                                    <option value="Google">Google</option>
-                                </select>
-                            </div>
-                        </>
-                    )} */}
-                    {/* {configuration === 'Same Language Subtitling' && (
-                        <>
-                            <div className="select-translation-api-container">
-                                <p className="select-heading">
-                                    <b>Transcript Source</b>
-                                </p>
-                                <select
-                                    value={transcriptSource}
-                                    onChange={(e) => {
-                                        console.log(e.target.value);
-                                        setTranscriptSource(e.target.value);
-                                        clearSubsEnglish();
-                                        player?.pause();
-                                    }}
-                                >
-                                    <option value="AI4Bharat">AI4Bharat</option>
-                                    <option value="Youtube">Youtube</option>
-                                    <option value="Manual Upload">Manual Upload</option>
-                                </select>
-                            </div>
-                        </>)} */}
                     {window.crossOriginIsolated ? (
                         <div className="burn" onClick={burnSubtitles}>
                             <div className="btn">
@@ -1382,65 +1038,9 @@ export default function Header({
                             </div>
                         </div>
                     ) : null}
-                    {/*<p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Your Subtitles</b>
-                    </p>
-                     <div className="export" style={{ marginTop: '-20px' }}>
-                        <div className="btn" onClick={() => downloadSub('ass')}>
-                            <Translate value="EXPORT_ASS" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSub('srt')}>
-                            <Translate value="EXPORT_SRT" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSub('vtt')}>
-                            <Translate value="EXPORT_VTT" />
-                        </div>
-                    </div>}
-                    <p style={{ paddingLeft: '10px', marginTop: '-0.5px' }}>
-                        <b>Export Transcript</b>
-                    </p>
-                    <div className="export" style={{ marginTop: '-20px' }}>
-                        <div className="btn" onClick={() => downloadSubReference('ass')}>
-                            <Translate value="EXPORT_ASS" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSubReference('srt')}>
-                            <Translate value="EXPORT_SRT" />
-                        </div>
-                        <div className="btn" onClick={() => downloadSubReference('vtt')}>
-                            <Translate value="EXPORT_VTT" />
-                        </div>
-                    </div> */}
                 </div>
 
                 <div className="">{/* <BottomLinks /> */}</div>
-
-                {/* <div className="translate">
-                        <select
-                            value={translate}
-                            onChange={(event) => {
-                                setTranslate(event.target.value);
-                                localStorage.setItem('lang', event.target.value);
-                            }}
-                        >
-                            {(languages[language] || languages.en).map((item) => (
-                                <option key={item.key} value={item.key}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="btn" onClick={onTranslate}>
-                            <Translate value="TRANSLATE" />
-                </div>
-                    </div> */}
-
-                {/* <div className="hotkey">
-                    <span className="button-layout">
-                        <Translate value="HOTKEY_01" />
-                    </span>
-                    <span className="button-layout">
-                        <Translate value="HOTKEY_02" />
-                    </span>
-                </div> */}
             </Style>
 
             <Button onClick={() => clearData()} style={{ marginRight: '20px' }}>

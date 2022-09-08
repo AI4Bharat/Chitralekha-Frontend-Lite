@@ -99,7 +99,6 @@ const UploadModal = (props) => {
                             <select
                                 onChange={(event) => {
                                     localStorage.setItem('langTranscribe', event.target.value);
-                                    props.setTranscribe(localStorage.getItem('langTranscribe'));
                                 }}
                                 style={{padding: "6px 4px", borderRadius: "5px", flex: 1}}
                             >

@@ -200,6 +200,7 @@ export default function SameLanguageSubtitles({
     setTranscriptionModalOpen,
     handleTranscriptionClose,
     handleTranscriptionShow,
+    saveTranscript,
 }) {
     // console.log('at start ' + subtitle )
     //console.log('at start ' + subtitleEnglish )
@@ -221,40 +222,6 @@ export default function SameLanguageSubtitles({
     const APIStatus = useSelector((state) => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
-
-    const saveTranscript = useCallback(async () => {
-        if (subtitle?.length > 0) {
-            // setLoading(t('SAVING'));
-            const payload = {
-                output: sub2vtt(subtitle),
-            };
-            const saveObj = new SaveTranscriptAPI(
-                localStorage.getItem('transcript_id'),
-                localStorage.getItem('langTranscribe'),
-                localStorage.getItem('videoId'),
-                payload,
-            );
-            const res = await fetch(saveObj.apiEndPoint(), {
-                method: 'POST',
-                body: JSON.stringify(saveObj.getBody()),
-                headers: saveObj.getHeaders().headers,
-            });
-            const resp = await res.json();
-
-            if (res.ok) {
-                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
-                localStorage.setItem('transcript_id', resp.id);
-                // notify({
-                //     message: 'Subtitle saved successfully',
-                //     level: 'success'});
-            } else {
-                // notify({
-                //     message: 'Subtitle could not be saved',
-                //     level: 'error'});
-            }
-            setLoading('');
-        }
-    }, [subtitle, setLoading]);
 
     const fetchTranscriptionLanguages = async () => {
         setLanguageAvailable([]);

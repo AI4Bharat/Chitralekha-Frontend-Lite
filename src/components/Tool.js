@@ -765,7 +765,8 @@ export default function Header({
                     file2sub(file)
                         .then((res) => {
                             localStorage.removeItem('transcript_id');
-                            setSubtitleEnglish(res);
+                            setSubtitle(res);
+                            // setSubtitleEnglish(res);
                             saveTranscript(res);
                         })
                         .catch((err) => {

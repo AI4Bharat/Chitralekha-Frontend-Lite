@@ -458,8 +458,6 @@ export default function App({ defaultLang }) {
                 localStorage.setItem('transcript_id', resp.id);
             }
             setLoading('');
-        } else {
-            setLoading('');
         }
     }, [subtitleEnglish, setLoading]);
 

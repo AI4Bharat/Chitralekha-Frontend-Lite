@@ -759,15 +759,14 @@ export default function Header({
         (event) => {
             const file = event.target.files[0];
             if (file) {
-                setLoading(t('LOADING'));
                 const ext = getExt(file.name);
                 if (['ass', 'vtt', 'srt', 'json'].includes(ext)) {
                     file2sub(file)
                         .then((res) => {
                             if (configuration === 'Subtitling') {
                                 setSubtitle(res);
-                                setLoading('');
                             } else {
+                                setLoading(t('LOADING'));
                                 localStorage.removeItem('transcript_id');
                                 setSubtitleEnglish(res);
                                 saveTranscript(res);
@@ -778,14 +777,12 @@ export default function Header({
                                 message: err.message,
                                 level: 'error',
                             });
-                            setLoading('');
                         });
                 } else {
                     notify({
                         message: `${t('SUB_EXT_ERR')}: ${ext}`,
                         level: 'error',
                     });
-                    setLoading('');
                 }
             }
         },

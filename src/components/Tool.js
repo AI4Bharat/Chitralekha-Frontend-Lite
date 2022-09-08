@@ -764,10 +764,14 @@ export default function Header({
                 if (['ass', 'vtt', 'srt', 'json'].includes(ext)) {
                     file2sub(file)
                         .then((res) => {
-                            localStorage.removeItem('transcript_id');
-                            setSubtitle(res);
-                            // setSubtitleEnglish(res);
-                            saveTranscript(res);
+                            if (configuration === 'Subtitling') {
+                                setSubtitle(res);
+                                setLoading('');
+                            } else {
+                                localStorage.removeItem('transcript_id');
+                                setSubtitleEnglish(res);
+                                saveTranscript(res);
+                            }
                         })
                         .catch((err) => {
                             notify({
@@ -785,7 +789,7 @@ export default function Header({
                 }
             }
         },
-        [notify, setSubtitle, clearSubs],
+        [notify, setSubtitle, setSubtitleEnglish, clearSubs],
     );
 
     const onInputClick = useCallback((event) => {

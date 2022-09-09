@@ -544,6 +544,7 @@ export default function Header({
     saveTranscript,
     showLogin,
     setShowLogin,
+    setTranscribe,
 }) {
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');

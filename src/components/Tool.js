@@ -578,6 +578,7 @@ export default function Header({
     handleTranslationShow,
     fullscreen,
     isTranslateClicked,
+    setIsTranslateClicked,
     showLogin,
     setShowLogin,
 }) {
@@ -774,7 +775,8 @@ export default function Header({
             clearSubsEnglish();
             clearSubsHandler();
             setConfiguration('');
-
+            setIsTranslateClicked(false);
+            
             const file = event.target.files[0];
             if (file) {
                 const ext = getExt(file.name);
@@ -911,6 +913,7 @@ export default function Header({
             clearSubsEnglish();
             clearSubsHandler();
             setConfiguration('');
+            setIsTranslateClicked(false);
 
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
@@ -928,7 +931,8 @@ export default function Header({
             clearSubsEnglish();
             clearSubsHandler();
             setConfiguration('');
-            
+            setIsTranslateClicked(false);
+
             const videoObj = new GetVideoDetailsAPI(url);
 
             setLoading(t('LOADING'));
@@ -953,7 +957,8 @@ export default function Header({
         clearSubsEnglish();
         clearSubsHandler();
         setConfiguration('');
-        
+        setIsTranslateClicked(false);
+
         window.location.reload();
     };
 

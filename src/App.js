@@ -24,6 +24,7 @@ import Header from './components/Tool';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SaveTranscriptAPI from './redux/actions/api/Transcript/SaveTranscript';
 import { sub2vtt } from './libs/readSub';
+import FirstTimeModal from './components/FirstTimeModal';
 
 const Style = styled.div`
     height: 100%;
@@ -134,6 +135,17 @@ export default function App({ defaultLang }) {
     const [found, setFound] = useState([]);
     const [currentFound, setCurrentFound] = useState();
     const [fullscreen, setFullscreen] = useState(false);
+    const [firstTimeOpen, setFirstTimeOpen] = useState(true);
+    const [showLogin, setShowLogin] = useState(false);
+
+    useEffect(()=>{
+        if (localStorage.getItem('registered')) {
+          setFirstTimeOpen(false);
+        } else if (!localStorage.getItem('registered')) {
+          localStorage.setItem('registered', true);
+          setFirstTimeOpen(true);
+        }
+    }, [])
 
     /* For Transcription Modal */
     const [transcriptionModalOpen, setTranscriptionModalOpen] = useState(false);
@@ -696,6 +708,8 @@ export default function App({ defaultLang }) {
         handleTranslationShow,
         fullscreen,
         saveTranscript,
+        showLogin, 
+        setShowLogin,
     };
 
     const renderTooltip = (props) => (
@@ -1044,6 +1058,12 @@ export default function App({ defaultLang }) {
                     )}
                 </Button>
             </OverlayTrigger>
+
+            <FirstTimeModal 
+                show={firstTimeOpen}
+                handleClose={() => setFirstTimeOpen(false)}
+                setLoginOpen={() => setShowLogin(true)}
+            />
         </Style>
     );
 }

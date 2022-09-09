@@ -20,6 +20,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
+import axios from 'axios';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -541,6 +542,8 @@ export default function Header({
     fullscreen,
     isTranslateClicked,
     saveTranscript,
+    showLogin,
+    setShowLogin,
 }) {
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
@@ -548,7 +551,6 @@ export default function Header({
     const [toolOpen, setToolOpen] = useState(true);
     const dispatch = useDispatch();
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
-    const [showLogin, setShowLogin] = useState(false);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
     const [importModalOpen, setImportModalOpen] = useState(false);
@@ -694,6 +696,7 @@ export default function Header({
                 }
             }
 
+            localStorage.setItem('videoName', file.name.replace(/\.[^.$]+$/, ''));
             localStorage.setItem('isVideoPresent', true);
             setIsSetVideo(true);
         },
@@ -975,19 +978,50 @@ export default function Header({
                 </Dropdown.Item>
             </DropdownButton>
 
-            <UploadModal
-                show={importModalOpen}
-                onHide={handleImportClose}
-                textAreaValue={youtubeURL}
-                textAreaValueChange={handleChange}
-                onYouTubeChange={onYouTubeChange}
-                onVideoChange={onVideoChange}
-                onSubtitleChange={onSubtitleChange}
-                onInputClick={onInputClick}
-                clearData={clearData}
-                onRecentVideoLinkClick={onRecentVideoLinkClick}
-                setLoading={setLoading}
-            />
+            {/* <Dropdown
+                onMouseLeave={() => {setShowDropdown(false);console.log(showDropdown);}}
+                onMouseEnter={() => {setShowDropdown(!showDropdown); console.log(showDropdown);}}
+                style={{ width: '166px' }}
+                
+                >
+                <Dropdown.Toggle
+                    className="main-style"
+                    id="dropdown-basic"
+                >
+                    Open
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu
+                    show={showDropdown}
+                    onChange={(event) => {
+                        localStorage.setItem('selectValue', event.target.value);
+                        handleImportShow();
+                    }}
+                    value="">
+                    <Dropdown.Item value="video" as="button" onClick={()=>{localStorage.setItem('selectValue', 'video'); handleImportShow();}}>
+                    Import Video
+                    </Dropdown.Item>
+                    <Dropdown.Item value="subtitles" as="button" onClick={()=>{localStorage.setItem('selectValue', 'subtitles'); handleImportShow();}}>
+                    Import Subtitle
+                    </Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown> */}
+
+            {importModalOpen && (
+                <UploadModal
+                    show={importModalOpen}
+                    onHide={handleImportClose}
+                    textAreaValue={youtubeURL}
+                    textAreaValueChange={handleChange}
+                    onYouTubeChange={onYouTubeChange}
+                    onVideoChange={onVideoChange}
+                    onSubtitleChange={onSubtitleChange}
+                    onInputClick={onInputClick}
+                    clearData={clearData}
+                    onRecentVideoLinkClick={onRecentVideoLinkClick}
+                    setTranscribe={setTranscribe}
+                />
+            )}
 
             <Style>
                 <div
@@ -1000,7 +1034,10 @@ export default function Header({
                             handleTranscriptionShow();
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px', backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '' }}
+                        style={{
+                            marginRight: '20px',
+                            backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '',
+                        }}
                     >
                         <Translate value="SAME_LANGUAGE" />
                     </Button>
@@ -1024,7 +1061,10 @@ export default function Header({
                             handleTranslationShow();
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px', backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '' }}
+                        style={{
+                            marginRight: '20px',
+                            backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '',
+                        }}
                     >
                         <Translate value="MAIN_LANGUAGE" />
                     </Button>

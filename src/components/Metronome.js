@@ -38,7 +38,7 @@ function findIndex(subs, startTime) {
     });
 }
 
-export default function Component({ render, subtitle, newSub, addSub, player, playing }) {
+export default function Component({ render, subtitle, newSub, addSub, player, playing, configuration }) {
     const [isDroging, setIsDroging] = useState(false);
     const [drogStartTime, setDrogStartTime] = useState(0);
     const [drogEndTime, setDrogEndTime] = useState(0);
@@ -72,7 +72,7 @@ export default function Component({ render, subtitle, newSub, addSub, player, pl
     );
 
     const onDocumentMouseUp = useCallback(() => {
-        if (isDroging) {
+        if (isDroging && configuration !== '') {
             if (drogStartTime > 0 && drogEndTime > 0 && drogEndTime - drogStartTime >= 0.2) {
                 const index = findIndex(subtitle, drogStartTime) + 1;
                 const start = DT.d2t(drogStartTime);

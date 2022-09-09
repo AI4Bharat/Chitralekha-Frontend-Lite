@@ -767,6 +767,7 @@ export default function Header({
                                 setSubtitle(res);
                             } else {
                                 setLoading(t('LOADING'));
+                                clearSubs();
                                 localStorage.removeItem('transcript_id');
                                 setSubtitleEnglish(res);
                                 saveTranscript(res);

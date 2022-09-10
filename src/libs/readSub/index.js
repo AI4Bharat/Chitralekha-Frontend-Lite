@@ -4,6 +4,8 @@ import Sub from '../Sub';
 import ass2vtt from './ass2vtt';
 import srt2vtt from './srt2vtt';
 
+const SUB_GAP = 5;
+
 export function url2sub(url) {
     return new Promise((resolve) => {
         const $video = document.createElement('video');
@@ -103,5 +105,13 @@ export function sub2srt(sub) {
 }
 
 export function sub2txt(sub) {
-    return sub.map((item) => item.text).join('\n\n');
+    return sub.map((item, i) => {
+        if (i === 0)
+            return item.text.trim() + ' '
+        let startDate = Date.parse('01/01/2000 ' + item.start);
+        let endDate = Date.parse('01/01/2000 ' + sub[i - 1].end);
+        if ((startDate - endDate) / 1000 > SUB_GAP)
+            return item.text.trim() + '\n\n'
+        return item.text.trim() + ' '
+    }).join('');
 }

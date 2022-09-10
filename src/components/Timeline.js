@@ -183,6 +183,7 @@ export default React.memo(
         //     (item) => item.startTime <= currentTime && item.endTime > currentTime,
         // );
         const onMouseDown = (sub, event, type) => {
+            console.log(sub, event, type, "test");
             lastSub = sub;
             if (event.button !== 0) return;
             isDroging = true;
@@ -242,14 +243,16 @@ export default React.memo(
                 const endTime = magnetically(lastSub.endTime + timeDiff, next ? next.startTime : null);
                 const width = (endTime - startTime) * 10 * gridGap;
 
-                if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
-                    //
+                // if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
+                //     //
+                //     console.log("test start")
    
-                } else {
+                // } else {
               
                     if (lastType === 'left') {
                         if (startTime >= 0 && lastSub.endTime - startTime >= 0.2) {
                             const start = DT.d2t(startTime);
+                            console.log(start, startTime, "start")
                             updateSub(lastSub, { start });
                      
                             updateSubEnglish(lastSub, { start });
@@ -282,7 +285,7 @@ export default React.memo(
                             lastTarget.style.width = `${width}px`;
                         }
                     }
-                }
+                // }
  
                 lastTarget.style.transform = `translate(0)`;
             }

@@ -8,19 +8,17 @@ import { useState } from 'react';
 const ExportModal = (props) => {
     const [radioTranscribeSelected, setRadioTranscribeSelected] = useState('ass');
     const [radioTranslateSelected, setRadioTranslateSelected] = useState('ass');
-    // console.log(props);
-   // console.log(downloadSub);
+
     return (
         <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
             <Modal.Header closeButton>
                 <Modal.Title style={{textAlign: "center", width: "100%"}}>Export Subtitle</Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
                 <Tabs defaultActiveKey="Transcription" id="fill-tab-example" className="mb-3" fill variant="pills">
                     <Tab eventKey="Transcription" title="Transcription">
                         <Form fill>
-                            {['ass', 'srt', 'vtt'].map((value,index) => ( 
+                            {['ass', 'srt', 'vtt', 'txt'].map((value,index) => ( 
                                 <div key={`inline-${value}`} className="mb-3" style={{display: 'inline-block', padding: '10px 20px'}}>
                                     
                                     <Form.Check
@@ -32,8 +30,6 @@ const ExportModal = (props) => {
                                         checked={radioTranscribeSelected === value}
                                         onChange={()=>setRadioTranscribeSelected(value)}
                                     />
-                                    
-                                    {/* {console.log('transcribe radio selected value '+ radioTranscribeSelected)} */}
                                 </div>
                             ))}
                         </Form>
@@ -41,7 +37,7 @@ const ExportModal = (props) => {
                     </Tab>
                     <Tab eventKey="Translation" title="Translation">
                     <Form>
-                            {['ass', 'srt', 'vtt'].map((value) => ( 
+                            {['ass', 'srt', 'vtt', 'txt'].map((value) => ( 
                                 <div key={`inline-${value}`} className="mb-3" style={{display: 'inline-block', padding: '10px 20px'}}>
                                     
                                     <Form.Check
@@ -53,8 +49,6 @@ const ExportModal = (props) => {
                                         checked={radioTranslateSelected === value}
                                         onChange={e=>setRadioTranslateSelected(value)}
                                     />
-
-                                    {/* {console.log('translate radio selected value '+ radioTranslateSelected)} */}
                                 </div>
                             ))}
                         </Form>
@@ -62,9 +56,7 @@ const ExportModal = (props) => {
                     </Tab>
                 </Tabs>
             </Modal.Body>
-
             <Modal.Footer>
-                
                 <Button onClick={props.onHide} variant="dark">Close</Button>
             </Modal.Footer>
         </Modal>

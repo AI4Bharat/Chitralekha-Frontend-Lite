@@ -414,9 +414,9 @@ export default function SameLanguageSubtitles({
         (subtitles) => {
             const suburl = vtt2url(subtitles);
             url2sub(suburl).then((urlsub) => {
-                setSubtitle(formatSub(urlsub));
+                clearSubs();
                 setSubtitleEnglish(formatSub(urlsub));
-                localStorage.setItem('subtitle', JSON.stringify(urlsub));
+                // localStorage.setItem('subtitle', JSON.stringify(urlsub));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
                 setLoading('');
             });

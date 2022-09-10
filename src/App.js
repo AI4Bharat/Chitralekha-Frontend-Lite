@@ -447,6 +447,32 @@ export default function App({ defaultLang }) {
         [hasSub, hasSubEnglish, copySubs, copySubsEnglish, setSubtitle, setSubtitleEnglish, newSub],
     );
 
+    const saveTranscript = useCallback(async (sub) => {
+        if (sub ? sub.length > 0 : subtitleEnglish?.length > 0) {
+            const payload = {
+                output: sub2vtt(sub ?? subtitleEnglish),
+            };
+            const saveObj = new SaveTranscriptAPI(
+                localStorage.getItem('transcript_id'),
+                localStorage.getItem('langTranscribe'),
+                localStorage.getItem('videoId'),
+                payload,
+            );
+            const res = await fetch(saveObj.apiEndPoint(), {
+                method: 'POST',
+                body: JSON.stringify(saveObj.getBody()),
+                headers: saveObj.getHeaders().headers,
+            });
+            const resp = await res.json();
+
+            if (res.ok) {
+                localStorage.setItem('subtitleEnglish', JSON.stringify(sub ? sub : subtitleEnglish));
+                localStorage.setItem('transcript_id', resp.id);
+            }
+            setLoading('');
+        }
+    }, [subtitleEnglish, setLoading]);
+
     const onKeyDown = useCallback(
         (event) => {
             const keyCode = getKeyCode(event);
@@ -681,6 +707,7 @@ export default function App({ defaultLang }) {
         handleTranslationClose,
         handleTranslationShow,
         fullscreen,
+        saveTranscript,
         showLogin, 
         setShowLogin,
     };
@@ -714,39 +741,6 @@ export default function App({ defaultLang }) {
         } else {
             setFullscreen(false);
             cancelFullScreen.call(doc);
-        }
-    };
-
-    const saveTranscript = async () => {
-        if (localStorage.getItem('subtitle')) {
-            const payload = {
-                output: sub2vtt(subtitle),
-            };
-            const saveObj = new SaveTranscriptAPI(
-                localStorage.getItem('transcript_id'),
-                localStorage.getItem('langTranscribe'),
-                payload,
-            );
-            const res = await fetch(saveObj.apiEndPoint(), {
-                method: 'POST',
-                body: JSON.stringify(saveObj.getBody()),
-                headers: saveObj.getHeaders().headers,
-            });
-            const resp = await res.json();
-            console.log(resp);
-            if (res.ok) {
-                localStorage.setItem('subtitle', JSON.stringify(subtitle));
-                localStorage.setItem('subtitleEnglish', JSON.stringify(subtitle));
-                notify({
-                    message: 'Subtitle saved successfully',
-                    level: 'success',
-                });
-            } else {
-                notify({
-                    message: 'Subtitle could not be saved',
-                    level: 'error',
-                });
-            }
         }
     };
 
@@ -1009,6 +1003,7 @@ export default function App({ defaultLang }) {
                             currentFound={props.currentFound}
                             transcriptionModalOpen={props.transcriptionModalOpen}
                             handleTranscriptionClose={props.handleTranscriptionClose}
+                            saveTranscript={props.saveTranscript}
                         />
                     </>
                 )}

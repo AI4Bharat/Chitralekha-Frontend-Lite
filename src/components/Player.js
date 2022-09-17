@@ -18,11 +18,19 @@ const Style = styled.div`
 
     .video {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         justify-content: center;
         height: 100%;
         width: auto;
         position: relative;
+        flex-direction: column;
+
+        .videoName {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 15px 0;
+            color: #fff;
+        }
 
         video {
             position: relative;
@@ -225,6 +233,7 @@ export default function Player(props) {
     return (
         <Style className="player">
             <div className="video" id="video" ref={$player}>
+                <div className="videoName">{localStorage.getItem("videoName")}</div>
                 <VideoWrap {...props} />
                 { props.isSetVideo && !props.fullscreen &&
                 <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>

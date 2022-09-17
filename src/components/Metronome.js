@@ -74,7 +74,7 @@ export default React.memo(
         );
 
         const onDocumentMouseUp = useCallback(() => {
-            if (isDroging) {
+            if (isDroging && configuration !== '') {
                 if (drogStartTime > 0 && drogEndTime > 0 && drogEndTime - drogStartTime >= 0.2) {
                     const index = findIndex(configuration === 'Subtitling' ? subtitle : subtitleEnglish, drogStartTime) + 1;
                     const start = DT.d2t(drogStartTime);

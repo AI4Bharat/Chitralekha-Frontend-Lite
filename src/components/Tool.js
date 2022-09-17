@@ -20,6 +20,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
+import axios from 'axios';
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -540,7 +541,11 @@ export default function Header({
     handleTranslationShow,
     fullscreen,
     isTranslateClicked,
+    setIsTranslateClicked,
     saveTranscript,
+    showLogin,
+    setShowLogin,
+    setTranscribe,
 }) {
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
@@ -548,7 +553,6 @@ export default function Header({
     const [toolOpen, setToolOpen] = useState(true);
     const dispatch = useDispatch();
     const VideoDetails = useSelector((state) => state.getVideoDetails.data);
-    const [showLogin, setShowLogin] = useState(false);
     const [showFindReplaceModal, setShowFindReplaceModal] = useState(false);
     const [toggleState, setToggleState] = useState('Same Language Subtitling');
     const [importModalOpen, setImportModalOpen] = useState(false);
@@ -666,6 +670,12 @@ export default function Header({
 
     const onVideoChange = useCallback(
         (event) => {
+            clearSubs();
+            clearSubsEnglish();
+            clearSubsHandler();
+            setConfiguration('');
+            setIsTranslateClicked(false);
+            
             const file = event.target.files[0];
             if (file) {
                 const ext = getExt(file.name);
@@ -694,6 +704,7 @@ export default function Header({
                 }
             }
 
+            localStorage.setItem('videoName', file.name.replace(/\.[^.$]+$/, ''));
             localStorage.setItem('isVideoPresent', true);
             setIsSetVideo(true);
         },
@@ -717,6 +728,12 @@ export default function Header({
 
     const onYouTubeChange = useCallback(
         (event) => {
+            clearSubs();
+            clearSubsEnglish();
+            clearSubsHandler();
+            setConfiguration('');
+            setIsTranslateClicked(false);
+
             if (youtubeURL.length > 0) {
                 const videoObj = new GetVideoDetailsAPI(youtubeURL);
 
@@ -729,6 +746,12 @@ export default function Header({
 
     const onRecentVideoLinkClick = useCallback(
         (url) => {
+            clearSubs();
+            clearSubsEnglish();
+            clearSubsHandler();
+            setConfiguration('');
+            setIsTranslateClicked(false);
+
             const videoObj = new GetVideoDetailsAPI(url);
 
             setLoading(t('LOADING'));
@@ -747,10 +770,13 @@ export default function Header({
         localStorage.setItem('isVideoPresent', false);
         localStorage.setItem('lang', 'en');
         localStorage.setItem('subtitleEnglish', null);
+        localStorage.setItem('videoName', "");
 
         clearSubs();
         clearSubsEnglish();
         clearSubsHandler();
+        setConfiguration('');
+        setIsTranslateClicked(false);
 
         window.location.reload();
     };
@@ -767,6 +793,7 @@ export default function Header({
                                 setSubtitle(res);
                             } else {
                                 setLoading(t('LOADING'));
+                                clearSubs();
                                 localStorage.removeItem('transcript_id');
                                 setSubtitleEnglish(res);
                                 saveTranscript(res);
@@ -964,7 +991,7 @@ export default function Header({
                         width="16"
                         height="16"
                         fill="currentColor"
-                        class="bi bi-card-text"
+                        className="bi bi-card-text"
                         style={{ marginRight: '10px' }}
                         viewBox="0 0 16 16"
                     >
@@ -975,19 +1002,50 @@ export default function Header({
                 </Dropdown.Item>
             </DropdownButton>
 
-            <UploadModal
-                show={importModalOpen}
-                onHide={handleImportClose}
-                textAreaValue={youtubeURL}
-                textAreaValueChange={handleChange}
-                onYouTubeChange={onYouTubeChange}
-                onVideoChange={onVideoChange}
-                onSubtitleChange={onSubtitleChange}
-                onInputClick={onInputClick}
-                clearData={clearData}
-                onRecentVideoLinkClick={onRecentVideoLinkClick}
-                setLoading={setLoading}
-            />
+            {/* <Dropdown
+                onMouseLeave={() => {setShowDropdown(false);console.log(showDropdown);}}
+                onMouseEnter={() => {setShowDropdown(!showDropdown); console.log(showDropdown);}}
+                style={{ width: '166px' }}
+                
+                >
+                <Dropdown.Toggle
+                    className="main-style"
+                    id="dropdown-basic"
+                >
+                    Open
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu
+                    show={showDropdown}
+                    onChange={(event) => {
+                        localStorage.setItem('selectValue', event.target.value);
+                        handleImportShow();
+                    }}
+                    value="">
+                    <Dropdown.Item value="video" as="button" onClick={()=>{localStorage.setItem('selectValue', 'video'); handleImportShow();}}>
+                    Import Video
+                    </Dropdown.Item>
+                    <Dropdown.Item value="subtitles" as="button" onClick={()=>{localStorage.setItem('selectValue', 'subtitles'); handleImportShow();}}>
+                    Import Subtitle
+                    </Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown> */}
+
+            {importModalOpen && (
+                <UploadModal
+                    show={importModalOpen}
+                    onHide={handleImportClose}
+                    textAreaValue={youtubeURL}
+                    textAreaValueChange={handleChange}
+                    onYouTubeChange={onYouTubeChange}
+                    onVideoChange={onVideoChange}
+                    onSubtitleChange={onSubtitleChange}
+                    onInputClick={onInputClick}
+                    clearData={clearData}
+                    onRecentVideoLinkClick={onRecentVideoLinkClick}
+                    setTranscribe={setTranscribe}
+                />
+            )}
 
             <Style>
                 <div
@@ -1000,7 +1058,10 @@ export default function Header({
                             handleTranscriptionShow();
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px', backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '' }}
+                        style={{
+                            marginRight: '20px',
+                            backgroundColor: configuration === 'Same Language Subtitling' ? '#00CCFF' : '',
+                        }}
                     >
                         <Translate value="SAME_LANGUAGE" />
                     </Button>
@@ -1024,7 +1085,10 @@ export default function Header({
                             handleTranslationShow();
                             player?.pause();
                         }}
-                        style={{ marginRight: '20px', backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '' }}
+                        style={{
+                            marginRight: '20px',
+                            backgroundColor: configuration === 'Subtitling' ? '#00CCFF' : '',
+                        }}
                     >
                         <Translate value="MAIN_LANGUAGE" />
                     </Button>
@@ -1071,7 +1135,7 @@ export default function Header({
                 />
             ) : null}
             <LoginForm showLogin={showLogin} setShowLogin={setShowLogin} />
-            <div className="signin-btn" style={{ zIndex: 200 }}>
+            <div className="signin-btn" style={{ zIndex: 250 }}>
                 {process.env.REACT_APP_LITE ? null : localStorage.getItem('user_id') ? (
                     <DropdownButton
                         id="dropdown-basic-button"

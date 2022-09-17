@@ -1080,7 +1080,7 @@ export default function Header({
                         </>
                     )}
 
-                    <Button
+                    {subtitleEnglish?.length > 0 && <Button
                         onClick={() => {
                             handleTranslationShow();
                             player?.pause();
@@ -1091,7 +1091,7 @@ export default function Header({
                         }}
                     >
                         <Translate value="MAIN_LANGUAGE" />
-                    </Button>
+                    </Button>}
                     <ExportSubtitleModal />
                 </div>
 

@@ -68,7 +68,7 @@ const Style = styled.div`
     }
 
     .footer {
-        height: 200px;
+        height: 150px;
     }
 
     .full-screen-btn {

@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
-import { IndicTransliterate } from '@ai4bharat/indic-transliterate';
+import { IndicTransliterate, getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
 import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
 import GetTranslationLanguagesAPI from '../redux/actions/api/Translation/GetTranslationLanguages';
@@ -197,6 +197,8 @@ export default function Subtitles({
     handleTranslationClose,
     handleTranslationShow,
     displayBtn,
+    translationSource,
+    setTranslationSource,
 }) {
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
@@ -210,9 +212,40 @@ export default function Subtitles({
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
 
-    const fetchTranslationLanguages = async() => {
+    const fetchLanguagesMap = async() => {
         const langObj = new GetTranslationLanguagesAPI();
         dispatch(APITransport(langObj));
+    };
+
+    const fetchTranslationLanguages = async () => {
+        setLanguageAvailable([]);
+        if (translationSource === 'Machine Translation') {
+            let apiObj = new GetTranslationLanguagesAPI();
+            const res = await fetch(apiObj.apiEndPoint(), {
+                method: 'GET',
+                headers: apiObj.getHeaders().headers,
+            });
+            const resp = await res.json();
+            console.log(resp, "test");
+            if (res.ok) {
+                let langArray = [];
+                for (const key in resp) {
+                    langArray.push({ name: `${key}`, key: `${resp[key]}` });
+                }
+                console.log(langArray, "test");
+                setLanguageAvailable(langArray);
+            }
+        } else {
+            let langs = await getTransliterationLanguages();
+            if (langs?.length > 0) {
+                let langArray = [{name: 'English', key: 'en'}];
+                for (const index in langs) {
+                    langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+                }
+                langArray.push({ name: 'Other Language', key: 'xx' });
+                setLanguageAvailable(langArray);
+            }
+        }
     };
 
     const saveTranslation = async () => {
@@ -248,8 +281,12 @@ export default function Subtitles({
             localStorage.setItem('langTranslate', 'en'); //added
             setTranslate(localStorage.getItem('langTranslate'));
         }
-        fetchTranslationLanguages();
+        fetchLanguagesMap();
     }, []);
+
+    useEffect(() => {
+        fetchTranslationLanguages();
+    }, [translationSource]);
 
     useEffect(() => {
         let scrollDivs = [];
@@ -291,17 +328,6 @@ export default function Subtitles({
             saveTranslation();
         }
     }, [waiting]);
-
-    useEffect(() => {
-        if (languageChoices && Object.keys(languageChoices).length > 0) {
-            let langArray = [];
-            for (const key in languageChoices) {
-                langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
-            }
-            setLanguageAvailable(langArray);
-            setTranslate(langArray[0].key);
-        }
-    }, [languageChoices]);
 
     const handleBlur = (data, index) => {
         if (isPrimary) {
@@ -368,6 +394,18 @@ export default function Subtitles({
         dispatch(APITransport(translationObj));
     };
 
+    const getManualTranslations = () => {
+        const translations = subtitleEnglish.map((item) => {
+            return {
+                start: item.start,
+                end: item.end,
+                text: '',
+            };
+        });
+        setSubtitle(formatSub(translations));
+        localStorage.setItem('subtitle', JSON.stringify(translations));
+    }
+
     useEffect(() => {
         if (
             translateReq.current &&
@@ -401,10 +439,14 @@ export default function Subtitles({
     }, [GeneratedTranslations]);
 
     const onTranslate = useCallback(() => {
-        translateReq.current = true;
-        setLoading(t('TRANSLATING'));
-        getTranslations();
-    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs]);
+        if (translationSource === 'Machine Translation') {
+            translateReq.current = true;
+            setLoading(t('TRANSLATING'));
+            getTranslations();
+        } else {
+            getManualTranslations();
+        }
+    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationSource]);
 
     console.log("test", isPrimary, subtitle)
 
@@ -420,6 +462,8 @@ export default function Subtitles({
                 language={language}
                 onTranslate={onTranslate}
                 setConfiguration={setConfiguration}
+                translationSource={translationSource}
+                setTranslationSource={setTranslationSource}
             />
 
             {configuration === 'Subtitling' && subtitle && (

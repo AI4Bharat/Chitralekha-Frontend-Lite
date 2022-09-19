@@ -76,7 +76,7 @@ const Style = styled.div`
         font-size: 18px;
         color: rgb(255 255 255 / 75%);
         text-shadow: 0 1px 2px rgb(0 0 0 / 75%);
-        text-align: center;
+        margin-left: 20px;
         user-select: none;
         pointer-events: none;
     }

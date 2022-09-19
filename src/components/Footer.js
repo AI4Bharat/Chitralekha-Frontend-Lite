@@ -99,7 +99,7 @@ const Style = styled.div`
         position: relative;
         z-index: 11;
         cursor: grab;
-        height: 20%;
+        height: 25%;
         user-select: none;
         background-color: rgb(33 150 243 / 20%);
         border-top: 1px solid rgb(33 150 243 / 30%);

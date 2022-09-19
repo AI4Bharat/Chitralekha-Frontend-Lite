@@ -79,6 +79,10 @@ const Style = styled.div`
         margin-left: 20px;
         user-select: none;
         pointer-events: none;
+        span {
+            padding: 5px 10px;
+            background-color: rgb(0 0 0 / 50%);
+        }
     }
 
     .waveform {

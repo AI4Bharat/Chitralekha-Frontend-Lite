@@ -40,7 +40,7 @@ const Style = styled.div`
 
     .main {
         display: flex;
-        height: calc(100% - 200px);
+        height: calc(100% - 270px);
 
         .main-center {
             flex: 1;

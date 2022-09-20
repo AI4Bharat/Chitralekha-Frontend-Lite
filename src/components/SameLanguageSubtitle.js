@@ -398,7 +398,7 @@ export default function SameLanguageSubtitles({
     };
 //end of change*/
     const resize = useCallback(() => {
-        setHeight(document.body.clientHeight - 370);
+        setHeight(document.body.clientHeight - 320);
     }, [setHeight]);
 
     useEffect(() => {

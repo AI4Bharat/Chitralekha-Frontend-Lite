@@ -31,7 +31,7 @@ const Timeline = styled.div`
 
     .sub-item {
         position: absolute;
-        top: 30%;
+        top: 40%;
         left: 0;
         height: 40%;
         overflow: hidden;

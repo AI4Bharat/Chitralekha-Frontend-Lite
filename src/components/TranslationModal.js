@@ -14,7 +14,6 @@ const TranslationModal = (props) => {
       {/* <Button variant="primary" onClick={handleShow}>
         Launch demo modal
       </Button> */}
-      {console.log(props)}
 
       <Modal show={props.translationModalOpen} onHide={props.handleTranslationClose} style={{top: "20%"}}>
         <Modal.Header closeButton>
@@ -31,8 +30,8 @@ const TranslationModal = (props) => {
               }}
               style={{display: "inline-block",padding: "6px 4px", borderRadius: "5px", minWidth: "200px"}}
             >
-              <option value="Machine Translation">Machine Translation</option>
-              <option value="Manual">Manual</option>
+              <option value="AI4Bharat">AI4Bharat</option>
+              <option value="Custom">Custom</option>
             </select>
           </div>
           <br/>

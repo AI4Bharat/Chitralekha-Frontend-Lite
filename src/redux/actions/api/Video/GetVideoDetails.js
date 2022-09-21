@@ -10,7 +10,7 @@
      super("GET", timeout, false);
      this.type = constants.GET_VIDEO_DETAILS
      this.videoUrl = videoUrl;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.video}?video_url=${videoUrl}&create_youtube_transcript=True`;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.video}?multimedia_url=${videoUrl}&create_youtube_transcript=True`;
    }
  
    processResponse(res) {

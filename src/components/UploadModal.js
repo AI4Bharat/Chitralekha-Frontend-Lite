@@ -69,7 +69,7 @@ const UploadModal = (props) => {
                                     </p>
 
                                     <ul>
-                                    {recentLinks?.map((video) => {
+                                    {typeof(recentLinks) === Array && recentLinks?.map((video) => {
                                         return (
                                             <li
                                                 href="javascript:void(0)"

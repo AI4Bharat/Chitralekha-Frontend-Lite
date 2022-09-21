@@ -265,3 +265,7 @@ li.video-name:visited {
   color: #0d6efd;
   text-decoration: underline;
 }
+
+::-webkit-scrollbar {
+  width: 10px !important;
+}

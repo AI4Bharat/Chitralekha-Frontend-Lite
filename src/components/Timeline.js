@@ -1,4 +1,4 @@
-import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
+import { ContextMenu, MenuItem, ContextMenuTrigger, connectMenu } from 'react-contextmenu';
 import React, { useEffect, useCallback } from 'react';
 import { Translate } from 'react-i18nify';
 import styled from 'styled-components';
@@ -31,7 +31,7 @@ const Timeline = styled.div`
 
     .sub-item {
         position: absolute;
-        top: 30%;
+        top: 40%;
         left: 0;
         height: 40%;
         overflow: hidden;
@@ -155,9 +155,6 @@ export default React.memo(
         configuration,
         setConfiguration
     }) {
-            
-            //console.log('subtitleEnglish ' +subtitleEnglish[0].text);
-            //console.log('subtitle '+subtitle[0].text);
       
         const $blockRef = React.createRef();
         const $subsRef = React.createRef();
@@ -168,20 +165,12 @@ export default React.memo(
             ? currentSubs = getCurrentSubs(subtitle, render.beginTime, render.duration)   
             : currentSubs = getCurrentSubs(subtitleEnglish, render.beginTime, render.duration)
         }
-
-       // const currentSubsEnglish = getCurrentSubs(subtitleEnglish, render.beginTime, render.duration); //addition
-       // console.log('currentSubs '+currentSubs);
-    //    console.log('subtitle '+subtitle[0].text);
     
         const gridGap = document.body.clientWidth / render.gridNum;
         const currentIndex = currentSubs.findIndex(
             (item) => item.startTime <= currentTime && item.endTime > currentTime,
         );
 
-        //addition
-        // const currentIndexEnglish = currentSubsEnglish.findIndex(
-        //     (item) => item.startTime <= currentTime && item.endTime > currentTime,
-        // );
         const onMouseDown = (sub, event, type) => {
             console.log(sub, event, type, "test");
             lastSub = sub;
@@ -242,12 +231,6 @@ export default React.memo(
                 const startTime = magnetically(lastSub.startTime + timeDiff, previou ? previou.endTime : null);
                 const endTime = magnetically(lastSub.endTime + timeDiff, next ? next.startTime : null);
                 const width = (endTime - startTime) * 10 * gridGap;
-
-                // if ((previou && endTime < previou.startTime) || (next && startTime > next.endTime)) {
-                //     //
-                //     console.log("test start")
-   
-                // } else {
               
                     if (lastType === 'left') {
                         if (startTime >= 0 && lastSub.endTime - startTime >= 0.2) {
@@ -285,8 +268,6 @@ export default React.memo(
                             lastTarget.style.width = `${width}px`;
                         }
                     }
-                // }
- 
                 lastTarget.style.transform = `translate(0)`;
             }
    
@@ -334,6 +315,23 @@ export default React.memo(
             [currentSubs, player, removeSub, updateSub],
         );
 
+        const DynamicMenu = (props) => {
+            const { id, trigger } = props;
+        
+            return (
+                <ContextMenu id={id}>
+                    {trigger && <MenuItem onClick={() => removeSub(lastSub)}>
+                        <Translate value="DELETE" />
+                    </MenuItem>}
+                    {trigger && configuration === 'Same Language Subtitling' && trigger.parentSub!==subtitleEnglish[subtitleEnglish.length-1] && <MenuItem onClick={() => mergeSub(lastSub)}>
+                        <Translate value="MERGE" />
+                    </MenuItem>}
+                </ContextMenu>
+            );
+        };
+        
+        const ConnectedMenu = connectMenu("contextmenu")(DynamicMenu);
+
         useEffect(() => {
             document.addEventListener('mousemove', onDocumentMouseMove);
             document.addEventListener('mouseup', onDocumentMouseUp);
@@ -345,17 +343,10 @@ export default React.memo(
             };
         }, [onDocumentMouseMove, onDocumentMouseUp, onKeyDown]);
 
-
-        {}
         return (
             <Timeline ref={$blockRef}>
                 {}
-                <div ref={$subsRef}>
-              
-                {/* {console.log('configuration '+configuration)} */}
-              
-                {/* {console.log('currentSubs '+currentSubs[0].text)} */}
-                    
+                <div ref={$subsRef}>                    
                     {
                         currentSubs.map((sub, key) => {
                            
@@ -380,7 +371,7 @@ export default React.memo(
                                     }}
                                     onDoubleClick={(event) => onDoubleClick(sub, event)}
                                 >
-                                    <ContextMenuTrigger id="contextmenu" holdToDisplay={-1}>
+                                    <ContextMenuTrigger id="contextmenu" holdToDisplay={-1} parentSub={sub} collect={(props) => props}>
                                         <div
                                             className="sub-handle"
                                             style={{
@@ -415,18 +406,9 @@ export default React.memo(
                                 </div>
                             );
                         })
-                    
-                    
                     }
                 </div>
-                <ContextMenu id="contextmenu">
-                    <MenuItem onClick={() => removeSub(lastSub)}>
-                        <Translate value="DELETE" />
-                    </MenuItem>
-                    {configuration === 'Same Language Subtitling' && <MenuItem onClick={() => mergeSub(lastSub)}>
-                        <Translate value="MERGE" />
-                    </MenuItem>}
-                </ContextMenu>
+                <ConnectedMenu />
             </Timeline>
         );
     },

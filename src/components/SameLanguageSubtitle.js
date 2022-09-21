@@ -29,7 +29,7 @@ const Style = styled.div`
     position: relative;
     box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
     background-color: rgb(0 0 0 / 100%);
-    z-index: 100;
+    z-index: 10;
 
     .transcribe {
         display: flex;
@@ -398,7 +398,7 @@ export default function SameLanguageSubtitles({
     };
 //end of change*/
     const resize = useCallback(() => {
-        setHeight(document.body.clientHeight - 240);
+        setHeight(document.body.clientHeight - 320);
     }, [setHeight]);
 
     useEffect(() => {

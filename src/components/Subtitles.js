@@ -343,7 +343,7 @@ export default function Subtitles({
     };
 
     const resize = useCallback(() => {
-        setHeight(document.body.clientHeight - 240);
+        setHeight(document.body.clientHeight - 320);
     }, [setHeight]);
 
     useEffect(() => {

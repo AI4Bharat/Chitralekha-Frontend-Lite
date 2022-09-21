@@ -76,9 +76,13 @@ const Style = styled.div`
         font-size: 18px;
         color: rgb(255 255 255 / 75%);
         text-shadow: 0 1px 2px rgb(0 0 0 / 75%);
-        text-align: center;
+        margin-left: 20px;
         user-select: none;
         pointer-events: none;
+        span {
+            padding: 5px 10px;
+            background-color: rgb(0 0 0 / 50%);
+        }
     }
 
     .waveform {
@@ -99,7 +103,7 @@ const Style = styled.div`
         position: relative;
         z-index: 11;
         cursor: grab;
-        height: 20%;
+        height: 25%;
         user-select: none;
         background-color: rgb(33 150 243 / 20%);
         border-top: 1px solid rgb(33 150 243 / 30%);

@@ -40,7 +40,7 @@ const Style = styled.div`
 
     .main {
         display: flex;
-        height: calc(100% - 200px);
+        height: calc(100% - 220px);
 
         .main-center {
             flex: 1;
@@ -68,7 +68,7 @@ const Style = styled.div`
     }
 
     .footer {
-        height: 200px;
+        height: 150px;
     }
 
     .full-screen-btn {

@@ -940,7 +940,6 @@ export default function Header({
             );
         }
     }
-    console.log(transcriptSource, 'transcriptSource');
 
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>

@@ -129,6 +129,7 @@ export default function App({ defaultLang }) {
         return <>{showPopup ? <div>Test </div> : console.log('in else')}</>;
     };
     const [transcriptSource, setTranscriptSource] = useState(process.env.REACT_APP_LITE ? 'Custom' : 'AI4Bharat');
+    const [translationSource, setTranslationSource] = useState('AI4Bharat');
     const [showFindAndReplace, setShowFindAndReplace] = useState(false);
     const [find, setFind] = useState('');
     const [replace, setReplace] = useState('');
@@ -708,6 +709,8 @@ export default function App({ defaultLang }) {
         handleTranslationShow,
         fullscreen,
         saveTranscript,
+        translationSource,
+        setTranslationSource,
         showLogin, 
         setShowLogin,
     };
@@ -872,6 +875,8 @@ export default function App({ defaultLang }) {
                                 handleTranslationClose={props.handleTranslationClose}
                                 handleTranslationShow={props.handleTranslationShow}
                                 translationModalOpen={props.translationModalOpen}
+                                translationSource={props.translationSource}
+                                setTranslationSource={props.setTranslationSource}
                             />
                             {console.log(props.subtitle)}
                             <Subtitles
@@ -898,6 +903,8 @@ export default function App({ defaultLang }) {
                                 //  setIsTranslateClicked={props.setIsTranslateClicked} //added
                                 found={props.found}
                                 currentFound={props.currentFound}
+                                translationSource={props.translationSource}
+                                setTranslationSource={props.setTranslationSource}
                             />
                         </div>
                     </div>

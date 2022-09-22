@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
-import { IndicTransliterate } from '@ai4bharat/indic-transliterate';
+import { IndicTransliterate, getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
 import { ai4BharatBatchTranslate } from '../libs/ai4BharatTranslate';
 import GetTranslationLanguagesAPI from '../redux/actions/api/Translation/GetTranslationLanguages';
@@ -48,7 +48,7 @@ const Style = styled.div`
             height: 35px;
             border-radius: 3px;
         }
-        
+
         .save {
             display: block;
             margin: 0;
@@ -197,22 +197,58 @@ export default function Subtitles({
     handleTranslationClose,
     handleTranslationShow,
     displayBtn,
+    translationSource,
+    setTranslationSource,
 }) {
     const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
     const translateReq = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
-    const languageChoices = useSelector(state => state.getTranslationLanguages.data);
-    const Translations = useSelector(state => state.fetchTranslation.data);
-    const GeneratedTranslations = useSelector(state => state.generateTranslation.data);
-    const APIStatus = useSelector(state => state.apiStatus);
+    const languageChoices = useSelector((state) => state.getTranslationLanguages.data);
+    const Translations = useSelector((state) => state.fetchTranslation.data);
+    const GeneratedTranslations = useSelector((state) => state.generateTranslation.data);
+    const APIStatus = useSelector((state) => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
 
-    const fetchTranslationLanguages = async() => {
+    const TRANSLATION_TYPES = {
+        AI4Bharat: 'umg',
+        Custom: 'mc',
+    };
+
+    const fetchLanguagesMap = async () => {
         const langObj = new GetTranslationLanguagesAPI();
         dispatch(APITransport(langObj));
+    };
+
+    const fetchTranslationLanguages = async () => {
+        setLanguageAvailable([]);
+        if (translationSource === 'AI4Bharat') {
+            let apiObj = new GetTranslationLanguagesAPI();
+            const res = await fetch(apiObj.apiEndPoint(), {
+                method: 'GET',
+                headers: apiObj.getHeaders().headers,
+            });
+            const resp = await res.json();
+            if (res.ok) {
+                let langArray = [];
+                for (const key in resp) {
+                    langArray.push({ name: `${key}`, key: `${resp[key]}` });
+                }
+                setLanguageAvailable(langArray);
+            }
+        } else {
+            let langs = await getTransliterationLanguages();
+            if (langs?.length > 0) {
+                let langArray = [{ name: 'English', key: 'en' }];
+                for (const index in langs) {
+                    langArray.push({ name: `${langs[index].DisplayName}`, key: `${langs[index].LangCode}` });
+                }
+                langArray.push({ name: 'Other Language', key: 'xx' });
+                setLanguageAvailable(langArray);
+            }
+        }
     };
 
     const saveTranslation = async () => {
@@ -231,6 +267,7 @@ export default function Subtitles({
             const saveObj = new SaveTranslationAPI(
                 localStorage.getItem('translation_id'),
                 localStorage.getItem('langTranslate'),
+                localStorage.getItem('transcript_id'),
                 payload,
             );
             const res = await fetch(saveObj.apiEndPoint(), {
@@ -248,8 +285,12 @@ export default function Subtitles({
             localStorage.setItem('langTranslate', 'en'); //added
             setTranslate(localStorage.getItem('langTranslate'));
         }
-        fetchTranslationLanguages();
+        fetchLanguagesMap();
     }, []);
+
+    useEffect(() => {
+        fetchTranslationLanguages();
+    }, [translationSource]);
 
     useEffect(() => {
         let scrollDivs = [];
@@ -258,7 +299,7 @@ export default function Subtitles({
                 e.currentTarget.scrollNum === scrollDivs.length - 1 ? 0 : e.currentTarget.scrollNum + 1
             ].scrollTop = e.currentTarget.scrollTop;
         };
-        if (configuration==='Subtitling') {
+        if (configuration === 'Subtitling') {
             scrollDivs = document.getElementsByClassName('ReactVirtualized__Table__Grid');
             if (scrollDivs.length >= 2) {
                 for (let i = 0; i < scrollDivs.length; i++) {
@@ -292,17 +333,6 @@ export default function Subtitles({
         }
     }, [waiting]);
 
-    useEffect(() => {
-        if (languageChoices && Object.keys(languageChoices).length > 0) {
-            let langArray = [];
-            for (const key in languageChoices) {
-                langArray.push({ name: `${key}`, key: `${languageChoices[key]}` });
-            }
-            setLanguageAvailable(langArray);
-            setTranslate(langArray[0].key);
-        }
-    }, [languageChoices]);
-
     const handleBlur = (data, index) => {
         if (isPrimary) {
             return;
@@ -333,6 +363,7 @@ export default function Subtitles({
 
     const parseTranslations = useCallback(
         (translations) => {
+            console.log('translations', translations);
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
             for (let i = 0; i < transcript.length; i++) {
                 if (transcript[i].text === translations[i].source) {
@@ -341,7 +372,6 @@ export default function Subtitles({
             }
             localStorage.setItem('subtitle', JSON.stringify(transcript));
             setSubtitle(formatSub(transcript));
-            console.log(transcript, "testagain")
             setLoading('');
             notify({
                 message: t('TRANSLAT_SUCCESS'),
@@ -355,6 +385,7 @@ export default function Subtitles({
         const translationObj = new FetchTranslationAPI(
             localStorage.getItem('transcript_id'),
             localStorage.getItem('langTranslate'),
+            TRANSLATION_TYPES[translationSource],
             true,
         );
         dispatch(APITransport(translationObj));
@@ -368,12 +399,25 @@ export default function Subtitles({
         dispatch(APITransport(translationObj));
     };
 
+    const generateCustomTranslations = () => {
+        const translations = subtitleEnglish.map((item) => {
+            return {
+                start: item.start,
+                end: item.end,
+                text: '',
+            };
+        });
+        setSubtitle(formatSub(translations));
+        localStorage.setItem('subtitle', JSON.stringify(translations));
+        setLoading('');
+    };
+
     useEffect(() => {
         if (
             translateReq.current &&
             Translations.payload?.translations?.length > 0 &&
-            (languageChoices[Translations.target_lang] === localStorage.getItem('langTranslate') ||
-                Translations.target_lang === localStorage.getItem('langTranslate'))
+            (languageChoices[Translations.target_language] === localStorage.getItem('langTranslate') ||
+                Translations.target_language === localStorage.getItem('langTranslate'))
         ) {
             translateReq.current = false;
             localStorage.setItem('translation_id', Translations.id);
@@ -383,16 +427,18 @@ export default function Subtitles({
 
     useEffect(() => {
         if (translateReq.current && APIStatus?.error) {
-            generateTranslations();
+            if (translationSource === 'AI4Bharat') generateTranslations();
+            else generateCustomTranslations();
         }
     }, [APIStatus]);
 
     useEffect(() => {
+        console.log(GeneratedTranslations, "GeneratedTranslations");
         if (
             translateReq.current &&
             GeneratedTranslations.payload?.translations?.length > 0 &&
-            (languageChoices[GeneratedTranslations.target_lang] === localStorage.getItem('langTranslate') ||
-                GeneratedTranslations.target_lang === localStorage.getItem('langTranslate'))
+            (languageChoices[GeneratedTranslations.target_language] === localStorage.getItem('langTranslate') ||
+                GeneratedTranslations.target_language === localStorage.getItem('langTranslate'))
         ) {
             parseTranslations(GeneratedTranslations.payload.translations);
             localStorage.setItem('translation_id', GeneratedTranslations.id);
@@ -404,9 +450,7 @@ export default function Subtitles({
         translateReq.current = true;
         setLoading(t('TRANSLATING'));
         getTranslations();
-    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs]);
-
-    console.log("test", isPrimary, subtitle)
+    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationSource]);
 
     return (
         <>
@@ -420,21 +464,26 @@ export default function Subtitles({
                 language={language}
                 onTranslate={onTranslate}
                 setConfiguration={setConfiguration}
+                translationSource={translationSource}
+                setTranslationSource={setTranslationSource}
             />
 
             {configuration === 'Subtitling' && subtitle && (
                 <Style className="subtitles">
                     {isPrimary && translate && languageAvailable && (
                         <div className="translate">
-                                {!!localStorage.getItem('user_id') && <Button className="save" onClick={saveTranslation}>
+                            {!!localStorage.getItem('user_id') && (
+                                <Button className="save" onClick={saveTranslation}>
                                     Save 💾
-                                </Button>}
-                                {!(
-                                    !localStorage.getItem('langTranslate') ||
-                                    localStorage.getItem('langTranslate') === 'en' ||
-                                    localStorage.getItem('langTranslate') === 'en-k' ||
-                                    localStorage.getItem('langTranslate') === 'xx'
-                                ) && <div className="transliterate-toggle">
+                                </Button>
+                            )}
+                            {!(
+                                !localStorage.getItem('langTranslate') ||
+                                localStorage.getItem('langTranslate') === 'en' ||
+                                localStorage.getItem('langTranslate') === 'en-k' ||
+                                localStorage.getItem('langTranslate') === 'xx'
+                            ) && (
+                                <div className="transliterate-toggle">
                                     <Toggle
                                         id="toggle-panel"
                                         icons={false}
@@ -443,10 +492,10 @@ export default function Subtitles({
                                         aria-labelledby="toggle-panel"
                                     />
                                     <p>Transliteration</p>
-                                </div>}
+                                </div>
+                            )}
                         </div>
                     )}
-
 
                     {!isPrimary && (
                         <div className="reference">
@@ -454,8 +503,7 @@ export default function Subtitles({
                         </div>
                     )}
                     <div style={{ display: 'flex', position: 'relative', height: `90%` }}>
-
-                        <Table 
+                        <Table
                             headerHeight={40}
                             width={300}
                             height={height}
@@ -501,8 +549,7 @@ export default function Subtitles({
                                                 }}
                                                 onBlur={() => handleBlur(props.rowData, props.index)}
                                                 enabled={
-                                                    transliterate &&
-                                                    isPrimary
+                                                    transliterate && isPrimary
                                                         ? !(
                                                               !localStorage.getItem('langTranslate') ||
                                                               localStorage.getItem('langTranslate') === 'en' ||
@@ -512,7 +559,7 @@ export default function Subtitles({
                                                         : !(
                                                               !localStorage.getItem('langTranscribe') ||
                                                               localStorage.getItem('langTranscribe') === 'en' ||
-                                                              localStorage.getItem('langTranscribe') === 'en-k' || 
+                                                              localStorage.getItem('langTranscribe') === 'en-k' ||
                                                               localStorage.getItem('langTranscribe') === 'xx'
                                                           )
                                                 }
@@ -523,7 +570,9 @@ export default function Subtitles({
                                                 }
                                                 maxOptions={5}
                                                 readOnly={isPrimary ? false : true}
-                                                renderComponent={(props) => <textarea {...props} style={{height: "70px", fontSize: "18px"}}/>}
+                                                renderComponent={(props) => (
+                                                    <textarea {...props} style={{ height: '70px', fontSize: '18px' }} />
+                                                )}
                                             />
                                         </div>
                                     </div>

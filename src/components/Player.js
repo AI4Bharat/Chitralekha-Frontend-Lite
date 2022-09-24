@@ -18,7 +18,7 @@ const Style = styled.div`
 
     .video {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         justify-content: center;
         height: 100%;
         width: auto;
@@ -41,6 +41,15 @@ const Style = styled.div`
             box-shadow: 0px 5px 25px 5px rgb(0 0 0 / 80%);
             background-color: #000;
             cursor: pointer;
+        }
+
+        .audio-style {
+            margin: 10px;
+            background-size: 150px;
+            background-color: rgba(0, 0, 0, -0.2);
+            box-shadow: none;
+            height: 150px;
+            width: 150px;
         }
 
         .subtitle {
@@ -122,11 +131,14 @@ const VideoWrap = memo(
             }
         }, [$video]);
 
-        // if (localStorage.getItem('videoSrc') === null) {
-        //     return <video onClick={onClick} src="/sample.mp4" ref={$video} />;
-        // }
-
-        return <video onClick={onClick} src={localStorage.getItem('videoSrc')} ref={$video} id="full-screenVideo"/>;
+        return (
+            <video 
+                onClick={onClick} 
+                src={localStorage.getItem('videoSrc')} 
+                ref={$video} 
+                id="full-screenVideo" 
+            />
+        );
     },
     () => true,
 );
@@ -235,35 +247,36 @@ export default function Player(props) {
             <div className="video" id="video" ref={$player}>
                 <div className="videoName">{localStorage.getItem("videoName")}</div>
                 <VideoWrap {...props} />
-                { props.isSetVideo && !props.fullscreen &&
-                <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
-                <Button className="full-screen-btn" variant="dark" onClick={() => handleFullscreenVideo(!fullscreenVideo)}>
-                {fullscreenVideo ? (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-fullscreen-exit"
-                            viewBox="0 0 16 16"
-                        >
-                            <path d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z" />
-                        </svg>
-                    ) : (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-fullscreen"
-                            viewBox="0 0 16 16"
-                        >
-                            <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z" />
-                        </svg>
-                    )}
-                </Button>
-            </OverlayTrigger>
-}
+
+                { props.isSetVideo && !props.fullscreen && !JSON.parse(localStorage.getItem('isAudioOnly')) &&
+                    <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
+                        <Button className="full-screen-btn" variant="dark" onClick={() => handleFullscreenVideo(!fullscreenVideo)}>
+                        {fullscreenVideo ? (
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-fullscreen-exit"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path d="M5.5 0a.5.5 0 0 1 .5.5v4A1.5 1.5 0 0 1 4.5 6h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5zm5 0a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 10 4.5v-4a.5.5 0 0 1 .5-.5zM0 10.5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 6 11.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zm10 1a1.5 1.5 0 0 1 1.5-1.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4z" />
+                                </svg>
+                            ) : (
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="currentColor"
+                                    class="bi bi-fullscreen"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1h-4zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5zM.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5zm15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5z" />
+                                </svg>
+                            )}
+                        </Button>
+                    </OverlayTrigger>
+                }
                 {props.player && currentSub ? (
                     <div className="subtitle">
                         {props.configuration === 'Same Language Subtitling' && focusing ? (

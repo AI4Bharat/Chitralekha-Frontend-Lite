@@ -85,17 +85,23 @@ const Style = styled.div`
 
     .ReactVirtualized__Table {
         margin-top: 20px;
+        width: 100%;
 
         .ReactVirtualized__Table__Grid {
             outline: none;
+            width: 100% !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
             overflow: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
 
         .ReactVirtualized__Table__row {
             overflow: visible !important;
+            width: 100% !important;
+
             .item {
                 height: 100%;
                 padding: 10px;
@@ -222,7 +228,7 @@ export default function SameLanguageSubtitles({
     const APIStatus = useSelector((state) => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
-
+    
     const fetchTranscriptionLanguages = async () => {
         setLanguageAvailable([]);
         if (transcriptSource === 'AI4Bharat') {
@@ -542,7 +548,7 @@ export default function SameLanguageSubtitles({
                 setConfiguration={setConfiguration}
             />
 
-            {configuration === "Same Language Subtitling" && <Style className="subtitles">
+            {configuration === "Same Language Subtitling" && <Style className="subtitles" style={{ width: JSON.parse(localStorage.getItem('isAudioOnly')) ? '50%' : '' }}>
                 <div className="transcribe">
                     {!!localStorage.getItem('user_id') && (
                         <Button className="save" onClick={saveTranscript}>

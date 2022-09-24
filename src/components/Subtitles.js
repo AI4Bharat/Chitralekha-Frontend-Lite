@@ -81,17 +81,22 @@ const Style = styled.div`
     }
 
     .ReactVirtualized__Table {
+        width: 100%;
+        
         .ReactVirtualized__Table__Grid {
             outline: none;
-            max-width: 20vw;
+            width: 100% !important;
         }
 
         .ReactVirtualized__Grid__innerScrollContainer {
             overflow: visible !important;
+            width: 100% !important;
+            max-width: 100% !important;
         }
 
         .ReactVirtualized__Table__row {
             overflow: visible !important;
+            width: 100% !important;
 
             .item {
                 height: 100%;
@@ -469,7 +474,7 @@ export default function Subtitles({
             />
 
             {configuration === 'Subtitling' && subtitle && (
-                <Style className="subtitles">
+                <Style className="subtitles" style={JSON.parse(localStorage.getItem('isAudioOnly')) ? { width: '60%' } : {}}>
                     {isPrimary && translate && languageAvailable && (
                         <div className="translate">
                             {!!localStorage.getItem('user_id') && (

@@ -6,11 +6,11 @@
  import constants from "../../../constants";
  
  export default class GetVideoDetailsAPI extends API {
-   constructor(videoUrl, timeout = 2000) {
+   constructor(videoUrl, isAudio, timeout = 2000) {
      super("GET", timeout, false);
      this.type = constants.GET_VIDEO_DETAILS
      this.videoUrl = videoUrl;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.video}?multimedia_url=${videoUrl}&create_youtube_transcript=True`;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.video}?multimedia_url=${videoUrl}&save_original_transcript=True&is_audio_only=${isAudio}`;
    }
  
    processResponse(res) {

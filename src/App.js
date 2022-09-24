@@ -773,84 +773,16 @@ export default function App({ defaultLang }) {
                     </div>
                     <Player {...props} />
                 </div>
+                
                 {configuration === '' && <></>}
+
                 {(configuration === 'Subtitling' || translationModalOpen) && (
-                    <div style={{ overflow: 'hidden', background: '#000' }}>
-                        {/* <Subtitles
-                            currentIndex={props.currentIndex}
-                            subtitle={props.subtitleEnglish}
-                            checkSub={props.checkSub}
-                            player={props.player}
-                            updateSub={props.updateSubEnglish}
-                            language={props.language}
-                            setLanguage={props.setLanguage}
-                            setLoading={props.setLoading}
-                            subtitleEnglish={props.subtitleEnglish}
-                            formatSub={props.formatSub}
-                            setSubtitle={props.setSubtitle}
-                            notify={props.notify}
-                            isPrimary={false}
-                            configuration={props.configuration}
-                            setConfiguration={props.setConfiguration}
-                            updateSubOriginal={props.updateSubTranslate}
-                            translationApi={props.translationApi}
-                        />*/}
-
-                        {/* <ScrollSync>
-                            <div style={{ display: 'flex', position: 'relative', height:`90%`}}>
-                                <ScrollSyncPane>
-                                    <div style={{overflow: 'auto'}}>
-                                            <Subtitles
-                                            currentIndex={props.currentIndex}
-                                            subtitle={props.subtitleEnglish} //changed from subtitleEnglish to subtitle
-                                            checkSub={props.checkSub}
-                                            player={props.player}
-                                            updateSub={props.updateSubEnglish} 
-                                            language={props.language}
-                                            setLanguage={props.setLanguage}
-                                            setLoading={props.setLoading}
-                                            subtitleEnglish={props.subtitleEnglish}
-                                            formatSub={props.formatSub}
-                                            setSubtitle={props.setSubtitle}
-                                            notify={props.notify}
-                                            isPrimary={false}
-                                            configuration={props.configuration}
-                                            setConfiguration={props.setConfiguration}
-                                            updateSubOriginal={props.updateSubTranslate}
-                                            translationApi={props.translationApi}
-                                            />
-                                    </div>
-                                </ScrollSyncPane>
-                                <ScrollSyncPane>
-                                    <div style={{overflow: 'auto'}}>
-                                        <Subtitles
-                                            currentIndex={props.currentIndex}
-                                            subtitle={props.subtitle} //subtitle to subtitleEnglish?
-                                            checkSub={props.checkSub}
-                                            player={props.player}
-                                            updateSub={props.updateSub}
-                                            language={props.language}
-                                            setLanguage={props.setLanguage}
-                                            setLoading={props.setLoading}
-                                            subtitleEnglish={props.subtitleEnglish}
-                                            formatSub={props.formatSub}
-                                            setSubtitle={props.setSubtitle}
-                                            notify={props.notify}
-                                            isPrimary={true}
-                                            clearedSubs={props.clearedSubs} //extra
-                                            setClearedSubs={props.setClearedSubs} //extra
-                                            setSubtitleOriginal={props.setSubtitleOriginal} //extra
-                                            configuration={props.configuration}
-                                            setConfiguration={props.setConfiguration}
-                                            translationApi={props.translationApi}
-                                            isTranslateClicked={props.isTranslateClicked} //added
-                                            setIsTranslateClicked={props.setIsTranslateClicked} //added
-                                        />
-                                    </div>
-                                </ScrollSyncPane>
-                            </div>
-                            </ScrollSync> */}
-
+                    <div style={
+                        translationModalOpen ? {} :
+                            JSON.parse(localStorage.getItem('isAudioOnly'))
+                                ? { width: '60%', overflow: 'hidden', background: '#000' }
+                                : { overflow: 'hidden', background: '#000' }
+                    }>
                         <div style={{ display: 'flex', position: 'relative', height: `90%`, zIndex: '200' }}>
                             <Subtitles
                                 currentIndex={props.currentIndex}

@@ -21,6 +21,7 @@ import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 import axios from 'axios';
+import image from "../assets/play-pause-button-transparent-6.png";
 
 const Style = styled.div`
     border-bottom: 1px solid #63d471;
@@ -559,6 +560,9 @@ export default function Header({
     const handleImportClose = () => setImportModalOpen(false);
     const handleImportShow = () => setImportModalOpen(true);
 
+    //Audio
+    const [driveUrl, setDriveUrl] = useState('');
+
     const clearSubsHandler = () => {
         window.localStorage.setItem('subsBeforeClear', JSON.stringify(subtitle));
         setSubtitle([]);
@@ -712,16 +716,29 @@ export default function Header({
     );
 
     useEffect(() => {
-        if (VideoDetails.direct_video_url) {
-            localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
+        if (VideoDetails.direct_video_url || VideoDetails.direct_audio_url) {
+            if(VideoDetails.video.audio_only) {
+                localStorage.setItem('videoSrc', VideoDetails.direct_audio_url);
+                player.src = VideoDetails.direct_audio_url;
+                player.poster = image;
+                player.className = "audio-style";
+            } else {
+                localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
+                player.src = VideoDetails.direct_video_url;
+                player.poster = '';
+                player.className = '';
+            }
+
             localStorage.setItem('videoId', VideoDetails.video.id);
-            localStorage.setItem('audioSrc', VideoDetails.direct_audio_url);
             localStorage.setItem('youtubeURL', VideoDetails.video.url);
             localStorage.setItem('isVideoPresent', true);
+            localStorage.setItem('isAudioOnly', VideoDetails.video.audio_only);
+
             setIsSetVideo(true);
             setLoading('');
-            player.src = VideoDetails.direct_video_url;
+
             player.currentTime = 0;
+
             clearSubs();
         }
     }, [VideoDetails]);
@@ -735,7 +752,7 @@ export default function Header({
             setIsTranslateClicked(false);
 
             if (youtubeURL.length > 0) {
-                const videoObj = new GetVideoDetailsAPI(youtubeURL);
+                const videoObj = new GetVideoDetailsAPI(youtubeURL, false);
 
                 setLoading(t('LOADING'));
                 dispatch(APITransport(videoObj));
@@ -752,7 +769,7 @@ export default function Header({
             setConfiguration('');
             setIsTranslateClicked(false);
 
-            const videoObj = new GetVideoDetailsAPI(url);
+            const videoObj = new GetVideoDetailsAPI(url, false);
 
             setLoading(t('LOADING'));
             dispatch(APITransport(videoObj));
@@ -941,6 +958,21 @@ export default function Header({
         }
     }
 
+    const handleAudioUpload = () => {
+        clearSubs();
+        clearSubsEnglish();
+        clearSubsHandler();
+        setConfiguration('');
+        setIsTranslateClicked(false);
+
+        if (driveUrl.length > 0) {
+            const audioObj = new GetVideoDetailsAPI(driveUrl, true);
+
+            setLoading(t('LOADING'));
+            dispatch(APITransport(audioObj));
+        }
+    };
+
     return (
         <Style className={`tool ${toolOpen ? 'tool-open' : ''} ${fullscreen ? 'd-none' : ''}`}>
             <Links />
@@ -979,6 +1011,33 @@ export default function Header({
                 </Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item
+                    name="audio"
+                    onClick={(event) => {
+                        localStorage.setItem('selectValue', event.target.name);
+                        handleImportShow();
+                    }}
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        style={{ marginRight: '10px' }}
+                        class="bi bi-music-note-list"
+                        viewBox="0 0 16 16"
+                    >
+                        <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2z" />
+                        <path fill-rule="evenodd" d="M12 3v10h-1V3h1z" />
+                        <path d="M11 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 16 2.22V4l-5 1V2.82z" />
+                        <path
+                            fill-rule="evenodd"
+                            d="M0 11.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 .5 7H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 .5 3H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5z"
+                        />
+                    </svg>
+                    Import Audio
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item
                     name="subtitles"
                     onClick={(event) => {
                         localStorage.setItem('selectValue', event.target.name);
@@ -1001,35 +1060,6 @@ export default function Header({
                 </Dropdown.Item>
             </DropdownButton>
 
-            {/* <Dropdown
-                onMouseLeave={() => {setShowDropdown(false);console.log(showDropdown);}}
-                onMouseEnter={() => {setShowDropdown(!showDropdown); console.log(showDropdown);}}
-                style={{ width: '166px' }}
-                
-                >
-                <Dropdown.Toggle
-                    className="main-style"
-                    id="dropdown-basic"
-                >
-                    Open
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu
-                    show={showDropdown}
-                    onChange={(event) => {
-                        localStorage.setItem('selectValue', event.target.value);
-                        handleImportShow();
-                    }}
-                    value="">
-                    <Dropdown.Item value="video" as="button" onClick={()=>{localStorage.setItem('selectValue', 'video'); handleImportShow();}}>
-                    Import Video
-                    </Dropdown.Item>
-                    <Dropdown.Item value="subtitles" as="button" onClick={()=>{localStorage.setItem('selectValue', 'subtitles'); handleImportShow();}}>
-                    Import Subtitle
-                    </Dropdown.Item>
-                </Dropdown.Menu>
-            </Dropdown> */}
-
             {importModalOpen && (
                 <UploadModal
                     show={importModalOpen}
@@ -1043,6 +1073,9 @@ export default function Header({
                     clearData={clearData}
                     onRecentVideoLinkClick={onRecentVideoLinkClick}
                     setTranscribe={setTranscribe}
+                    driveUrl={driveUrl}
+                    setDriveUrl={setDriveUrl}
+                    handleAudioUpload={handleAudioUpload}
                 />
             )}
 

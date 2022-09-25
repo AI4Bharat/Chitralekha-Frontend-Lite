@@ -21,7 +21,7 @@ const Style = styled.div`
         align-items: center;
         justify-content: center;
         height: 100%;
-        width: auto;
+        width: 100%;
         position: relative;
         flex-direction: column;
 

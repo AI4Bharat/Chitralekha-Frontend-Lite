@@ -320,7 +320,7 @@ export default function Footer(props) {
     }, [onWheel]);
 
     return (
-        <Style className={`footer ${props.fullscreen ? "d-none" : ""}`} ref={$footer}>
+        <Style className='footer' ref={$footer} style={props.fullscreen ? {visibility: 'hidden'} : {}}>
             {/* {console.log('props '+props.subtitle.length)}
             {
                 props.subtitle.map((item, index)=>{

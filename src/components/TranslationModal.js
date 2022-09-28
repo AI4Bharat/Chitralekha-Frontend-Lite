@@ -47,7 +47,7 @@ const TranslationModal = (props) => {
               }}
               style={{padding: "6px 4px", borderRadius: "5px", minWidth: "200px"}}
             >
-              {(props.languageAvailable[props.language] || props.languageAvailable.en || props.languageAvailable).map(
+              {props.languageAvailable?.filter((lang) => lang.key !== localStorage.getItem("langTranscribe"))?.map(
                 (item) =>
                   ( 
                     <option key={item.key} value={item.key}>

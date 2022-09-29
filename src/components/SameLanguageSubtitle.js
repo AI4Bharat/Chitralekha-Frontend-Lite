@@ -1,5 +1,3 @@
-// ff450a7f531a4e9ab43bd2dd87cdbfcc
-
 import styled from 'styled-components';
 import languages from '../libs/languages';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
@@ -8,17 +6,11 @@ import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
 import { IndicTransliterate, getTransliterationLanguages } from '@ai4bharat/indic-transliterate';
 import { t, Translate } from 'react-i18nify';
-// import englishKeywordsTranslate from '../libs/englishKeywordsTranslate';
 import googleTranslate from '../libs/googleTranslate';
 import { url2sub, vtt2url, sub2vtt } from '../libs/readSub';
 import GetTranscriptLanguagesAPI from '../redux/actions/api/Transcript/GetTranscriptLanguages';
-import APITransport from '../redux/actions/apitransport/apitransport';
-import { useDispatch, useSelector } from 'react-redux';
 import FetchTranscriptAPI from '../redux/actions/api/Transcript/FetchTranscript';
 import GenerateTranscriptAPI from '../redux/actions/api/Transcript/GenerateTranscript';
-import SaveTranscriptAPI from '../redux/actions/api/Transcript/SaveTranscript';
-import ReactModal from 'react-modal';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import TranscriptionModal from './TranscriptionModal';
 import { Button } from 'react-bootstrap';
@@ -208,24 +200,15 @@ export default function SameLanguageSubtitles({
     handleTranscriptionShow,
     saveTranscript,
 }) {
-    // console.log('at start ' + subtitle )
-    //console.log('at start ' + subtitleEnglish )
     const [height, setHeight] = useState(100);
-    const dispatch = useDispatch();
-    // const [translate, setTranslate] = useState(null);
+
     const TRANSCRIPT_TYPES = {
         Youtube: 'uos',
         AI4Bharat: 'umg',
         Custom: 'mc',
     };
 
-    //change
-    const transcribeReq = useRef(false);
-    const fetchError = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
-    const Transcript = useSelector((state) => state.fetchTranscript.data);
-    const GeneratedTranscript = useSelector((state) => state.generateTranscript.data);
-    const APIStatus = useSelector((state) => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
     
@@ -267,25 +250,6 @@ export default function SameLanguageSubtitles({
         fetchTranscriptionLanguages();
     }, [transcriptSource]);
 
-    const fetchTranscription = () => {
-        const transcriptObj = new FetchTranscriptAPI(
-            localStorage.getItem('videoId'),
-            localStorage.getItem('langTranscribe'),
-            TRANSCRIPT_TYPES[transcriptSource],
-            true,
-        );
-        dispatch(APITransport(transcriptObj));
-        fetchError.current = true;
-    };
-
-    const generateTranscription = () => {
-        const generateObj = new GenerateTranscriptAPI(
-            localStorage.getItem('videoId'),
-            localStorage.getItem('langTranscribe'),
-        );
-        dispatch(APITransport(generateObj));
-    };
-
     useEffect(() => {
         if (localStorage.getItem('langTranscribe')) {
             setModeTranscribe(localStorage.getItem('langTranscribe'));
@@ -312,54 +276,6 @@ export default function SameLanguageSubtitles({
         }
     }, [waiting]);
 
-    // useEffect(() => {
-    //     if (languageChoices?.data) {
-    //         let langArray = [];
-    //         for (const key in languageChoices.data) {
-    //             langArray.push({ name: `${key}`, key: `${languageChoices.data[key]}` });
-    //         }
-    //         setLanguageAvailable(langArray);
-    //         localStorage.setItem('langTranscribe', langArray[0].key);
-    //         setTranscribe(langArray[0].key);
-    //     }
-    // }, [languageChoices]);
-
-    // useEffect(() => {
-    //  /*   console.log("languages");
-    //         setLanguageAvailable(languages);
-    //         localStorage.setItem('lang', languages['en'][1].key);
-    //         setTranscribe(languages['en'][1].key);
-    //     */
-    //         const langObj = new GetTranscriptLanguagesAPI();
-    //         // fetch(`${process.env.REACT_APP_ASR_URL}/supported_languages`)
-    //         fetch(langObj.apiEndPoint(), {
-    //             method: "GET",
-    //             headers: langObj.getHeaders().headers,
-    //           })
-    //         .then((resp) => {
-    //             console.log(resp)
-    //             return resp.json();
-    //         })
-    //         .then((resp) => {
-    //             let langArray = [];
-    //             // langArray.push({ name: 'English', key: 'en' });
-    //             for (const key in resp.data) {
-    //                 langArray.push({ name: `${key}`, key: `${resp[key]}` });
-    //             }
-    //             setLanguageAvailable(langArray);
-    //             localStorage.setItem('langTranscribe', langArray[0].key);
-    //             setTranscribe(langArray[0].key);
-    //           //  console.log("transcribe");
-    //             console.log(langArray);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //         });
-    // }, []);
-
-    //end of change
-
-    //change
     function useStickyState(defaultValue, key) {
         const [value, setValue] = React.useState(() => {
             const stickyValue = window.localStorage.getItem(key);
@@ -374,8 +290,6 @@ export default function SameLanguageSubtitles({
     const [modeTranscribe, setModeTranscribe] = useStickyState('en', 'transcribed-view');
 
     const handleBlur = (data, index) => {
-        //console.log(e.target.value);
-
         if (isPrimary) {
             return;
         }
@@ -383,26 +297,7 @@ export default function SameLanguageSubtitles({
             updateSubOriginal(data, resp[0], index);
         });
     };
-    /*
-    //change
-    const handleBlur = (data, index) => {
-        //console.log(e.target.value);
-        if (isPrimary) {
-            return;
-        }
-        console.log(translationApi);
-        if (translationApi === 'AI4Bharat') {
-            // return;
-            ai4BharatBatchTranslate([{ text: data.text }], 'hi', localStorage.getItem('lang')).then((resp) => {
-                updateSubOriginal(data, resp[0], index);
-            });
-        } else {
-            googleTranslate([{ text: data.text }], localStorage.getItem('lang')).then((resp) => {
-                updateSubOriginal(data, resp[0], index);
-            });
-        }
-    };
-//end of change*/
+
     const resize = useCallback(() => {
         setHeight(document.body.clientHeight - 320);
     }, [setHeight]);
@@ -422,119 +317,61 @@ export default function SameLanguageSubtitles({
             url2sub(suburl).then((urlsub) => {
                 clearSubs();
                 setSubtitleEnglish(formatSub(urlsub));
-                // localStorage.setItem('subtitle', JSON.stringify(urlsub));
                 localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
                 setLoading('');
+                notify({
+                    message: "Transcript loaded successfully",
+                    level: 'success',
+                });
             });
         },
         [setSubtitleEnglish, setLoading, formatSub],
     );
 
-    useEffect(() => {
-        if (transcribeReq.current && Transcript.data?.output) {
-            transcribeReq.current = false;
-            localStorage.setItem('transcript_id', Transcript.id);
-            parseSubtitles(Transcript.data.output);
-        }
-    }, [Transcript]);
+    const onTranscribe = useCallback(async () => {
+        setLoading(t('TRANSCRIBING'));
+        const transcriptObj = new FetchTranscriptAPI(
+            localStorage.getItem('videoId'),
+            localStorage.getItem('langTranscribe'),
+            TRANSCRIPT_TYPES[transcriptSource],
+        );
+        const res = await fetch(transcriptObj.apiEndPoint(), {
+            method: 'GET',
+            body: JSON.stringify(transcriptObj.getBody()),
+            headers: transcriptObj.getHeaders().headers,
+        });
 
-    useEffect(() => {
-        if (fetchError.current && APIStatus?.error) {
-            if (transcriptSource === 'AI4Bharat') {
-                generateTranscription();
-                fetchError.current = false;
-            } else if (transcriptSource === 'Youtube') {
-                const transcriptObj = new FetchTranscriptAPI(
-                    localStorage.getItem('videoId'),
-                    localStorage.getItem('langTranscribe'),
-                    'os',
-                    true,
-                );
-                dispatch(APITransport(transcriptObj));
-                fetchError.current = false;
+        if (res.ok) {
+            const resp = await res.json();
+            localStorage.setItem('transcript_id', resp.id);
+            parseSubtitles(resp.data.output);
+        } else {
+            const generateObj = new GenerateTranscriptAPI(
+                localStorage.getItem('videoId'),
+                localStorage.getItem('langTranscribe'),
+            );
+            const res = await fetch(generateObj.apiEndPoint(), {
+                method: 'GET',
+                body: JSON.stringify(generateObj.getBody()),
+                headers: generateObj.getHeaders().headers,
+            });
+
+            if (res.ok) {
+                const resp = await res.json();
+                localStorage.setItem('transcript_id', resp.id);
+                parseSubtitles(resp.data.output);
             } else {
-                fetchError.current = false;
-                transcribeReq.current = false;
                 setLoading('');
+                notify({
+                    message: "Transcript not available",
+                    level: 'error',
+                });
             }
         }
-    }, [APIStatus]);
-
-    useEffect(() => {
-        if (transcribeReq.current && GeneratedTranscript.data?.output) {
-            transcribeReq.current = false;
-            localStorage.setItem('transcript_id', GeneratedTranscript.id);
-            parseSubtitles(GeneratedTranscript.data.output);
-        }
-    }, [GeneratedTranscript]);
-
-    //
-    const onTranscribe = useCallback(() => {
-        // console.log(localStorage.getItem('youtubeURL'));
-        // const lang = localStorage.getItem('langTranscribe');
-        setLoading(t('TRANSCRIBING'));
-        transcribeReq.current = true;
-        fetchTranscription();
-        // const youtubeURL = localStorage.getItem('youtubeURL');
-        //console.log("localstorage transcribe get item " + localStorage.getItem('lang'));
-        // const data = {
-        //     url: youtubeURL,
-        //     vad_level: 2,
-        //     chunk_size: 10,
-        //     language: lang,
-        // };
-        //console.log(lang);
-        // return fetch(`${process.env.REACT_APP_ASR_URL}/transcribe`, {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(data),
-        // })
-        //     .then((resp) => resp.json())
-        //     .then((resp) => {
-        //         //console.log(resp.output);
-        //         player.currentTime = 0;
-        //         clearSubs();
-        //         const suburl = vtt2url(resp.output);
-        //         url2sub(suburl).then((urlsub) => {
-        //             setSubtitle(formatSub(urlsub));
-        //             setSubtitleEnglish(formatSub(urlsub));
-        //             localStorage.setItem('subtitle', JSON.stringify(urlsub));
-        //             localStorage.setItem('subtitleEnglish', JSON.stringify(urlsub));
-        //         });
-        //     })
-        //     .then(() => setLoading(''))
-        //     .catch((err) => {
-        //         console.log(err);
-        //         setLoading('');
-        //         notify({
-        //             message: err.message,
-        //             level: 'error',
-        //         });
-        //     });
     }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);
 
-    // useEffect(() => {
-    //     if (localStorage.getItem('lang')) {
-    //         setTranslate(localStorage.getItem('lang'));
-    //     } else {
-    //         setTranslate('en');
-    //     }
-    // }, []);
-    /*change
-    useEffect(() => {
-        if (localStorage.getItem('lang')) {
-            setTranscribe(localStorage.getItem('lang'));
-        } else {
-            setTranscribe('en');
-        }
-    }, []);
-    end of change*/
-
     return (
-        // subtitle &&
-        // (
         <>
-            {/* <AltTranscriptionModal /> */}
             <TranscriptionModal
                 transcriptionModalOpen={transcriptionModalOpen}
                 handleTranscriptionClose={handleTranscriptionClose}
@@ -571,45 +408,6 @@ export default function SameLanguageSubtitles({
                         <p>Transliteration</p>
                     </div>}
                 </div>
-                {/* {isPrimary && (
-                    <div className="transcribe">
-                        <div className="heading">
-                            <h4>Speech-To-Text  {subtitle?.length > 0 && <span title="Save Transcript" className='save-btn' onClick={saveTranscript}>💾</span>}</h4>
-                        </div>
-                           {console.log('rendering here')}
-                         <div className="options">
-                           <select
-                               // value={transcribe == null ? '' : transcribe}
-                               value={modeTranscribe}
-                                onChange={(event) => {
-                                    setModeTranscribe(event.target.value);
-                                    localStorage.setItem('langTranscribe', event.target.value);
-                                   
-                                    //console.log(event.target.value);
-                                    //console.log('transcribed view'+localStorage.getItem('transcribed-view'));
-                                    setTranscribe(localStorage.getItem('langTranscribe'));
-                                
-                                    
-                                }}
-                            >
-                               
-                                {(languageAvailable[language] || languageAvailable.en || languageAvailable).map(
-                                    (item) =>
-                                            <option key={item.key} value={item.key}>
-                                                {item.name}
-                                            </option>
-                                    
-                                )}
-                                
-                            </select>
-                            
-                            <div className="btn" onClick={onTranscribe}>
-                                <Translate value="TRANSCRIBE" />
-                            </div> 
-                         <span className="language"> : en</span>
-                        </div>
-                    </div>
-                )} */}
 
                 {!isPrimary && (
                     <div className="reference">
@@ -672,35 +470,11 @@ export default function SameLanguageSubtitles({
                                             )
                                         }
                                         lang={localStorage.getItem('langTranscribe')}
-                                        // lang={
-                                        //     isPrimary
-                                        //         ? localStorage.getItem('lang') === 'en-k'
-                                        //             ? 'en'
-                                        //             : localStorage.getItem('lang')
-                                        //         : 'en'
-                                        // }
                                         maxOptions={5}
                                         renderComponent={(props) => (
                                             <textarea {...props} style={{ height: '70px', fontSize: '18px' }} />
                                         )}
                                     />
-                                    {/* <textarea
-                                    maxLength={200}
-                                    spellCheck={false}
-                                    className={[
-                                        'textarea',
-                                        currentIndex === props.index ? 'highlight' : '',
-                                        checkSub(props.rowData) ? 'illegal' : '',
-                                    ]
-                                        .join(' ')
-                                        .trim()}
-                                    value={unescape(props.rowData.text)}
-                                    onChange={(event) => {
-                                        updateSub(props.rowData, {
-                                            text: event.target.value,
-                                        });
-                                    }}
-                                /> */}
                                 </div>
                             </div>
                         );
@@ -708,6 +482,5 @@ export default function SameLanguageSubtitles({
                 ></Table>
             </Style>}
         </>
-        //    )
     );
 }

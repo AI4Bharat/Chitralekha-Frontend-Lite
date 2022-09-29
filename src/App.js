@@ -760,6 +760,7 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         if(apiStatus.error && apiStatus.message) {
+            console.log(apiStatus.message, "test");
             setError(true);
             setLoading('');
         }

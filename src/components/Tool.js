@@ -722,18 +722,19 @@ export default function Header({
                 player.src = VideoDetails.direct_audio_url;
                 player.poster = image;
                 player.className = "audio-style";
+                localStorage.setItem('isAudioOnly', true);
             } else {
                 localStorage.setItem('videoSrc', VideoDetails.direct_video_url);
                 player.src = VideoDetails.direct_video_url;
                 player.poster = '';
                 player.className = '';
+                localStorage.setItem('isAudioOnly', false);
             }
 
             localStorage.setItem('videoId', VideoDetails.video.id);
             localStorage.setItem('youtubeURL', VideoDetails.video.url);
             localStorage.setItem('isVideoPresent', true);
-            localStorage.setItem('isAudioOnly', VideoDetails.video.audio_only);
-
+            
             setIsSetVideo(true);
             setLoading('');
 

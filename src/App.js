@@ -25,6 +25,8 @@ import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import SaveTranscriptAPI from './redux/actions/api/Transcript/SaveTranscript';
 import { sub2vtt } from './libs/readSub';
 import FirstTimeModal from './components/FirstTimeModal';
+import { useSelector } from "react-redux";
+import Alert from 'react-bootstrap/Alert';
 
 const Style = styled.div`
     height: 100%;
@@ -88,6 +90,12 @@ const Style = styled.div`
         display: block;
         background: #000;
     }
+
+    .alert-box {
+        position: absolute;
+        bottom: 10px;
+        left: 20px;
+    }
 `;
 
 export default function App({ defaultLang }) {
@@ -139,6 +147,8 @@ export default function App({ defaultLang }) {
     const [firstTimeOpen, setFirstTimeOpen] = useState(true);
     const [showLogin, setShowLogin] = useState(false);
 
+    const [error, setError] = useState(false);
+ 
     useEffect(()=>{
         if (localStorage.getItem('registered')) {
           setFirstTimeOpen(false);
@@ -746,9 +756,18 @@ export default function App({ defaultLang }) {
             cancelFullScreen.call(doc);
         }
     };
+    const apiStatus = useSelector((state) => state.apiStatus);
+
+    useEffect(() => {
+        if(apiStatus.error && apiStatus.message) {
+            setError(true);
+            setLoading('');
+        }
+    }, [apiStatus.error, apiStatus.message])
 
     return (
         <Style>
+            <Alert className='alert-box' show={error} variant="danger" onClose={() => setError(false)} dismissible>{apiStatus.message}</Alert>
             {/* <Header /> */}
             <Tool {...props} style={{ marginBottom: '20px' }} />
             <div className={`${fullscreen ? 'fullscreen-style' : ''} main`}>

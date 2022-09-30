@@ -6,10 +6,10 @@
  import constants from "../../../constants";
  
  export default class FetchTranscriptAPI extends API {
-   constructor(videoId, language, transcriptType, latest, timeout = 2000) {
+   constructor(videoId, language, transcriptType, latest = false, timeout = 2000) {
      super("GET", timeout, false);
      this.type = constants.FETCH_TRANSCRIPT;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.transcript}?video_id=${videoId}&language=${language}&transcript_type=${transcriptType}${latest ? "&load_latest_transcript=true" : ""}`;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.transcript}?video_id=${videoId}&language=${language}&transcript_type=${transcriptType}load_latest_transcript=${latest}`;
    }
  
    processResponse(res) {

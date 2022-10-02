@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Table } from 'react-virtualized';
 import unescape from 'lodash/unescape';
 import debounce from 'lodash/debounce';
@@ -10,8 +10,6 @@ import GetTranslationLanguagesAPI from '../redux/actions/api/Translation/GetTran
 import FetchTranslationAPI from '../redux/actions/api/Translation/FetchTranslation';
 import GenerateTranslationAPI from '../redux/actions/api/Translation/GenerateTranslation';
 import SaveTranslationAPI from '../redux/actions/api/Translation/SaveTranslation';
-import APITransport from '../redux/actions/apitransport/apitransport';
-import { useDispatch, useSelector } from 'react-redux';
 import TranslationModal from './TranslationModal';
 import { Button } from 'react-bootstrap';
 import Toggle from 'react-toggle';
@@ -205,27 +203,11 @@ export default function Subtitles({
     translationSource,
     setTranslationSource,
 }) {
-    const dispatch = useDispatch();
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
-    const translateReq = useRef(false);
     const [languageAvailable, setLanguageAvailable] = useState([]);
-    const languageChoices = useSelector((state) => state.getTranslationLanguages.data);
-    const Translations = useSelector((state) => state.fetchTranslation.data);
-    const GeneratedTranslations = useSelector((state) => state.generateTranslation.data);
-    const APIStatus = useSelector((state) => state.apiStatus);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
-
-    const TRANSLATION_TYPES = {
-        AI4Bharat: 'umg',
-        Custom: 'mc',
-    };
-
-    const fetchLanguagesMap = async () => {
-        const langObj = new GetTranslationLanguagesAPI();
-        dispatch(APITransport(langObj));
-    };
 
     const fetchTranslationLanguages = async () => {
         setLanguageAvailable([]);
@@ -290,7 +272,6 @@ export default function Subtitles({
             localStorage.setItem('langTranslate', 'en'); //added
             setTranslate(localStorage.getItem('langTranslate'));
         }
-        fetchLanguagesMap();
     }, []);
 
     useEffect(() => {
@@ -386,24 +367,6 @@ export default function Subtitles({
         [setSubtitle, notify, formatSub, setLoading],
     );
 
-    const getTranslations = () => {
-        const translationObj = new FetchTranslationAPI(
-            localStorage.getItem('transcript_id'),
-            localStorage.getItem('langTranslate'),
-            TRANSLATION_TYPES[translationSource],
-            true,
-        );
-        dispatch(APITransport(translationObj));
-    };
-
-    const generateTranslations = () => {
-        const translationObj = new GenerateTranslationAPI(
-            localStorage.getItem('transcript_id'),
-            localStorage.getItem('langTranslate'),
-        );
-        dispatch(APITransport(translationObj));
-    };
-
     const generateCustomTranslations = () => {
         const translations = subtitleEnglish.map((item) => {
             return {
@@ -417,44 +380,57 @@ export default function Subtitles({
         setLoading('');
     };
 
-    useEffect(() => {
-        if (
-            translateReq.current &&
-            Translations.payload?.translations?.length > 0 &&
-            (languageChoices[Translations.target_language] === localStorage.getItem('langTranslate') ||
-                Translations.target_language === localStorage.getItem('langTranslate'))
-        ) {
-            translateReq.current = false;
-            localStorage.setItem('translation_id', Translations.id);
-            parseTranslations(Translations.payload.translations);
-        }
-    }, [Translations]);
+    const onTranslate = useCallback(async() => {
 
-    useEffect(() => {
-        if (translateReq.current && APIStatus?.error) {
-            if (translationSource === 'AI4Bharat') generateTranslations();
-            else generateCustomTranslations();
-        }
-    }, [APIStatus]);
+        const TRANSLATION_TYPES = {
+            AI4Bharat: localStorage.getItem('isLoggedIn') ? 'umg' : 'mg',
+            Custom: 'mc',
+        };
 
-    useEffect(() => {
-        console.log(GeneratedTranslations, "GeneratedTranslations");
-        if (
-            translateReq.current &&
-            GeneratedTranslations.payload?.translations?.length > 0 &&
-            (languageChoices[GeneratedTranslations.target_language] === localStorage.getItem('langTranslate') ||
-                GeneratedTranslations.target_language === localStorage.getItem('langTranslate'))
-        ) {
-            parseTranslations(GeneratedTranslations.payload.translations);
-            localStorage.setItem('translation_id', GeneratedTranslations.id);
-            translateReq.current = false;
-        }
-    }, [GeneratedTranslations]);
-
-    const onTranslate = useCallback(() => {
-        translateReq.current = true;
         setLoading(t('TRANSLATING'));
-        getTranslations();
+        const translationObj = new FetchTranslationAPI(
+            localStorage.getItem('transcript_id'),
+            localStorage.getItem('langTranslate'),
+            TRANSLATION_TYPES[translationSource],
+        );
+        const res = await fetch(translationObj.apiEndPoint(), {
+            method: 'GET',
+            body: JSON.stringify(translationObj.getBody()),
+            headers: translationObj.getHeaders().headers,
+        });
+
+        if (res.ok) {
+            const resp = await res.json();
+            localStorage.setItem('translation_id', resp.id);
+            parseTranslations(resp.payload.translations);
+        } else {
+            if (translationSource === 'Custom') {
+                generateCustomTranslations();
+            } else {
+                const generateObj = new GenerateTranslationAPI(
+                    localStorage.getItem('transcript_id'),
+                    localStorage.getItem('langTranslate'),
+                );
+                const res = await fetch(generateObj.apiEndPoint(), {
+                    method: 'GET',
+                    body: JSON.stringify(generateObj.getBody()),
+                    headers: generateObj.getHeaders().headers,
+                });
+    
+                if (res.ok) {
+                    const resp = await res.json();
+                    localStorage.setItem('translation_id', resp.id);
+                    parseTranslations(resp.payload.translations);
+                } else {
+                    setLoading('');
+                    notify({
+                        message: "Translation not available",
+                        level: 'error',
+                    });
+                }
+            }
+        }
+
     }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationSource]);
 
     return (

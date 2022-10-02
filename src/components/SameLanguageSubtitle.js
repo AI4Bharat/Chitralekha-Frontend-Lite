@@ -11,6 +11,7 @@ import { url2sub, vtt2url, sub2vtt } from '../libs/readSub';
 import GetTranscriptLanguagesAPI from '../redux/actions/api/Transcript/GetTranscriptLanguages';
 import FetchTranscriptAPI from '../redux/actions/api/Transcript/FetchTranscript';
 import GenerateTranscriptAPI from '../redux/actions/api/Transcript/GenerateTranscript';
+import GenerateYtTranscriptAPI from '../redux/actions/api/Transcript/GenerateYtTranscript';
 import 'react-tabs/style/react-tabs.css';
 import TranscriptionModal from './TranscriptionModal';
 import { Button } from 'react-bootstrap';
@@ -202,12 +203,6 @@ export default function SameLanguageSubtitles({
 }) {
     const [height, setHeight] = useState(100);
 
-    const TRANSCRIPT_TYPES = {
-        Youtube: 'uos',
-        AI4Bharat: 'umg',
-        Custom: 'mc',
-    };
-
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
@@ -329,6 +324,13 @@ export default function SameLanguageSubtitles({
     );
 
     const onTranscribe = useCallback(async () => {
+
+        const TRANSCRIPT_TYPES = {
+            Youtube: localStorage.getItem('isLoggedIn') ? 'uos' : 'os',
+            AI4Bharat: localStorage.getItem('isLoggedIn') ? 'umg' : 'mg',
+            Custom: 'mc',
+        };
+
         setLoading(t('TRANSCRIBING'));
         const transcriptObj = new FetchTranscriptAPI(
             localStorage.getItem('videoId'),
@@ -346,26 +348,36 @@ export default function SameLanguageSubtitles({
             localStorage.setItem('transcript_id', resp.id);
             parseSubtitles(resp.data.output);
         } else {
-            const generateObj = new GenerateTranscriptAPI(
-                localStorage.getItem('videoId'),
-                localStorage.getItem('langTranscribe'),
-            );
-            const res = await fetch(generateObj.apiEndPoint(), {
-                method: 'GET',
-                body: JSON.stringify(generateObj.getBody()),
-                headers: generateObj.getHeaders().headers,
-            });
-
-            if (res.ok) {
-                const resp = await res.json();
-                localStorage.setItem('transcript_id', resp.id);
-                parseSubtitles(resp.data.output);
-            } else {
-                setLoading('');
+            if (transcriptSource === 'Custom') {
                 notify({
                     message: "Transcript not available",
                     level: 'error',
                 });
+            } else {
+                const generateObj = transcriptSource === 'AI4Bharat' ? new GenerateTranscriptAPI(
+                    localStorage.getItem('videoId'),
+                    localStorage.getItem('langTranscribe'),
+                ) : new GenerateYtTranscriptAPI(
+                    localStorage.getItem('videoId'),
+                    localStorage.getItem('langTranscribe'),
+                );
+                const res = await fetch(generateObj.apiEndPoint(), {
+                    method: 'GET',
+                    body: JSON.stringify(generateObj.getBody()),
+                    headers: generateObj.getHeaders().headers,
+                });
+    
+                if (res.ok) {
+                    const resp = await res.json();
+                    localStorage.setItem('transcript_id', resp.id);
+                    parseSubtitles(resp.data.output);
+                } else {
+                    setLoading('');
+                    notify({
+                        message: "Transcript not available",
+                        level: 'error',
+                    });
+                }
             }
         }
     }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);

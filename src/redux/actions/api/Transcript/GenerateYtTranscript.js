@@ -1,15 +1,15 @@
 /**
- * Fetch Transcript API
+ * Generate Transcript API
  */
  import API from "../../../api";
  import ENDPOINTS from "../../../../config/apiendpoint";
  import constants from "../../../constants";
  
- export default class FetchTranscriptAPI extends API {
-   constructor(videoId, language, transcriptType, latest = false, timeout = 2000) {
+ export default class GenerateYtTranscriptAPI extends API {
+   constructor(videoId, language, timeout = 2000) {
      super("GET", timeout, false);
-     this.type = constants.FETCH_TRANSCRIPT;
-     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.transcript}?video_id=${videoId}&language=${language}&transcript_type=${transcriptType}&load_latest_transcript=${latest}`;
+     this.type = constants.GENERATE_YT_TRANSCRIPT;
+     this.endpoint = `${super.apiEndPointAuto()}${ENDPOINTS.transcript}generate_original_transcript/?video_id=${videoId}&language=${language}`;
    }
  
    processResponse(res) {

@@ -147,7 +147,7 @@ export default function App({ defaultLang }) {
     const [firstTimeOpen, setFirstTimeOpen] = useState(true);
     const [showLogin, setShowLogin] = useState(false);
 
-    const [error, setError] = useState(false);
+    const [error, setError] = useState('');
  
     useEffect(()=>{
         if (localStorage.getItem('registered')) {
@@ -723,6 +723,8 @@ export default function App({ defaultLang }) {
         setTranslationSource,
         showLogin, 
         setShowLogin,
+        error,
+        setError,
     };
 
     const renderTooltip = (props) => (
@@ -760,15 +762,15 @@ export default function App({ defaultLang }) {
 
     useEffect(() => {
         if(apiStatus.error && apiStatus.message) {
-            console.log(apiStatus.message, "test");
-            setError(true);
+            console.log(apiStatus.error, apiStatus.message, "test");
+            setError(apiStatus.message);
             setLoading('');
         }
     }, [apiStatus.error, apiStatus.message])
 
     return (
         <Style>
-            <Alert className='alert-box' show={error} variant="danger" onClose={() => setError(false)} dismissible>{apiStatus.message}</Alert>
+            <Alert className='alert-box' show={error} variant="danger" onClose={() => setError('')} dismissible>{error}</Alert>
             {/* <Header /> */}
             <Tool {...props} style={{ marginBottom: '20px' }} />
             <div className={`${fullscreen ? 'fullscreen-style' : ''} main`}>
@@ -829,6 +831,8 @@ export default function App({ defaultLang }) {
                                 translationModalOpen={props.translationModalOpen}
                                 translationSource={props.translationSource}
                                 setTranslationSource={props.setTranslationSource}
+                                error={props.error}
+                                setError={props.setError}
                             />
                             {console.log(props.subtitle)}
                             <Subtitles
@@ -857,6 +861,8 @@ export default function App({ defaultLang }) {
                                 currentFound={props.currentFound}
                                 translationSource={props.translationSource}
                                 setTranslationSource={props.setTranslationSource}
+                                error={props.error}
+                                setError={props.setError}
                             />
                         </div>
                     </div>
@@ -963,6 +969,8 @@ export default function App({ defaultLang }) {
                             transcriptionModalOpen={props.transcriptionModalOpen}
                             handleTranscriptionClose={props.handleTranscriptionClose}
                             saveTranscript={props.saveTranscript}
+                            error={props.error}
+                            setError={props.setError}
                         />
                     </>
                 )}

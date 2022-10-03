@@ -202,6 +202,8 @@ export default function Subtitles({
     displayBtn,
     translationSource,
     setTranslationSource,
+    error,
+    setError,
 }) {
     const [height, setHeight] = useState(100);
     const [translate, setTranslate] = useState(null);
@@ -269,7 +271,7 @@ export default function Subtitles({
         if (localStorage.getItem('langTranslate')) {
             setTranslate(localStorage.getItem('langTranslate')); //changes in both
         } else {
-            localStorage.setItem('langTranslate', 'en'); //added
+            localStorage.setItem('langTranslate', localStorage.getItem('langTranscribe') === 'en' ? 'hi' : 'en'); //added
             setTranslate(localStorage.getItem('langTranslate'));
         }
     }, []);
@@ -349,8 +351,11 @@ export default function Subtitles({
 
     const parseTranslations = useCallback(
         (translations) => {
-            console.log('translations', translations);
             let transcript = JSON.parse(localStorage.getItem('subtitleEnglish'));
+            if (translations?.length === 0  || transcript?.length === 0) {
+                setLoading('');
+                setError('No translation found');
+            }
             for (let i = 0; i < transcript.length; i++) {
                 if (transcript[i].text === translations[i].source) {
                     transcript[i].text = translations[i].target;
@@ -423,10 +428,7 @@ export default function Subtitles({
                     parseTranslations(resp.payload.translations);
                 } else {
                     setLoading('');
-                    notify({
-                        message: "Translation not available",
-                        level: 'error',
-                    });
+                    setError("No translation found");
                 }
             }
         }

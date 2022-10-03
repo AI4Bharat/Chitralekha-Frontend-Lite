@@ -200,6 +200,8 @@ export default function SameLanguageSubtitles({
     handleTranscriptionClose,
     handleTranscriptionShow,
     saveTranscript,
+    error,
+    setError,
 }) {
     const [height, setHeight] = useState(100);
 
@@ -308,6 +310,11 @@ export default function SameLanguageSubtitles({
 
     const parseSubtitles = useCallback(
         (subtitles) => {
+            if (subtitles.length === 0) {
+                setLoading(false);
+                setError('No transcript found');
+                return;
+            }
             const suburl = vtt2url(subtitles);
             url2sub(suburl).then((urlsub) => {
                 clearSubs();
@@ -318,6 +325,9 @@ export default function SameLanguageSubtitles({
                     message: "Transcript loaded successfully",
                     level: 'success',
                 });
+            }).catch((err) => {
+                setLoading('');
+                setError('No transcript found');
             });
         },
         [setSubtitleEnglish, setLoading, formatSub],
@@ -349,10 +359,8 @@ export default function SameLanguageSubtitles({
             parseSubtitles(resp.data.output);
         } else {
             if (transcriptSource === 'Custom') {
-                notify({
-                    message: "Transcript not available",
-                    level: 'error',
-                });
+                setLoading('');
+                setError('No custom transcript found');
             } else {
                 const generateObj = transcriptSource === 'AI4Bharat' ? new GenerateTranscriptAPI(
                     localStorage.getItem('videoId'),
@@ -373,10 +381,7 @@ export default function SameLanguageSubtitles({
                     parseSubtitles(resp.data.output);
                 } else {
                     setLoading('');
-                    notify({
-                        message: "Transcript not available",
-                        level: 'error',
-                    });
+                    setError('No transcript found');
                 }
             }
         }

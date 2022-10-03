@@ -11,6 +11,7 @@ function dispatchAPIAsync(api) {
 }
 
 function apiStatusAsync(progress, errors, message, res = null, unauthrized = false, loading = false) {
+  console.log("test", progress, errors, message, res, unauthrized, loading);
   if (res === null || !(res.status && res.status.statusCode && res.status.statusCode !== 200 && res.status.statusCode !== 201)) {
     return {
       type: C.APISTATUS,
@@ -20,7 +21,6 @@ function apiStatusAsync(progress, errors, message, res = null, unauthrized = fal
         message: res && res.status && res.status.statusMessage ? res.status.statusMessage : message,
         unauthrized: unauthrized,
         loading: loading,
-        
       }
     };
   }
@@ -48,7 +48,7 @@ function success(res, api, dispatch) {
 }
 
 function error(err, api, dispatch) {
-  let errorMsg = err.response.data.error;
+  let errorMsg = err.response.data.error ?? "Something went wrong";
   if (api.errorMsg || api.errorMsg === null) {
     errorMsg = api.errorMsg === null ? "" : api.errorMsg;
   }

@@ -953,6 +953,7 @@ export default function Header({
                         onHide={this.handleCloseExportModal}
                         downloadSub={downloadSub}
                         downloadSubReference={downloadSubReference}
+                        configuration={configuration}
                     />
                 </>
             );

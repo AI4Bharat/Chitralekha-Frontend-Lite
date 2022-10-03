@@ -15,7 +15,7 @@ const ExportModal = (props) => {
                 <Modal.Title style={{textAlign: "center", width: "100%"}}>Export Subtitle</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Tabs defaultActiveKey="Transcription" id="fill-tab-example" className="mb-3" fill variant="pills">
+                <Tabs defaultActiveKey={props.configuration === 'Subtitling' ? "Translation" : "Transcription"} id="fill-tab-example" className="mb-3" fill variant="pills">
                     <Tab eventKey="Transcription" title="Transcription">
                         <Form fill>
                             {['ass', 'srt', 'vtt', 'txt'].map((value,index) => ( 

@@ -815,6 +815,8 @@ export default function Header({
                                 localStorage.removeItem('transcript_id');
                                 setSubtitleEnglish(res);
                                 saveTranscript(res);
+                                setTranscriptSource('Custom');
+                                setConfiguration('Same Language Subtitling');
                             }
                         })
                         .catch((err) => {

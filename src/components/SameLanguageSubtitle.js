@@ -227,12 +227,9 @@ export default function SameLanguageSubtitles({
                     langArray.push({ name: `${key}`, key: `${resp.data[key]}` });
                 }
                 setLanguageAvailable(langArray);
-                localStorage.setItem('langTranscribe', langArray[0].key);
-                setModeTranscribe(langArray[0].key);
             }
         } else {
             let langs = await getTransliterationLanguages();
-            console.log(langs, "langArray");
             if (langs?.length > 0) {
                 let langArray = [{name: 'English', key: 'en'}];
                 for (const index in langs) {
@@ -240,8 +237,6 @@ export default function SameLanguageSubtitles({
                 }
                 if (transcriptSource === 'Custom') langArray.push({ name: 'Other Language', key: 'xx' });
                 setLanguageAvailable(langArray);
-                localStorage.setItem('langTranscribe', langArray[0].key);
-                setModeTranscribe(langArray[0].key);
             }
         }
     };
@@ -251,11 +246,6 @@ export default function SameLanguageSubtitles({
     }, [transcriptSource]);
 
     useEffect(() => {
-        if (localStorage.getItem('langTranscribe')) {
-            setModeTranscribe(localStorage.getItem('langTranscribe'));
-        } else {
-            setModeTranscribe('en');
-        }
         return () => {
             !!localStorage.getItem('user_id') && saveTranscript();
         };

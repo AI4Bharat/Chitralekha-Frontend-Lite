@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { t, Translate } from 'react-i18nify';
@@ -8,13 +8,15 @@ const TranscriptionModal = (props) => {
 
 //   const handleClose = () => setShow(false);
 //   const handleShow = () => setShow(true);
+  useEffect(() => {
+    props.setModeTranscribe(localStorage.getItem('langTranscribe') ?? 'en');
+  }, [props.transcriptionModalOpen]);
 
   return (
     <>
       {/* <Button variant="primary" onClick={handleShow}>
         Launch demo modal
       </Button> */}
-      {console.log(props)}
 
       <Modal show={props.transcriptionModalOpen} onHide={props.handleTranscriptionClose} style={{top: "20%"}}>
         <Modal.Header closeButton>
@@ -26,7 +28,6 @@ const TranscriptionModal = (props) => {
                 <select
                     value={props.transcriptSource}
                     onChange={(e) => {
-                        console.log(e.target.value);
                         props.setTranscriptSource(e.target.value);
                         //clearSubsEnglish();
                         props.player?.pause();

@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { t, Translate } from 'react-i18nify';
 
 const TranscriptionModal = (props) => {
@@ -9,8 +10,15 @@ const TranscriptionModal = (props) => {
 //   const handleClose = () => setShow(false);
 //   const handleShow = () => setShow(true);
   useEffect(() => {
-    props.setModeTranscribe(localStorage.getItem('langTranscribe') ?? 'en');
+    if (localStorage.getItem('langTranscribe')) {
+      props.setModeTranscribe(localStorage.getItem('language'));
+    } else {
+      localStorage.setItem('langTranscribe', 'en');
+      props.setModeTranscribe('en');
+    }
   }, [props.transcriptionModalOpen]);
+
+  console.log("test", props.continueEditing)
 
   return (
     <>
@@ -59,6 +67,14 @@ const TranscriptionModal = (props) => {
                     ),
                 )}
               </select>
+              <Form.Check 
+                type="checkbox"
+                label="Continue editing where i left off"
+                disabled={!localStorage.getItem('isLoggedIn')}
+                style={{marginTop: "10px"}}
+                checked={props.continueEditing}
+                onChange={() => props.setContinueEditing(!props.continueEditing)}
+              />
             </div>               
         </Modal.Body> 
         <Modal.Footer>

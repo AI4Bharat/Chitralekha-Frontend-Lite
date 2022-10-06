@@ -210,6 +210,7 @@ export default function Subtitles({
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
+    const [continueEditing, setContinueEditing] = useState(localStorage.getItem('isLoggedIn'));
 
     const fetchTranslationLanguages = async () => {
         setLanguageAvailable([]);
@@ -373,6 +374,7 @@ export default function Subtitles({
     );
 
     const generateCustomTranslations = () => {
+        localStorage.removeItem('translation_id');
         const translations = subtitleEnglish.map((item) => {
             return {
                 start: item.start,
@@ -388,9 +390,14 @@ export default function Subtitles({
     const onTranslate = useCallback(async() => {
 
         const TRANSLATION_TYPES = {
-            AI4Bharat: localStorage.getItem('isLoggedIn') ? 'umg' : 'mg',
+            AI4Bharat: localStorage.getItem('isLoggedIn') && continueEditing ? 'umg' : 'mg',
             Custom: 'mc',
         };
+
+        if (translationSource === 'Custom' && (!continueEditing || !localStorage.getItem('isLoggedIn'))) {
+            generateCustomTranslations();
+            return;
+        }
 
         setLoading(t('TRANSLATING'));
         const translationObj = new FetchTranslationAPI(
@@ -433,7 +440,7 @@ export default function Subtitles({
             }
         }
 
-    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationSource]);
+    }, [setLoading, subtitleEnglish, formatSub, setSubtitle, translate, notify, clearedSubs, translationSource, continueEditing]);
 
     return (
         <>
@@ -449,6 +456,8 @@ export default function Subtitles({
                 setConfiguration={setConfiguration}
                 translationSource={translationSource}
                 setTranslationSource={setTranslationSource}
+                continueEditing={continueEditing}
+                setContinueEditing={setContinueEditing}
             />
 
             {configuration === 'Subtitling' && subtitle && (

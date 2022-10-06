@@ -2,13 +2,14 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { t, Translate } from 'react-i18nify';
+import Form from 'react-bootstrap/Form';
 
 const TranslationModal = (props) => {
 //     const [show, setShow] = useState(false);
 
 //   const handleClose = () => setShow(false);
 //   const handleShow = () => setShow(true);
-
+  console.log("test", props.continueEditing)
   return (
     <>
       {/* <Button variant="primary" onClick={handleShow}>
@@ -56,6 +57,14 @@ const TranslationModal = (props) => {
                   ),
               )}
             </select>
+            <Form.Check 
+              type="checkbox"
+              label="Continue editing where i left off"
+              disabled={!localStorage.getItem('isLoggedIn')}
+              style={{marginTop: "10px"}}
+              checked={props.continueEditing}
+              onChange={() => props.setContinueEditing(!props.continueEditing)}
+            />
           </div>       
         </Modal.Body> 
         <Modal.Footer>

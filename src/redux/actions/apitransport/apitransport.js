@@ -20,7 +20,6 @@ function apiStatusAsync(progress, errors, message, res = null, unauthrized = fal
         message: res && res.status && res.status.statusMessage ? res.status.statusMessage : message,
         unauthrized: unauthrized,
         loading: loading,
-        
       }
     };
   }
@@ -48,7 +47,7 @@ function success(res, api, dispatch) {
 }
 
 function error(err, api, dispatch) {
-  let errorMsg = err.response.data.error;
+  let errorMsg = err?.response?.data?.error ?? "Something went wrong";
   if (api.errorMsg || api.errorMsg === null) {
     errorMsg = api.errorMsg === null ? "" : api.errorMsg;
   }

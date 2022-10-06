@@ -11,6 +11,7 @@ import { url2sub, vtt2url, sub2vtt } from '../libs/readSub';
 import GetTranscriptLanguagesAPI from '../redux/actions/api/Transcript/GetTranscriptLanguages';
 import FetchTranscriptAPI from '../redux/actions/api/Transcript/FetchTranscript';
 import GenerateTranscriptAPI from '../redux/actions/api/Transcript/GenerateTranscript';
+import GenerateYtTranscriptAPI from '../redux/actions/api/Transcript/GenerateYtTranscript';
 import 'react-tabs/style/react-tabs.css';
 import TranscriptionModal from './TranscriptionModal';
 import { Button } from 'react-bootstrap';
@@ -199,14 +200,10 @@ export default function SameLanguageSubtitles({
     handleTranscriptionClose,
     handleTranscriptionShow,
     saveTranscript,
+    error,
+    setError,
 }) {
     const [height, setHeight] = useState(100);
-
-    const TRANSCRIPT_TYPES = {
-        Youtube: 'uos',
-        AI4Bharat: 'umg',
-        Custom: 'mc',
-    };
 
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const [waiting, setWaiting] = useState(false);
@@ -313,6 +310,11 @@ export default function SameLanguageSubtitles({
 
     const parseSubtitles = useCallback(
         (subtitles) => {
+            if (subtitles.length === 0) {
+                setLoading(false);
+                setError('No transcript found');
+                return;
+            }
             const suburl = vtt2url(subtitles);
             url2sub(suburl).then((urlsub) => {
                 clearSubs();
@@ -323,12 +325,22 @@ export default function SameLanguageSubtitles({
                     message: "Transcript loaded successfully",
                     level: 'success',
                 });
+            }).catch((err) => {
+                setLoading('');
+                setError('No transcript found');
             });
         },
         [setSubtitleEnglish, setLoading, formatSub],
     );
 
     const onTranscribe = useCallback(async () => {
+
+        const TRANSCRIPT_TYPES = {
+            Youtube: localStorage.getItem('isLoggedIn') ? 'uos' : 'os',
+            AI4Bharat: localStorage.getItem('isLoggedIn') ? 'umg' : 'mg',
+            Custom: 'mc',
+        };
+
         setLoading(t('TRANSCRIBING'));
         const transcriptObj = new FetchTranscriptAPI(
             localStorage.getItem('videoId'),
@@ -346,26 +358,31 @@ export default function SameLanguageSubtitles({
             localStorage.setItem('transcript_id', resp.id);
             parseSubtitles(resp.data.output);
         } else {
-            const generateObj = new GenerateTranscriptAPI(
-                localStorage.getItem('videoId'),
-                localStorage.getItem('langTranscribe'),
-            );
-            const res = await fetch(generateObj.apiEndPoint(), {
-                method: 'GET',
-                body: JSON.stringify(generateObj.getBody()),
-                headers: generateObj.getHeaders().headers,
-            });
-
-            if (res.ok) {
-                const resp = await res.json();
-                localStorage.setItem('transcript_id', resp.id);
-                parseSubtitles(resp.data.output);
-            } else {
+            if (transcriptSource === 'Custom') {
                 setLoading('');
-                notify({
-                    message: "Transcript not available",
-                    level: 'error',
+                setError('No custom transcript found');
+            } else {
+                const generateObj = transcriptSource === 'AI4Bharat' ? new GenerateTranscriptAPI(
+                    localStorage.getItem('videoId'),
+                    localStorage.getItem('langTranscribe'),
+                ) : new GenerateYtTranscriptAPI(
+                    localStorage.getItem('videoId'),
+                    localStorage.getItem('langTranscribe'),
+                );
+                const res = await fetch(generateObj.apiEndPoint(), {
+                    method: 'GET',
+                    body: JSON.stringify(generateObj.getBody()),
+                    headers: generateObj.getHeaders().headers,
                 });
+    
+                if (res.ok) {
+                    const resp = await res.json();
+                    localStorage.setItem('transcript_id', resp.id);
+                    parseSubtitles(resp.data.output);
+                } else {
+                    setLoading('');
+                    setError('No transcript found');
+                }
             }
         }
     }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);

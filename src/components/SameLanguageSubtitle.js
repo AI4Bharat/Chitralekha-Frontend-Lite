@@ -208,6 +208,7 @@ export default function SameLanguageSubtitles({
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const [waiting, setWaiting] = useState(false);
     const [transliterate, setTransliterate] = useState(true);
+    const [continueEditing, setContinueEditing] = useState(localStorage.getItem('isLoggedIn'));
     
     const fetchTranscriptionLanguages = async () => {
         setLanguageAvailable([]);
@@ -323,13 +324,25 @@ export default function SameLanguageSubtitles({
         [setSubtitleEnglish, setLoading, formatSub],
     );
 
+    const generateCustomTranscript = () => {
+        localStorage.removeItem('transcript_id');
+        clearSubs();
+        setSubtitleEnglish(formatSub([]));
+        localStorage.setItem('subtitleEnglish', JSON.stringify([]));
+    }
+
     const onTranscribe = useCallback(async () => {
 
         const TRANSCRIPT_TYPES = {
-            Youtube: localStorage.getItem('isLoggedIn') ? 'uos' : 'os',
-            AI4Bharat: localStorage.getItem('isLoggedIn') ? 'umg' : 'mg',
+            Youtube: localStorage.getItem('isLoggedIn') && continueEditing ? 'uos' : 'os',
+            AI4Bharat: localStorage.getItem('isLoggedIn') && continueEditing ? 'umg' : 'mg',
             Custom: 'mc',
         };
+
+        if (transcriptSource === 'Custom' && (!continueEditing || !localStorage.getItem('isLoggedIn'))) {
+            generateCustomTranscript();
+            return;
+        }
 
         setLoading(t('TRANSCRIBING'));
         const transcriptObj = new FetchTranscriptAPI(
@@ -351,6 +364,7 @@ export default function SameLanguageSubtitles({
             if (transcriptSource === 'Custom') {
                 setLoading('');
                 setError('No custom transcript found');
+                generateCustomTranscript();
             } else {
                 const generateObj = transcriptSource === 'AI4Bharat' ? new GenerateTranscriptAPI(
                     localStorage.getItem('videoId'),
@@ -375,7 +389,7 @@ export default function SameLanguageSubtitles({
                 }
             }
         }
-    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource]);
+    }, [setLoading, formatSub, setSubtitle, notify, clearSubs, player, setSubtitleEnglish, transcriptSource, continueEditing]);
 
     return (
         <>
@@ -390,6 +404,8 @@ export default function SameLanguageSubtitles({
                 player={player}
                 onTranscribe={onTranscribe}
                 setConfiguration={setConfiguration}
+                continueEditing={continueEditing}
+                setContinueEditing={setContinueEditing}
             />
 
             {configuration === "Same Language Subtitling" && <Style className="subtitles" style={{ width: JSON.parse(localStorage.getItem('isAudioOnly')) ? '50%' : '' }}>

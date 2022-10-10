@@ -60,7 +60,7 @@ const UploadModal = (props) => {
                 {localStorage.getItem('isLoggedIn') ? (
                     <div className="video-links">
                         <p className="video-links-heading">
-                            Recent Video Links <FaClipboardCheck />
+                            Recently Edited Video Links <FaClipboardCheck />
                         </p>
 
                         <ul>

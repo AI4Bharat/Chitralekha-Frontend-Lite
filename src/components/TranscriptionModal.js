@@ -1,14 +1,10 @@
-import React, {useEffect} from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import React, {useEffect, useState} from 'react';
+import {Modal, Button, Form, Alert} from "react-bootstrap"
 import { t, Translate } from 'react-i18nify';
 
 const TranscriptionModal = (props) => {
-//     const [show, setShow] = useState(false);
+  const [showAlert, setShowAlert] = useState(false)
 
-//   const handleClose = () => setShow(false);
-//   const handleShow = () => setShow(true);
   useEffect(() => {
     if (localStorage.getItem('langTranscribe')) {
       props.setModeTranscribe(localStorage.getItem('language'));
@@ -17,8 +13,6 @@ const TranscriptionModal = (props) => {
       props.setModeTranscribe('en');
     }
   }, [props.transcriptionModalOpen]);
-
-  console.log("test", props.continueEditing)
 
   return (
     <>
@@ -67,13 +61,23 @@ const TranscriptionModal = (props) => {
                     ),
                 )}
               </select>
+              {showAlert && <Alert variant='warning'>
+                <Alert.Heading style={{fontSize: "1.3rem"}}>
+                  Are you sure you want to force retreive translations?
+                </Alert.Heading>
+                <p>Please note that all your progress will be lost</p>
+                <div className='d-flex justify-content-end gap-3'>
+                  <Button variant="secondary" onClick={() => setShowAlert(false)}>Cancel</Button>
+                  <Button variant="danger" onClick={() => {setShowAlert(false); props.setContinueEditing(false)}}>Confirm</Button>
+                </div>
+              </Alert>}
               <Form.Check 
                 type="checkbox"
                 label="Continue editing where i left off"
                 disabled={!localStorage.getItem('isLoggedIn')}
                 style={{marginTop: "10px"}}
                 checked={props.continueEditing}
-                onChange={() => props.setContinueEditing(!props.continueEditing)}
+                onChange={() => props.continueEditing ? setShowAlert(true) : props.setContinueEditing(true)}
               />
             </div>               
         </Modal.Body> 

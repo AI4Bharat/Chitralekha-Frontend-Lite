@@ -39,7 +39,7 @@ const UploadModal = (props) => {
         if (localStorage.getItem('selectValue') === 'video') {
             setTitle('Upload Video');
         } else if (localStorage.getItem('selectValue') === 'subtitles') {
-            setTitle('Upload Subtitle');
+            setTitle(props.configuration === 'Subtitling' ? 'Upload Translation Subtitles' : 'Upload Transcription Subtitle');
         } else {
             setTitle('Upload Audio');
         }

@@ -547,6 +547,8 @@ export default function Header({
     showLogin,
     setShowLogin,
     setTranscribe,
+    translationSource,
+    setTranslationSource,
 }) {
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
@@ -808,12 +810,16 @@ export default function Header({
                     file2sub(file)
                         .then((res) => {
                             if (configuration === 'Subtitling') {
+                                localStorage.removeItem('translation_id');
                                 setSubtitle(res);
+                                localStorage.setItem('subtitle', JSON.stringify(res));
+                                setTranslationSource('Custom')
                             } else {
                                 setLoading(t('LOADING'));
                                 clearSubs();
                                 localStorage.removeItem('transcript_id');
                                 setSubtitleEnglish(res);
+                                localStorage.setItem('subtitleEnglish', JSON.stringify(res));
                                 saveTranscript(res);
                                 setTranscriptSource('Custom');
                                 setConfiguration('Same Language Subtitling');
@@ -833,7 +839,7 @@ export default function Header({
                 }
             }
         },
-        [notify, setSubtitle, setSubtitleEnglish, clearSubs],
+        [notify, setSubtitle, setSubtitleEnglish, clearSubs, configuration],
     );
 
     const onInputClick = useCallback((event) => {
@@ -1080,6 +1086,7 @@ export default function Header({
                     driveUrl={driveUrl}
                     setDriveUrl={setDriveUrl}
                     handleAudioUpload={handleAudioUpload}
+                    configuration={configuration}
                 />
             )}
 

@@ -786,18 +786,18 @@ export default function Header({
 
     const clearData = () => {
         setYoutubeURL('');
-        localStorage.setItem('videoSrc', null);
+        localStorage.setItem('videoSrc', "");
         localStorage.setItem('isVideoPresent', false);
         localStorage.setItem('lang', 'en');
-        localStorage.setItem('subtitleEnglish', null);
-        localStorage.setItem('subtitle', null);
+        localStorage.removeItem('subtitleEnglish');
+        localStorage.removeItem('subtitle');
         localStorage.setItem('videoName', "");
-        localStorage.setItem('videoId', null);
-        localStorage.setItem('youtubeURL', null);
+        localStorage.removeItem('videoId');
+        localStorage.setItem('youtubeURL', "");
         localStorage.setItem('isAudioOnly', false);
-        localStorage.setItem('transcript_id', null);
-        localStorage.setItem('translation_id', null);
-        localStorage.setItem('langTranslate', null);
+        localStorage.removeItem('transcript_id');
+        localStorage.removeItem('translation_id');
+        localStorage.removeItem('langTranslate');
         localStorage.setItem('langTranscribe', 'en');
 
         clearSubs();

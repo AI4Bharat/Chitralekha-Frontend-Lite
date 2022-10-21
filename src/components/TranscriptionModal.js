@@ -7,7 +7,7 @@ const TranscriptionModal = (props) => {
 
   useEffect(() => {
     if (localStorage.getItem('langTranscribe')) {
-      props.setModeTranscribe(localStorage.getItem('language'));
+      props.setModeTranscribe(localStorage.getItem('langTranscribe'));
     } else {
       localStorage.setItem('langTranscribe', 'en');
       props.setModeTranscribe('en');
@@ -73,7 +73,7 @@ const TranscriptionModal = (props) => {
               </Alert>}
               <Form.Check 
                 type="checkbox"
-                label="Continue editing where i left off"
+                label="Continue editing where I left off"
                 disabled={!localStorage.getItem('isLoggedIn')}
                 style={{marginTop: "10px"}}
                 checked={props.continueEditing}

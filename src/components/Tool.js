@@ -790,12 +790,21 @@ export default function Header({
         localStorage.setItem('isVideoPresent', false);
         localStorage.setItem('lang', 'en');
         localStorage.setItem('subtitleEnglish', null);
+        localStorage.setItem('subtitle', null);
         localStorage.setItem('videoName', "");
+        localStorage.setItem('videoId', null);
+        localStorage.setItem('youtubeURL', null);
+        localStorage.setItem('isAudioOnly', false);
+        localStorage.setItem('transcript_id', null);
+        localStorage.setItem('translation_id', null);
+        localStorage.setItem('langTranslate', null);
+        localStorage.setItem('langTranscribe', 'en');
 
         clearSubs();
         clearSubsEnglish();
         clearSubsHandler();
         setConfiguration('');
+        setIsSetVideo(false);
         setIsTranslateClicked(false);
 
         window.location.reload();

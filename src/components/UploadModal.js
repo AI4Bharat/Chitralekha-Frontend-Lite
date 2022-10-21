@@ -103,6 +103,7 @@ const UploadModal = (props) => {
                         onChange={(event) => {
                             localStorage.setItem('langTranscribe', event.target.value);
                         }}
+                        value={localStorage.getItem('langTranscribe') ?? 'en'}
                         style={{ padding: '6px 4px', borderRadius: '5px', flex: 1 }}
                     >
                         {languageAvailable?.map((item) => (

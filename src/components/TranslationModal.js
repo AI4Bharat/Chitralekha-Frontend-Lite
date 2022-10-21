@@ -1,9 +1,18 @@
 import {Modal, Button, Form, Alert} from "react-bootstrap"
 import { t, Translate } from 'react-i18nify';
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const TranslationModal = (props) => {
   const [showAlert, setShowAlert] = useState(false)
+
+  useEffect(() => {
+    if (localStorage.getItem('langTranslate')) {
+      props.setModeTranslate(localStorage.getItem('langTranslate'));
+    } else {
+      localStorage.setItem('langTranslate', localStorage.getItem('langTranscribe') === 'en' ? 'hi' : 'en');
+      props.setModeTranslate(localStorage.getItem('langTranslate'));
+    }
+  }, [props.translationModalOpen]);
 
   return (
     <>
@@ -64,7 +73,7 @@ const TranslationModal = (props) => {
             </Alert>}
             <Form.Check 
               type="checkbox"
-              label="Continue editing where i left off"
+              label="Continue editing where I left off"
               disabled={!localStorage.getItem('isLoggedIn')}
               style={{marginTop: "10px"}}
               checked={props.continueEditing}

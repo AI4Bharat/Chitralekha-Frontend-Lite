@@ -547,6 +547,8 @@ export default function Header({
     showLogin,
     setShowLogin,
     setTranscribe,
+    translationSource,
+    setTranslationSource,
 }) {
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
@@ -784,16 +786,25 @@ export default function Header({
 
     const clearData = () => {
         setYoutubeURL('');
-        localStorage.setItem('videoSrc', null);
+        localStorage.setItem('videoSrc', "");
         localStorage.setItem('isVideoPresent', false);
         localStorage.setItem('lang', 'en');
-        localStorage.setItem('subtitleEnglish', null);
+        localStorage.removeItem('subtitleEnglish');
+        localStorage.removeItem('subtitle');
         localStorage.setItem('videoName', "");
+        localStorage.removeItem('videoId');
+        localStorage.setItem('youtubeURL', "");
+        localStorage.setItem('isAudioOnly', false);
+        localStorage.removeItem('transcript_id');
+        localStorage.removeItem('translation_id');
+        localStorage.removeItem('langTranslate');
+        localStorage.setItem('langTranscribe', 'en');
 
         clearSubs();
         clearSubsEnglish();
         clearSubsHandler();
         setConfiguration('');
+        setIsSetVideo(false);
         setIsTranslateClicked(false);
 
         window.location.reload();
@@ -808,12 +819,16 @@ export default function Header({
                     file2sub(file)
                         .then((res) => {
                             if (configuration === 'Subtitling') {
+                                localStorage.removeItem('translation_id');
                                 setSubtitle(res);
+                                localStorage.setItem('subtitle', JSON.stringify(res));
+                                setTranslationSource('Custom')
                             } else {
                                 setLoading(t('LOADING'));
                                 clearSubs();
                                 localStorage.removeItem('transcript_id');
                                 setSubtitleEnglish(res);
+                                localStorage.setItem('subtitleEnglish', JSON.stringify(res));
                                 saveTranscript(res);
                                 setTranscriptSource('Custom');
                                 setConfiguration('Same Language Subtitling');
@@ -833,7 +848,7 @@ export default function Header({
                 }
             }
         },
-        [notify, setSubtitle, setSubtitleEnglish, clearSubs],
+        [notify, setSubtitle, setSubtitleEnglish, clearSubs, configuration],
     );
 
     const onInputClick = useCallback((event) => {
@@ -1080,6 +1095,7 @@ export default function Header({
                     driveUrl={driveUrl}
                     setDriveUrl={setDriveUrl}
                     handleAudioUpload={handleAudioUpload}
+                    configuration={configuration}
                 />
             )}
 

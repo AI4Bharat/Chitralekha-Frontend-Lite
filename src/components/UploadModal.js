@@ -14,6 +14,7 @@ const UploadModal = (props) => {
     const recentLinks = useSelector((state) => state.getRecentLinks.data);
     const [languageAvailable, setLanguageAvailable] = useState([]);
     const [title, setTitle] = useState('');
+    const [subLang, setSubLang] = useState('en');
 
     const fetchTranscriptionLanguages = async () => {
         let langs = await getTransliterationLanguages();
@@ -39,9 +40,24 @@ const UploadModal = (props) => {
         if (localStorage.getItem('selectValue') === 'video') {
             setTitle('Upload Video');
         } else if (localStorage.getItem('selectValue') === 'subtitles') {
-            setTitle('Upload Subtitle');
+            setTitle(props.configuration === 'Subtitling' ? 'Upload Translation Subtitles' : 'Upload Transcription Subtitle');
         } else {
             setTitle('Upload Audio');
+        }
+        if (props.configuration === 'Subtitling') {
+            if (localStorage.getItem('langTranslate')) {
+                setSubLang(localStorage.getItem('langTranslate'));
+            } else {
+                localStorage.setItem('langTranslate', localStorage.getItem('langTranscribe') === 'en' ? 'hi' : 'en');
+                setSubLang(localStorage.getItem('langTranslate'));
+            }
+        } else {
+            if (localStorage.getItem('langTranscribe')) {
+                setSubLang(localStorage.getItem('langTranscribe'));
+            } else {
+                localStorage.setItem('langTranscribe', 'en');
+                setSubLang('en');
+            }
         }
     }, []);
 
@@ -101,8 +117,14 @@ const UploadModal = (props) => {
                     <label style={{ margin: 0 }}>Select Language:</label>
                     <select
                         onChange={(event) => {
-                            localStorage.setItem('langTranscribe', event.target.value);
+                            setSubLang(event.target.value);
+                            if (props.configuration === 'Subtitling') {
+                                localStorage.setItem('langTranslate', event.target.value);
+                            } else {
+                                localStorage.setItem('langTranscribe', event.target.value);
+                            }
                         }}
+                        value={subLang}
                         style={{ padding: '6px 4px', borderRadius: '5px', flex: 1 }}
                     >
                         {languageAvailable?.map((item) => (

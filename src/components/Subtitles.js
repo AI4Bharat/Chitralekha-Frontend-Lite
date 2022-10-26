@@ -98,6 +98,7 @@ const Style = styled.div`
 
             .item {
                 height: 100%;
+                width: 100%;
                 padding: 10px;
 
                 ul {
@@ -114,6 +115,10 @@ const Style = styled.div`
                         color: #000 !important;
                         border-bottom: 1px solid #999;
                     }
+                }
+
+                div {
+                    width: 100%;
                 }
 
                 .textarea {

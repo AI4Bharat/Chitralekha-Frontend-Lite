@@ -124,9 +124,9 @@ const Style = styled.div`
                 .textarea {
                     border: none;
                     width: 100%;
-                    height: 100%;
+                    height: 70px;
                     color: #fff;
-                    font-size: 12px;
+                    font-size: 18px;
                     padding: 10px;
                     text-align: center;
                     background-color: rgba(255, 255, 255, 0.05);
@@ -526,17 +526,6 @@ export default function Subtitles({
                                     >
                                         <div className="item">
                                             <IndicTransliterate
-                                                className={[
-                                                    'textarea',
-                                                    currentIndex === props.index ? 'highlight' : '',
-                                                    checkSub(props.rowData) ? 'illegal' : '',
-                                                    isPrimary && found.includes(props.index) ? 'found' : '',
-                                                    isPrimary && found[currentFound] === props.index
-                                                        ? 'current-found'
-                                                        : '',
-                                                ]
-                                                    .join(' ')
-                                                    .trim()}
                                                 value={unescape(props.rowData.text)}
                                                 spellCheck={false}
                                                 onChangeText={(event) => {
@@ -567,8 +556,21 @@ export default function Subtitles({
                                                 }
                                                 maxOptions={5}
                                                 readOnly={isPrimary ? false : true}
-                                                renderComponent={(props) => (
-                                                    <textarea {...props} style={{ height: '70px', fontSize: '18px' }} />
+                                                renderComponent={(innerProps) => (
+                                                    <textarea 
+                                                        {...innerProps} 
+                                                        className={[
+                                                            'textarea',
+                                                            currentIndex === props.index ? 'highlight' : '',
+                                                            checkSub(props.rowData) ? 'illegal' : '',
+                                                            isPrimary && found.includes(props.index) ? 'found' : '',
+                                                            isPrimary && found[currentFound] === props.index
+                                                                ? 'current-found'
+                                                                : '',
+                                                        ]
+                                                            .join(' ')
+                                                            .trim()}
+                                                    />
                                                 )}
                                             />
                                         </div>

@@ -641,6 +641,19 @@ export default function App({ defaultLang }) {
         }
     }, [setSubtitleOriginal, setSubtitleEnglish]);
 
+    useEffect(() => {
+        let translations = localStorage.getItem('subtitle');
+        let transcriptions = localStorage.getItem('subtitleEnglish');
+        if (translations && translations !== '[]') {
+            setConfiguration('Subtitling');
+            setIsSetConfiguration(true);
+            setIsTranslateClicked(true);
+        } else if (transcriptions && transcriptions !== '[]') {
+            setConfiguration('Same Language Subtitling');
+            setIsSetConfiguration(true);
+        }
+    }, []);
+
     const props = {
         player,
         setPlayer,

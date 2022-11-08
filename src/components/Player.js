@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import backlight from '../libs/backlight';
 import { isPlaying } from '../utils';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { AiOutlineForward, AiOutlineBackward } from 'react-icons/ai';
 
 const Style = styled.div`
     display: flex;
@@ -50,6 +51,30 @@ const Style = styled.div`
             box-shadow: none;
             height: 150px;
             width: 150px;
+        }
+
+        .playbackRate {
+            display: flex;
+            flex-direction: row;
+            column-gap: 10px;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            background-color: #212529;
+            border-radius: 5px;
+            font-size: 18px;
+            position: absolute;
+            bottom: 25px;
+            right: 75px;
+            z-index: 999;
+            user-select: none;
+            p {
+                margin: 0;
+            }
+            svg:hover {
+                cursor: pointer;
+                transform: scale(1.2);
+            }
         }
 
         .subtitle {
@@ -148,6 +173,7 @@ export default function Player(props) {
     const [focusing, setFocusing] = useState(false);
     const [inputItemCursor, setInputItemCursor] = useState(0);
     const [fullscreenVideo, setFullscreenVideo] = useState(false);
+    const [playbackRate, setPlaybackRate] = useState(1);
     const $player = createRef();
 
     const handleFullscreenVideo = () =>{
@@ -189,12 +215,25 @@ export default function Player(props) {
                 {!fullscreenVideo ? 'Fullscreen Video' : 'Exit'}
             </Tooltip>
         );
+
+    const renderPlaybackRateTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            Playback Rate
+        </Tooltip>
+    );
+
     useEffect(() => {
         if ($player.current && props.player && !backlight.state) {
             backlight.state = true;
             backlight($player.current, props.player);
         }
     }, [$player, props.player]);
+
+    useEffect(() => {
+        if (props.player) {
+            props.player.playbackRate = playbackRate;
+        }
+    }, [playbackRate, props.player]);
 
     useMemo(() => {
         setCurrentSub(
@@ -248,6 +287,15 @@ export default function Player(props) {
                 <div className="videoName">{localStorage.getItem("videoName")}</div>
                 <VideoWrap {...props} />
 
+                { props.isSetVideo && 
+                    <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderPlaybackRateTooltip}>
+                        <div className="playbackRate">
+                            <AiOutlineBackward onClick={() => setPlaybackRate(playbackRate-0.1)} />
+                            <p className="playbackRateValue">{ Math.round(playbackRate*10)/10 }x</p>
+                            <AiOutlineForward onClick={() => setPlaybackRate(playbackRate+0.1)} />
+                        </div>
+                    </OverlayTrigger>
+                }
                 { props.isSetVideo && !props.fullscreen && !JSON.parse(localStorage.getItem('isAudioOnly')) &&
                     <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
                         <Button className="full-screen-btn" variant="dark" onClick={() => handleFullscreenVideo(!fullscreenVideo)}>

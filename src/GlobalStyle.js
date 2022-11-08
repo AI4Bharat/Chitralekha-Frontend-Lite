@@ -24,6 +24,11 @@ export default createGlobalStyle`
         background-color: rgb(0 0 0 / 90%);
     }
 
+    .react-contextmenu.react-contextmenu--visible { 
+        z-index: 9999;
+        transform: none !important;
+    }
+
     ::-webkit-scrollbar {
         width: 5px;
     }

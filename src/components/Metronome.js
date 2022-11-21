@@ -117,7 +117,8 @@ export default React.memo(
         return (
             isEqual(prevProps.subtitleEnglish, nextProps.subtitleEnglish) &&
             isEqual(prevProps.subtitle, nextProps.subtitle) &&
-            isEqual(prevProps.render, nextProps.render)
+            isEqual(prevProps.render, nextProps.render) &&
+            prevProps.configuration === nextProps.configuration
         );
     },
 );

@@ -294,7 +294,7 @@ export default function Player(props) {
                         <div className="playbackRate">
                             <AiOutlineBackward onClick={() => playbackRate >= 0.2 && setPlaybackRate(playbackRate-0.1)} />
                             <p className="playbackRateValue">{ Math.round(playbackRate*10)/10 }x</p>
-                            <AiOutlineForward onClick={() => setPlaybackRate(playbackRate+0.1)} />
+                            <AiOutlineForward onClick={() => playbackRate <= 15.9 && setPlaybackRate(playbackRate+0.1)} />
                         </div>
                     </OverlayTrigger>
                 }

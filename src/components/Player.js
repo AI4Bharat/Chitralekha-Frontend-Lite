@@ -226,12 +226,14 @@ export default function Player(props) {
         if ($player.current && props.player && !backlight.state) {
             backlight.state = true;
             backlight($player.current, props.player);
+            setPlaybackRate(parseFloat(localStorage.getItem('playbackRate')) || 1);
         }
     }, [$player, props.player]);
 
     useEffect(() => {
         if (props.player) {
             props.player.playbackRate = playbackRate;
+            localStorage.setItem('playbackRate', playbackRate);
         }
     }, [playbackRate, props.player]);
 
@@ -290,9 +292,9 @@ export default function Player(props) {
                 { props.isSetVideo && 
                     <OverlayTrigger placement="left" delay={{ show: 250, hide: 400 }} overlay={renderPlaybackRateTooltip}>
                         <div className="playbackRate">
-                            <AiOutlineBackward onClick={() => setPlaybackRate(playbackRate-0.1)} />
+                            <AiOutlineBackward onClick={() => playbackRate >= 0.2 && setPlaybackRate(playbackRate-0.1)} />
                             <p className="playbackRateValue">{ Math.round(playbackRate*10)/10 }x</p>
-                            <AiOutlineForward onClick={() => setPlaybackRate(playbackRate+0.1)} />
+                            <AiOutlineForward onClick={() => playbackRate <= 15.9 && setPlaybackRate(playbackRate+0.1)} />
                         </div>
                     </OverlayTrigger>
                 }

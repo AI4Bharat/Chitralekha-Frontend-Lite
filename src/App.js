@@ -10,8 +10,6 @@ import Footer from './components/Footer';
 import Loading from './components/Loading';
 import ProgressBar from './components/ProgressBar';
 import Links from './components/Links';
-//import LoginForm from './components/Login';
-// import BottomLinks from './components/BottomLinks';
 import { getKeyCode } from './utils';
 import Sub from './libs/Sub';
 import SameLanguageSubtitles from './components/SameLanguageSubtitle';
@@ -299,9 +297,11 @@ export default function App({ defaultLang }) {
 
     const addSub = useCallback(
         (index, sub) => {
-            const subs = copySubs();
-            subs.splice(index, 0, formatSub(sub));
-            setSubtitle(subs);
+            if (configuration === 'Subtitling') {
+                const subs = copySubs();
+                subs.splice(index, 0, formatSub(sub));
+                setSubtitle(subs);
+            }
             if (subtitleEnglish) {
                 const subsEnglish = copySubsEnglish();
                 subsEnglish.splice(index, 0, formatSub(sub));

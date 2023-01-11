@@ -16,7 +16,7 @@ jobs:
 
             - name: Install and Build 🔧
               run: |
-                  npm ci
+                  npm i
                   npm run build
               env:
                   REACT_APP_ASR_URL: ${{ secrets.REACT_APP_ASR_URL }}

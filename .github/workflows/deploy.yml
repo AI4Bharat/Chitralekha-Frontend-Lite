@@ -21,6 +21,7 @@ jobs:
               env:
                   REACT_APP_ASR_URL: ${{ secrets.REACT_APP_ASR_URL }}
                   REACT_APP_NMT_URL: ${{ secrets.REACT_APP_NMT_URL }}
+                  REACT_APP_APIGW_BASE_URL: ${{ secrets.REACT_APP_APIGW_BASE_URL }}
                   CI: false
 
             - name: Deploy 🚀

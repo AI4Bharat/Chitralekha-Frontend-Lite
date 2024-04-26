@@ -226,8 +226,8 @@ export default function SameLanguageSubtitles({
             const resp = await res.json();
             if (res.ok) {
                 let langArray = [];
-                for (const key in resp.data) {
-                    langArray.push({ name: `${key}`, key: `${resp.data[key]}` });
+                for (const key in resp) {
+                    langArray.push({ name: `${key}`, key: `${resp[key]}` });
                 }
                 setLanguageAvailable(langArray);
             }

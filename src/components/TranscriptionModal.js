@@ -4,7 +4,6 @@ import { t, Translate } from 'react-i18nify';
 
 const TranscriptionModal = (props) => {
   const [showAlert, setShowAlert] = useState(false)
-
   useEffect(() => {
     if (localStorage.getItem('langTranscribe')) {
       props.setModeTranscribe(localStorage.getItem('langTranscribe'));

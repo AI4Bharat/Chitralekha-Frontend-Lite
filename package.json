@@ -43,7 +43,7 @@
     "wfplayer": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
     "build": "CI=false && react-scripts build && rm -rf docs"
   },
   "eslintConfig": {

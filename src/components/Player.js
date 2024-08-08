@@ -129,8 +129,8 @@ const Style = styled.div`
     }
 `;
 
-const VideoWrap = memo(
-    ({ setPlayer, setCurrentTime, setPlaying }) => {
+const VideoWrap = (
+    ({ setPlayer, setCurrentTime, setPlaying, ytPlayer }) => {
         const $video = createRef();
 
         useEffect(() => {
@@ -157,15 +157,20 @@ const VideoWrap = memo(
         }, [$video]);
 
         return (
+            <>
+            { !ytPlayer ?
             <video 
                 onClick={onClick} 
                 src={localStorage.getItem('videoSrc')} 
                 ref={$video} 
                 id="full-screenVideo" 
-            />
+            /> :
+            <iframe src={localStorage.getItem('youtubeURL').replace("https://www.youtube.com/watch?v=", "https://www.youtube.com/embed/")}>
+            </iframe>
+            }
+            </>
         );
-    },
-    () => true,
+    }
 );
 
 export default function Player(props) {

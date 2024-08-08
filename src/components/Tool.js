@@ -549,6 +549,8 @@ export default function Header({
     setTranscribe,
     translationSource,
     setTranslationSource,
+    ytPlayer,
+    setYtPlayer,
 }) {
     const [videoFile, setVideoFile] = useState(null);
     const [youtubeURL, setYoutubeURL] = useState('');
@@ -962,6 +964,9 @@ export default function Header({
                     <Style>
                         <Button onClick={this.handleOpenExportModal} style={{ marginRight: '20px' }}>
                             <Translate value="Export" />
+                        </Button>
+                        <Button onClick={() => {setYtPlayer(!ytPlayer)}} style={{ marginRight: '20px', backgroundColor: ytPlayer ? "#19ab27" : "red" }}>
+                            Youtube Player
                         </Button>
                     </Style>
 

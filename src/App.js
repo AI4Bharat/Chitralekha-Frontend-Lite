@@ -144,6 +144,7 @@ export default function App({ defaultLang }) {
     const [fullscreen, setFullscreen] = useState(false);
     const [firstTimeOpen, setFirstTimeOpen] = useState(true);
     const [showLogin, setShowLogin] = useState(false);
+    const [ytPlayer, setYtPlayer] = useState(false);
 
     const [error, setError] = useState('');
  
@@ -738,6 +739,8 @@ export default function App({ defaultLang }) {
         setShowLogin,
         error,
         setError,
+        ytPlayer,
+        setYtPlayer,
     };
 
     const renderTooltip = (props) => (
